@@ -1,0 +1,28 @@
+name: R7 one-case real Playwright DOM snapshot schema probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-r7-probe.yml"
+      - "scripts/weblinx_r7_trace_probe.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot_structure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install same original browser and Django as R6
+        run: |
+          python -m pip install 'Django==5.2.12' 'playwright==1.65.2'
+          python -m playwright install --with-deps chromium
+      - name: One trusted browser action with sanitized snapshot schemas only
+        run: python scripts/weblinx_r7_trace_probe.py
