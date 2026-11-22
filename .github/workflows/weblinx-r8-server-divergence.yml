@@ -71,6 +71,7 @@ jobs:
           path: |
             out_round8/r8_summary.json
             out_round8/r8_12_source_cases.csv
+            out_round8/r8_equivalence_diagnostics.json
             r8_environment.txt
             r8_sha256.txt
           retention-days: 90
