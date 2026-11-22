@@ -1,0 +1,75 @@
+name: R3C captured XPath evaluation on original and next HTML
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-continuity-r3c.yml"
+      - "scripts/weblinx_continuity_r3c.py"
+      - "tests/test_weblinx_continuity_r3c.py"
+      - "docs/weblinx-continuity-r3c-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  DATASETS_DISABLE_PROGRESS_BARS: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  evaluate_xpath:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact source retrieval and DOM environment
+        run: |
+          python -m pip install 'huggingface_hub==0.36.2' 'requests==2.34.2' 'lxml==5.4.0'
+          python -m pip freeze > r3c_environment.txt
+      - name: Test captured XPath execution against synthetic HTML nodes
+        run: |
+          python -m compileall -q scripts
+          python -m unittest discover -s tests -p 'test_weblinx_continuity_r3c.py' -v
+      - name: Evaluate 600 original captured XPath expressions on source and next DOM
+        run: python scripts/weblinx_continuity_r3c.py
+      - name: Validate complete original cohort and distinct proxy evaluation
+        run: |
+          python - <<'PY'
+          import csv,json
+          with open('out_continuity_r3c/r3c_action_xpath_600.csv',
+                    newline='',encoding='utf-8') as f:
+              reader=csv.DictReader(f);cols=set(reader.fieldnames);rows=list(reader)
+          s=json.load(open('out_continuity_r3c/r3c_summary.json'))
+          assert len(rows)==600 and len({(r['demo'],r['turn']) for r in rows})==600
+          assert s['source_action_n']==600
+          assert sum(s['current_expression_results'].values())==600
+          assert sum(s['next_expression_results'].values())==600
+          assert s['site_native_proxy_eligible_n']==75
+          assert s['logical_element_identity_independently_adjudicated'] is False
+          assert s['browser_action_reexecution_measured'] is False
+          assert cols.isdisjoint({'xpath','uid','html','url','text','site_id','raw_html','target_element','dialogue'})
+          print('R3C_VALIDATED_COHORT',len(rows))
+          PY
+      - name: Archive hashed numeric results
+        if: always()
+        run: |
+          if test -e out_continuity_r3c/r3c_summary.json; then
+            sha256sum out_continuity_r3c/r3c_summary.json out_continuity_r3c/r3c_action_xpath_600.csv > r3c_sha256.txt
+          fi
+      - name: Retain redacted evaluator outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weblinx-r3c-replay-xpath-source-check
+          path: |
+            out_continuity_r3c/r3c_summary.json
+            out_continuity_r3c/r3c_action_xpath_600.csv
+            r3c_environment.txt
+            r3c_sha256.txt
+          retention-days: 90
+          if-no-files-found: warn
