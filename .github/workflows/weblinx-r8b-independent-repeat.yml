@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/weblinx-r8b-independent-repeat.yml"
+      - "scripts/weblinx_r8_server_divergence.py"
   workflow_dispatch:
 
 permissions:
