@@ -1,0 +1,92 @@
+name: Byte-accurate evidence storage and recovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storage-cost.yml"
+      - "scripts/storage_costs.py"
+      - "scripts/storage_cost_casebook.py"
+      - "tests/test_storage_costs.py"
+      - "requirements.lock.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  DATASETS_DISABLE_PROGRESS_BARS: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact reproducibility environment
+        run: |
+          python -m pip install -r requirements.lock.txt
+          python -m pip freeze > storage_environment.txt
+          diff -u requirements.lock.txt storage_environment.txt
+      - name: Test packet serialization, PNG encoding and target recovery
+        run: |
+          python -m compileall -q scripts
+          python -m unittest discover -s tests -v
+      - name: Measure actual bytes on all 600 frozen WebLINX actions
+        run: python scripts/storage_cost_casebook.py
+      - name: Verify unchanged earlier experiments byte for byte
+        run: |
+          python scripts/verify_results.py out_confirm/confirm_summary.json
+          echo "e03b5b07f44997b9017393a1eb0871bde1fd57c5299fe5818538e038224269e3  out_confirm/confirm_summary.json" | sha256sum -c -
+          echo "12444432bff93d75e3117a7e81eca9b764f7928bfd92a9a13685d63863004b58  out_identifier/identifier_summary.json" | sha256sum -c -
+          echo "6d18a92e487d3505431d9c9d1bf02beff85ea1d5b705d4556e7c06f2522781f3  out_identifier/identifier_action_metrics.csv" | sha256sum -c -
+          echo "a141e76d34b11a9dd63828293dd8cc06fc96d4aaf3292ec1ef4293bdc041e05b  out_residual/residual_summary.json" | sha256sum -c -
+          echo "a1d603af041fc5dd27a52f6c4e46a29b2761a6cb5ea3fbdf801fa8485302a5e3  out_residual/residual_70_cases.csv" | sha256sum -c -
+          echo "b26db3ca8707824551dc75dfa1a752a70138ad38362633abde79b46974facb0d  out_pixel/residual_pixel_summary.json" | sha256sum -c -
+          echo "38591f3a5749a015a23642de4ac745d0e2cbd7f8e0ae6ef027f227ca6b8d305b  out_pixel/residual_pixel_cases.csv" | sha256sum -c -
+      - name: Verify numeric-only 600-action export and recovery
+        run: |
+          python - <<'PY'
+          import csv,json,pathlib
+          root=pathlib.Path("out_storage")
+          with (root/"storage_cost_600_actions.csv").open(newline="",encoding="utf-8") as f:
+              reader=csv.DictReader(f)
+              cols=set(reader.fieldnames)
+              rows=list(reader)
+          assert len(rows)==600
+          assert len({(r["demo"],r["turn"]) for r in rows})==600
+          assert cols.isdisjoint({"label","uid","xpath","html_id","text","sem","raw_rgb","screenshot","screenshot_path","url","dialogue","source_doc"})
+          assert all(int(r["xpath_unique"])==1 and int(r["staged_unique"])==1 for r in rows)
+          assert sum(int(r["all_hashes_unique"]) for r in rows)==530
+          assert sum(int(r["selective_hashes_unique"]) for r in rows)==530
+          assert sum(int(r["semantic_unique"]) for r in rows)==403
+          assert sum(int(r["text_unique"]) for r in rows)==158
+          s=json.loads((root/"storage_cost_summary.json").read_text(encoding="utf-8"))
+          assert s["cohorts"]["residual_70"]["actions"]==70
+          assert s["cohorts"]["all_600"]["actions"]==600
+          assert sum(s["cohorts"][k]["actions"] for k in ["missing_visual_only","mixed_missing_and_valid","valid_visual_matches"])==70
+          print("PASS: 600 complete action-level cost rows, 70 residual groups and exact decoded recoveries")
+          PY
+      - name: Hash public outputs
+        if: always()
+        run: |
+          if test -f out_storage/storage_cost_summary.json; then
+            sha256sum out_storage/storage_cost_summary.json out_storage/storage_cost_600_actions.csv > storage_sha256.txt
+          fi
+      - name: Preserve measured outputs and exact environment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: actual-retention-cost-600
+          path: |
+            out_storage/storage_cost_summary.json
+            out_storage/storage_cost_600_actions.csv
+            storage_sha256.txt
+            storage_environment.txt
+          if-no-files-found: warn
+          retention-days: 90
