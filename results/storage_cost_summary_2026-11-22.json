@@ -1,0 +1,491 @@
+{
+  "cohorts": {
+    "all_600": {
+      "actions": 600,
+      "candidate_records": 155553,
+      "crop_png_bytes_sum": 308794163,
+      "crop_png_n": 9242,
+      "full_frame_original_phash_recovery_n": 530,
+      "pixel_exact_recovery_n": 545,
+      "policies": {
+        "all_hashes": {
+          "bytes_mean_per_action": 2783.4,
+          "bytes_median_per_action": 2466,
+          "bytes_total": 1670040,
+          "n": 600,
+          "unique_recovery_n": 530,
+          "unique_recovery_rate": 0.8833333333333333
+        },
+        "full_frame": {
+          "bytes_mean_per_action": 343792.51666666666,
+          "bytes_median_per_action": 280317,
+          "bytes_total": 206275510,
+          "n": 600,
+          "unique_recovery_n": 530,
+          "unique_recovery_rate": 0.8833333333333333
+        },
+        "selective_hashes": {
+          "bytes_mean_per_action": 1321.6333333333334,
+          "bytes_median_per_action": 1181,
+          "bytes_total": 792980,
+          "n": 600,
+          "unique_recovery_n": 530,
+          "unique_recovery_rate": 0.8833333333333333
+        },
+        "semantic": {
+          "bytes_mean_per_action": 1169.9433333333334,
+          "bytes_median_per_action": 1070.5,
+          "bytes_total": 701966,
+          "n": 600,
+          "unique_recovery_n": 403,
+          "unique_recovery_rate": 0.6716666666666666
+        },
+        "semantic_plus_crops": {
+          "bytes_mean_per_action": 515905.31833333336,
+          "bytes_median_per_action": 1500,
+          "bytes_total": 309543191,
+          "n": 600,
+          "unique_recovery_n": 545,
+          "unique_recovery_rate": 0.9083333333333333
+        },
+        "staged": {
+          "bytes_mean_per_action": 1437.3783333333333,
+          "bytes_median_per_action": 1095,
+          "bytes_total": 862427,
+          "n": 600,
+          "unique_recovery_n": 600,
+          "unique_recovery_rate": 1
+        },
+        "text": {
+          "bytes_mean_per_action": 446.49666666666667,
+          "bytes_median_per_action": 423.5,
+          "bytes_total": 267898,
+          "n": 600,
+          "unique_recovery_n": 158,
+          "unique_recovery_rate": 0.2633333333333333
+        },
+        "uid": {
+          "bytes_mean_per_action": 2991.0333333333333,
+          "bytes_median_per_action": 2426.5,
+          "bytes_total": 1794620,
+          "n": 600,
+          "unique_recovery_n": 600,
+          "unique_recovery_rate": 1
+        },
+        "xpath": {
+          "bytes_mean_per_action": 1036.3466666666666,
+          "bytes_median_per_action": 909.5,
+          "bytes_total": 621808,
+          "n": 600,
+          "unique_recovery_n": 600,
+          "unique_recovery_rate": 1
+        }
+      },
+      "source_screenshot_bytes_deduplicated": 186931927,
+      "source_screenshot_bytes_median": 278856,
+      "source_screenshot_bytes_sum": 204723458,
+      "staged_levels": {
+        "bbox": 53,
+        "phash": 127,
+        "semantic": 245,
+        "text": 158,
+        "xpath": 17
+      }
+    },
+    "missing_visual_only": {
+      "actions": 19,
+      "candidate_records": 4802,
+      "crop_png_bytes_sum": 51782504,
+      "crop_png_n": 1475,
+      "full_frame_original_phash_recovery_n": 0,
+      "pixel_exact_recovery_n": 0,
+      "policies": {
+        "all_hashes": {
+          "bytes_mean_per_action": 2550.2105263157896,
+          "bytes_median_per_action": 2414,
+          "bytes_total": 48454,
+          "n": 19,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "full_frame": {
+          "bytes_mean_per_action": 305555.15789473685,
+          "bytes_median_per_action": 268573,
+          "bytes_total": 5805548,
+          "n": 19,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "selective_hashes": {
+          "bytes_mean_per_action": 1762.421052631579,
+          "bytes_median_per_action": 1692,
+          "bytes_total": 33486,
+          "n": 19,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "semantic": {
+          "bytes_mean_per_action": 1013.5263157894736,
+          "bytes_median_per_action": 955,
+          "bytes_total": 19257,
+          "n": 19,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "semantic_plus_crops": {
+          "bytes_mean_per_action": 2726775.5263157897,
+          "bytes_median_per_action": 2839823,
+          "bytes_total": 51808735,
+          "n": 19,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "staged": {
+          "bytes_mean_per_action": 2269.9473684210525,
+          "bytes_median_per_action": 2110,
+          "bytes_total": 43129,
+          "n": 19,
+          "unique_recovery_n": 19,
+          "unique_recovery_rate": 1
+        },
+        "text": {
+          "bytes_mean_per_action": 455.10526315789474,
+          "bytes_median_per_action": 391,
+          "bytes_total": 8647,
+          "n": 19,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "uid": {
+          "bytes_mean_per_action": 2923.2631578947367,
+          "bytes_median_per_action": 2359,
+          "bytes_total": 55542,
+          "n": 19,
+          "unique_recovery_n": 19,
+          "unique_recovery_rate": 1
+        },
+        "xpath": {
+          "bytes_mean_per_action": 994.1578947368421,
+          "bytes_median_per_action": 768,
+          "bytes_total": 18889,
+          "n": 19,
+          "unique_recovery_n": 19,
+          "unique_recovery_rate": 1
+        }
+      },
+      "source_screenshot_bytes_deduplicated": 5261439,
+      "source_screenshot_bytes_median": 266178,
+      "source_screenshot_bytes_sum": 5760284,
+      "staged_levels": {
+        "bbox": 19
+      }
+    },
+    "mixed_missing_and_valid": {
+      "actions": 10,
+      "candidate_records": 3135,
+      "crop_png_bytes_sum": 30418693,
+      "crop_png_n": 1357,
+      "full_frame_original_phash_recovery_n": 0,
+      "pixel_exact_recovery_n": 0,
+      "policies": {
+        "all_hashes": {
+          "bytes_mean_per_action": 3303.9,
+          "bytes_median_per_action": 3094.5,
+          "bytes_total": 33039,
+          "n": 10,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "full_frame": {
+          "bytes_mean_per_action": 277771.1,
+          "bytes_median_per_action": 217910.5,
+          "bytes_total": 2777711,
+          "n": 10,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "selective_hashes": {
+          "bytes_mean_per_action": 2448.6,
+          "bytes_median_per_action": 2262.5,
+          "bytes_total": 24486,
+          "n": 10,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "semantic": {
+          "bytes_mean_per_action": 1217.4,
+          "bytes_median_per_action": 1067,
+          "bytes_total": 12174,
+          "n": 10,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "semantic_plus_crops": {
+          "bytes_mean_per_action": 3043671.8,
+          "bytes_median_per_action": 2193687,
+          "bytes_total": 30436718,
+          "n": 10,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "staged": {
+          "bytes_mean_per_action": 3155.8,
+          "bytes_median_per_action": 2766.5,
+          "bytes_total": 31558,
+          "n": 10,
+          "unique_recovery_n": 10,
+          "unique_recovery_rate": 1
+        },
+        "text": {
+          "bytes_mean_per_action": 554.3,
+          "bytes_median_per_action": 575,
+          "bytes_total": 5543,
+          "n": 10,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "uid": {
+          "bytes_mean_per_action": 3606.5,
+          "bytes_median_per_action": 3093,
+          "bytes_total": 36065,
+          "n": 10,
+          "unique_recovery_n": 10,
+          "unique_recovery_rate": 1
+        },
+        "xpath": {
+          "bytes_mean_per_action": 1225.2,
+          "bytes_median_per_action": 1124,
+          "bytes_total": 12252,
+          "n": 10,
+          "unique_recovery_n": 10,
+          "unique_recovery_rate": 1
+        }
+      },
+      "source_screenshot_bytes_deduplicated": 2245796,
+      "source_screenshot_bytes_median": 214871.5,
+      "source_screenshot_bytes_sum": 2748982,
+      "staged_levels": {
+        "bbox": 3,
+        "xpath": 7
+      }
+    },
+    "residual_70": {
+      "actions": 70,
+      "candidate_records": 18416,
+      "crop_png_bytes_sum": 133684844,
+      "crop_png_n": 4319,
+      "full_frame_original_phash_recovery_n": 0,
+      "pixel_exact_recovery_n": 15,
+      "policies": {
+        "all_hashes": {
+          "bytes_mean_per_action": 2556.8285714285716,
+          "bytes_median_per_action": 2332.5,
+          "bytes_total": 178978,
+          "n": 70,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "full_frame": {
+          "bytes_mean_per_action": 316091.5571428572,
+          "bytes_median_per_action": 279329.5,
+          "bytes_total": 22126409,
+          "n": 70,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "selective_hashes": {
+          "bytes_mean_per_action": 1581.1285714285714,
+          "bytes_median_per_action": 1329,
+          "bytes_total": 110679,
+          "n": 70,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "semantic": {
+          "bytes_mean_per_action": 1012.0428571428571,
+          "bytes_median_per_action": 897,
+          "bytes_total": 70843,
+          "n": 70,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "semantic_plus_crops": {
+          "bytes_mean_per_action": 1911089.4428571428,
+          "bytes_median_per_action": 971470,
+          "bytes_total": 133776261,
+          "n": 70,
+          "unique_recovery_n": 15,
+          "unique_recovery_rate": 0.21428571428571427
+        },
+        "staged": {
+          "bytes_mean_per_action": 2076.6714285714284,
+          "bytes_median_per_action": 1779.5,
+          "bytes_total": 145367,
+          "n": 70,
+          "unique_recovery_n": 70,
+          "unique_recovery_rate": 1
+        },
+        "text": {
+          "bytes_mean_per_action": 425.35714285714283,
+          "bytes_median_per_action": 372,
+          "bytes_total": 29775,
+          "n": 70,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "uid": {
+          "bytes_mean_per_action": 3038.8142857142857,
+          "bytes_median_per_action": 2261.5,
+          "bytes_total": 212717,
+          "n": 70,
+          "unique_recovery_n": 70,
+          "unique_recovery_rate": 1
+        },
+        "xpath": {
+          "bytes_mean_per_action": 1039.6714285714286,
+          "bytes_median_per_action": 779,
+          "bytes_total": 72777,
+          "n": 70,
+          "unique_recovery_n": 70,
+          "unique_recovery_rate": 1
+        }
+      },
+      "source_screenshot_bytes_deduplicated": 20856472,
+      "source_screenshot_bytes_median": 277249,
+      "source_screenshot_bytes_sum": 21957627,
+      "staged_levels": {
+        "bbox": 53,
+        "xpath": 17
+      }
+    },
+    "valid_visual_matches": {
+      "actions": 41,
+      "candidate_records": 10479,
+      "crop_png_bytes_sum": 51483647,
+      "crop_png_n": 1487,
+      "full_frame_original_phash_recovery_n": 0,
+      "pixel_exact_recovery_n": 15,
+      "policies": {
+        "all_hashes": {
+          "bytes_mean_per_action": 2377.682926829268,
+          "bytes_median_per_action": 2011,
+          "bytes_total": 97485,
+          "n": 41,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "full_frame": {
+          "bytes_mean_per_action": 330320.73170731706,
+          "bytes_median_per_action": 295744,
+          "bytes_total": 13543150,
+          "n": 41,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "selective_hashes": {
+          "bytes_mean_per_action": 1285.5365853658536,
+          "bytes_median_per_action": 1084,
+          "bytes_total": 52707,
+          "n": 41,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "semantic": {
+          "bytes_mean_per_action": 961.2682926829268,
+          "bytes_median_per_action": 882,
+          "bytes_total": 39412,
+          "n": 41,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "semantic_plus_crops": {
+          "bytes_mean_per_action": 1256848.975609756,
+          "bytes_median_per_action": 10942,
+          "bytes_total": 51530808,
+          "n": 41,
+          "unique_recovery_n": 15,
+          "unique_recovery_rate": 0.36585365853658536
+        },
+        "staged": {
+          "bytes_mean_per_action": 1723.9024390243903,
+          "bytes_median_per_action": 1507,
+          "bytes_total": 70680,
+          "n": 41,
+          "unique_recovery_n": 41,
+          "unique_recovery_rate": 1
+        },
+        "text": {
+          "bytes_mean_per_action": 380.1219512195122,
+          "bytes_median_per_action": 329,
+          "bytes_total": 15585,
+          "n": 41,
+          "unique_recovery_n": 0,
+          "unique_recovery_rate": 0
+        },
+        "uid": {
+          "bytes_mean_per_action": 2953.9024390243903,
+          "bytes_median_per_action": 2151,
+          "bytes_total": 121110,
+          "n": 41,
+          "unique_recovery_n": 41,
+          "unique_recovery_rate": 1
+        },
+        "xpath": {
+          "bytes_mean_per_action": 1015.5121951219512,
+          "bytes_median_per_action": 756,
+          "bytes_total": 41636,
+          "n": 41,
+          "unique_recovery_n": 41,
+          "unique_recovery_rate": 1
+        }
+      },
+      "source_screenshot_bytes_deduplicated": 13349237,
+      "source_screenshot_bytes_median": 293279,
+      "source_screenshot_bytes_sum": 13448361,
+      "staged_levels": {
+        "bbox": 31,
+        "xpath": 10
+      }
+    }
+  },
+  "dataset_revision": "36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8",
+  "encoding": {
+    "lossless_crops": "RGB PNG, Pillow compress_level=6, optimize=False",
+    "metadata": "compact sorted-key UTF-8 JSON; zlib level 9 per action",
+    "screenshots": "original publisher-compressed bytes",
+    "source_screenshot_deduplication": "first distinct demonstration/screenshot path",
+    "visual_hash": "16-character hex per valid 64-bit pHash"
+  },
+  "original_reference": {
+    "confirmatory_actions": 600,
+    "confirmatory_joint_recovery": 530,
+    "identifier_xpath_recovery": 600,
+    "pixel_audit_valid_competitor_n": 224,
+    "residual_classes": {
+      "missing_visual_only": 19,
+      "mixed_missing_and_valid": 10,
+      "valid_visual_matches": 41
+    }
+  },
+  "sample_seed": 2026100403,
+  "totals": {
+    "adaptive_stages": {
+      "bbox": 53,
+      "phash": 127,
+      "semantic": 245,
+      "text": 158,
+      "xpath": 17
+    },
+    "extra_compressed_fullframe_metadata_bytes": 1552052,
+    "lossless_png_bytes": 308794163,
+    "per_action_screenshot_bytes": 204723458,
+    "png_phash_recovery_n": 530,
+    "png_pixel_exact_recovery_n": 545,
+    "retained_png_crop_count": 9242,
+    "semantically_ambiguous_actions": 197,
+    "target_only_uid_bytes_zlib": 34665,
+    "target_only_xpath_bytes_zlib": 50556,
+    "unique_screenshot_bytes": 186931927,
+    "unique_screenshot_references": 546
+  }
+}
