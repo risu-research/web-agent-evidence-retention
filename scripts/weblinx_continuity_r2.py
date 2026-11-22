@@ -190,8 +190,15 @@ def main():
     page_cache={}
     rows=[]
     errors=Counter()
+    previous_demo=None
     for i,r in enumerate(selected,1):
         demo=r["demo"]; idx1=int(r["from_turn"]); idx2=int(r["to_turn"])
+        # Frozen pairs are ordered by demo. Release parsed DOM mappings at each
+        # demo boundary so memory use does not accumulate across 55 websites.
+        if previous_demo is not None and demo!=previous_demo:
+            page_cache.clear()
+            replay_cache.clear()
+        previous_demo=demo
         if demo not in replay_cache:
             replay_cache[demo]=replay_data(get_source(
                 f"demonstrations/{demo}/replay.json"))
@@ -221,8 +228,7 @@ def main():
         else:
             for key,path in ((key1,path1),(key2,path2)):
                 if key not in page_cache:
-                    # Keep only one decoded HTML snapshot at a time in the cache
-                    # to avoid inflated memory use on larger demonstrations.
+                    # Cache only source pages within the current demonstration.
                     blob=path.read_bytes()
                     page_cache[key]=inspect_html_bytes(blob)
             a=page_cache[key1];b=page_cache[key2]
