@@ -89,6 +89,15 @@ Image encoding and retention have distinct roles. Exact PNG pixels can support l
 
 Costs exclude initial screenshot acquisition, processor time, network transfer, storage indexing, encryption and object-store metadata. The original media remain on WebLINX; only derived sizes, outcomes and reproducibility code are retained in this repository.
 
+## Independent byte-for-byte reproduction
+
+A separate [second complete 600-action run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45046505590) repeated the original data acquisition, full candidate and screenshot processing, lossless PNG encoding, and self-contained packet decoding in the pinned environment. The run passed its 50 existing unit tests and every historical result checksum. Both new storage files matched the first run's SHA-256 values exactly:
+
+- Summary: `fa28e1b7981642ce4d8cb20d879129bf90cb4e5cbfbb531f018e7ff7ff549465`
+- Complete 600-action CSV: `1a7459d7a9fa1f81c1c4855ec85634db282e0ae9697e960eea030e1cb8741145`
+
+The runner-generated environment listing and checksum manifest also matched byte for byte. The public repository's expanded offline regression suite passed 54/54 tests, including the archived measured-cost checks. The 55-demonstration bootstrap ran separately and passed its fixed-point checks.
+
 ## Files and verification
 
 - [Frozen cost protocol](storage-cost-protocol.md)
