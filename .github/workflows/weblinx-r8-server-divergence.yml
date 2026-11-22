@@ -1,0 +1,77 @@
+name: R8 paired browser-equivalent SQL divergence with original DOM Trace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-r8-server-divergence.yml"
+      - "scripts/weblinx_r8_server_divergence.py"
+      - "tests/test_weblinx_r8_server_divergence.py"
+      - "docs/weblinx-r8-server-divergence-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run-r8:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install the exact original Django, Playwright and Chromium versions
+        run: |
+          python -m pip install 'Django==5.2.12' 'playwright==1.65.2'
+          python -m playwright install --with-deps chromium
+          python -m pip freeze > r8_environment.txt
+      - name: Verify R7 DOM decoder and R8 no-leakage source tests
+        run: |
+          python -m unittest discover -s tests -p 'test_weblinx_r7_trace_dom_auditor.py' -v
+          python -m unittest discover -s tests -p 'test_weblinx_r8_server_divergence.py' -v
+          python -m py_compile scripts/weblinx_r8_server_divergence.py
+      - name: Run 12 genuine original Django browser episodes
+        run: python scripts/weblinx_r8_server_divergence.py
+      - name: Validate exact source cases, original Trace fidelity and privacy
+        run: |
+          python - <<'PY'
+          import csv,json
+          with open('out_round8/r8_12_source_cases.csv',newline='') as f:
+              rdr=csv.DictReader(f);fields=set(rdr.fieldnames);cases=list(rdr)
+          s=json.load(open('out_round8/r8_summary.json'))
+          assert len(cases)==s['cases']==12
+          assert len({(r['pair'],r['mode']) for r in cases})==12
+          assert s['matched_pairs']==s['equivalent_pairs']==6
+          assert s['pairs_with_distinct_SQL_effect']==6
+          assert s['packet_Q6_correct']==12
+          assert s['trace_Q6']=={'abstain':12}
+          assert s['snapshot_totals']['failures']==0
+          assert all(r['q4_UI_effect']=='A' for r in cases)
+          assert all(r['q3_POST']=='A' for r in cases)
+          assert all(r['q2_click']=='A' for r in cases)
+          assert all(r['q5_first_click_status']=='returned' for r in cases)
+          assert all(r['server_POST_count']=='1' for r in cases)
+          assert fields.isdisjoint({'cookie','password','session','raw_trace',
+                'raw_HTML','DOM_snapshot','sql_dump','last_login','CSRF','http_body'})
+          print('R8_LIVE_SOURCE_AND_EQUIVALENCE_ALL_PASS')
+          PY
+      - name: SHA-256 of non-sensitive derived outputs
+        if: always()
+        run: |
+          if test -f out_round8/r8_summary.json; then
+            sha256sum out_round8/r8_summary.json out_round8/r8_12_source_cases.csv > r8_sha256.txt
+          fi
+      - name: Archive derived results only, never raw Trace or screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weblinx-r8-original-django-trace-hidden-effect
+          path: |
+            out_round8/r8_summary.json
+            out_round8/r8_12_source_cases.csv
+            r8_environment.txt
+            r8_sha256.txt
+          retention-days: 90
+          if-no-files-found: warn
