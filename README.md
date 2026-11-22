@@ -47,3 +47,15 @@ The reference tables record the submitted findings. The full dataset analysis ne
 WebLINX is hosted by its original publisher. The scripts download the necessary records. Local raw data and generated outputs stay outside the versioned source tree.
 
 The historical experiments were independently rerun on November 22, 2026. The resulting summaries and environment are preserved in [the reproduction record](docs/reproduction-2026-11-22.md). The archival DOI and citation metadata will be added after final validation and release.
+
+## Identifier retention baseline
+
+The same 600 actions were tested with retained element identifiers. Within the published candidate sets, a stored XPath uniquely identifies all 600 targets; the original text, semantic DOM and visual evidence identifies 530. The conventional HTML `id` appears in 122 target descriptions and uniquely identifies 121. Exact UID matching gives the same-snapshot upper bound.
+
+See [the baseline results](docs/identifier-baseline-results.md) and [the frozen method](docs/identifier-baseline-protocol.md). The script runs as:
+
+```bash
+python scripts/identifier_baseline.py
+```
+
+The script also writes an action-level metrics CSV with no literal locator strings. Its `out_confirm/confirm_summary.json` must match the original confirmatory experiment.
