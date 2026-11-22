@@ -38,7 +38,7 @@ Frozen case order: app, scenario, locator in the above order; no selective exclu
 
 ## Independent signals and classification
 
-Install the document-capture observer via `context.add_init_script()`, before app code. Count only `isTrusted` click events. It records the original event target's tag and the nearest path node's application item key. This observer never calls the application handler.
+Install the document-capture observer as the first `<script>` in each newly created fixture document, before application code. Count only `isTrusted` click events. It records the original event target's tag and the nearest path node's application item key. This observer never calls the application handler.
 
 A separate app handler runs at document bubble phase, logs its executed item, and updates in-memory state plus rendered counters. The two counters and two state values are read back separately. If the click is stopped at its inner target before bubbling, capture may exist without a handler.
 
@@ -61,3 +61,7 @@ Freeze the protocol and source before running the table-layout holdout. Do not t
 ## Advancement criteria
 
 R5A succeeds scientifically if all 72 episodes execute and separately report all four channels, including clean negative controls. Whether any given failure is observed is an empirical result, including zero wrong-action deliveries. Further R5B should compare the minimum retained evidence and measured bytes for answering distinct audit questions, with Playwright Trace as an explicit baseline and at least one genuinely independent external application or instrumented codebase before making generalization claims.
+
+## Instrumentation implementation note
+
+During the initial local Chromium smoke test (before any successful R5 result), we found that replacing the about:blank document with `page.set_content()` drops capture listeners installed on the previous document. The standalone observer is now installed as the first script **in the actual new fixture DOM**, before the application script. The declared four evidence channels, 72 episodes, locator set, mutations and scoring rules are unchanged. This correction prevents false missing-event observations from a test harness lifetime bug; an initial run that predates this fix cannot qualify as a scientific result. All production runs must use the corrected source and be repeated independently.
