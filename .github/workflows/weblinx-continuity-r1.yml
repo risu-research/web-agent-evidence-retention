@@ -1,0 +1,70 @@
+name: WebLINX R1 consecutive replay source inventory
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-continuity-r1.yml"
+      - "scripts/weblinx_continuity_r1.py"
+      - "tests/test_weblinx_continuity_r1.py"
+      - "results/storage_cost_600_actions_2026-11-22.csv"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install small pinned source retrieval environment
+        run: python -m pip install 'requests==2.32.5'
+      - name: Test raw replay adjacency rules before reading source
+        run: |
+          python -m unittest discover -s tests -p 'test_weblinx_continuity_r1.py' -v
+          python -m py_compile scripts/weblinx_continuity_r1.py
+      - name: Inventory all 55 pinned WebLINX demonstration replays
+        run: python scripts/weblinx_continuity_r1.py
+      - name: Verify selected source-pair publication boundaries
+        run: |
+          python - <<'PY'
+          import csv,json
+          from collections import Counter
+          folder='out_continuity_r1/'
+          with open(folder+'replay_inventory_55.csv',newline='') as f:
+              rows=list(csv.DictReader(f))
+          with open(folder+'source_pairs_frozen.csv',newline='') as f:
+              plans=list(csv.DictReader(f))
+              names=set(plans[0]) if plans else set()
+          summary=json.load(open(folder+'source_inventory_summary.json'))
+          assert len(rows)==55 and summary["original_action_keys"]==600
+          assert len({r["demo"] for r in rows})==55
+          assert sum(int(r["selected_distinct_pairs"]) for r in rows)==len(plans)
+          assert all(int(r["to_turn"])>int(r["from_turn"]) for r in plans)
+          assert all(int(r["intervening_chat_turns"])>=0 for r in plans)
+          assert not names.intersection({'url','text','html','uid','xpath','event_target'})
+          print("R1_SOURCE_SCHEMA_VERIFIED",len(plans),"source pairs")
+          PY
+      - name: Hash source inventory and fixed pair list
+        run: |
+          sha256sum out_continuity_r1/source_inventory_summary.json out_continuity_r1/replay_inventory_55.csv out_continuity_r1/source_pairs_frozen.csv > source_inventory_sha256.txt
+      - name: Retain published-source inventory only
+        uses: actions/upload-artifact@v4
+        with:
+          name: weblinx-consecutive-source-r1
+          path: |
+            out_continuity_r1/source_inventory_summary.json
+            out_continuity_r1/replay_inventory_55.csv
+            out_continuity_r1/source_pairs_frozen.csv
+            source_inventory_sha256.txt
+          if-no-files-found: error
+          retention-days: 90
