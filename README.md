@@ -126,3 +126,21 @@ The action-element XPath used a different representation: 568 of 600 began with 
 The next-source audit included 560 directly linked HTML files and 413 changed-page pairs. Among 75 **site-native-id continuity proxies**, original captured action XPath expressions selected the proxy in **75/75** next snapshots; the DMR canonical XPath selected it in **67/75**. The 75 proxies span 31 demonstrations. This comparison is exploratory and does not supply independent logical-element ground truth or actual browser event delivery.
 
 See the [captured-expression study](docs/weblinx-continuity-r3c-results.md), [paired generator audit](docs/weblinx-continuity-r3d-results.md) and [cluster uncertainty](results/weblinx_continuity_r3d_cluster_bootstrap.json). Original source records and executable scripts remain pinned. The manuscript and Zenodo release were left unchanged.
+
+## Round 5A: observed browser event delivery and effects
+
+The [Round 5A live-browser study](docs/weblinx-round5a-live-browser-results.md) completed 72 actual trusted Chromium clicks across **two controlled first-party fixture layouts**, twelve frozen mutation or handler scenarios, and three locator styles. The source protocol was fixed before the successful browser results. All 72 numeric records and their serialized-byte totals were independently repeated byte-for-byte.
+
+**30/72** episodes changed the intended fixture record, **six** changed the wrong record and **36** made no state change. These conditions were intentionally balanced to include engineered failures; this is **not** an agent-production error-rate estimate. Of 54 returned Playwright operations, six changed the wrong record and eighteen returned with no state change. Separate document-capture, application-handler and state/render readbacks explain the differences, including nested-event targets and bypassed actionability with forced clicks.
+
+The experiment measured compact event and effect log payloads: **5,500 bytes** for request-only and **13,564 bytes** for request+trusted-event+handler+state/render log packets over all 72 episodes, with per-episode zlib level 9 compression. These packets are not equivalent in coverage to a Playwright Trace.
+
+- [Frozen and amended source protocol](docs/weblinx-continuity-r5a-protocol.md)
+- [Complete results and interpretation](docs/weblinx-round5a-live-browser-results.md)
+- [Actual Chromium experiment runner](scripts/weblinx_round5_live_browser.py)
+- [72 verified episodes](results/weblinx_round5a_browser_cases.csv)
+- [Results and bytes summary](results/weblinx_round5a_browser_summary.json)
+- [Successful full run 1](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45060903027)
+- [Successful full run 2](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45060914497)
+
+The applications are synthetic testbeds and the second is a layout holdout; the experiment does not re-execute WebLINX recordings or measure a real externally maintained application's authoritative effects. Future work must compare an external app/event or server-state oracle and a real Playwright Trace. No Zenodo DOI or paper revision was made during R5A.
