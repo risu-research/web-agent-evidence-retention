@@ -72,6 +72,17 @@ jobs:
           assert cols.isdisjoint({'cookie','password','raw_trace','raw_html','literal_href'})
           print("R5B2_ALL_SIX_AUTHENTIC_SERVER_POST_REJECTIONS_VERIFIED")
           PY
+      - name: Compare all real server and SQLite observations with first independent source run
+        run: |
+          python scripts/weblinx_round5b2_compare.py
+          python - <<'PY'
+          import json
+          c=json.load(open("out_round5b2/r5b2_independent_comparison.json"))
+          assert c["cases"]==6 and c["different_fields"]==0
+          assert c["all_six_real_POSTs_rejected_without_SQL_change"]
+          assert c["independent_db_readback_in_both_runs"]
+          print("R5B2_INDEPENDENT_SIX_CASE_REPRODUCTION_PASSED")
+          PY
       - name: Hash derived six-case output
         if: always()
         run: |
@@ -89,5 +100,6 @@ jobs:
             out_round5b2/r5b2_server_rejections_6.csv
             round5b2_environment.txt
             round5b2_sha256.txt
+            out_round5b2/r5b2_independent_comparison.json
           retention-days: 90
           if-no-files-found: warn
