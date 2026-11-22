@@ -1,0 +1,73 @@
+{
+  "bootstrap_unit": "demonstration",
+  "demonstrations": 55,
+  "metrics": {
+    "cost_ratio_png_to_fullframe": {
+      "ci95": [
+        0.9980311100158245,
+        2.121035151087077
+      ],
+      "estimate": 1.5006298663375017
+    },
+    "cost_ratio_staged_to_selective": {
+      "ci95": [
+        1.0093388444246971,
+        1.1726154718892787
+      ],
+      "estimate": 1.0875772402834876
+    },
+    "fullframe_mean_bytes_per_action": {
+      "ci95": [
+        294137.51186440676,
+        396433.5820642978
+      ],
+      "estimate": 343792.51666666666
+    },
+    "gain_staged_vs_selective": {
+      "ci95": [
+        0.08237232289950576,
+        0.15346534653465346
+      ],
+      "estimate": 0.11666666666666667
+    },
+    "png_mean_bytes_per_action": {
+      "ci95": [
+        334195.46563573886,
+        730991.8815165877
+      ],
+      "estimate": 515905.31833333336
+    },
+    "png_recovery_rate": {
+      "ci95": [
+        0.8768718801996672,
+        0.9368932038834952
+      ],
+      "estimate": 0.9083333333333333
+    },
+    "selective_hash_saving_vs_all_hash": {
+      "ci95": [
+        0.49275576007746147,
+        0.5567882615560515
+      ],
+      "estimate": 0.5251730497473115
+    },
+    "selective_mean_bytes_per_action": {
+      "ci95": [
+        1175.5151515151515,
+        1473.1236641221374
+      ],
+      "estimate": 1321.6333333333334
+    },
+    "staged_mean_bytes_per_action": {
+      "ci95": [
+        1239.1789819376027,
+        1645.890728476821
+      ],
+      "estimate": 1437.3783333333333
+    }
+  },
+  "n": 600,
+  "replicates": 5000,
+  "seed": 2026112237,
+  "source_file": "results/storage_cost_600_actions_2026-11-22.csv"
+}
