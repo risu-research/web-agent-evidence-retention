@@ -10,6 +10,7 @@ on:
       - "scripts/verify_results.py"
       - "scripts/verify_universe.py"
       - "requirements.txt"
+      - "requirements.lock.txt"
 
 permissions:
   contents: read
@@ -32,12 +33,15 @@ jobs:
       - name: Install research dependencies
         run: |
           python -m pip install -U pip
-          python -m pip install -r requirements.txt
+          python -m pip install -r requirements.lock.txt
           python -m pip freeze > confirm_environment.txt
+          diff -u requirements.lock.txt confirm_environment.txt
       - name: Replay the frozen 600-action sample
         run: python scripts/reproduce_confirm.py
       - name: Compare against frozen submitted results
-        run: python scripts/verify_results.py out_confirm/confirm_summary.json
+        run: |
+          python scripts/verify_results.py out_confirm/confirm_summary.json
+          echo "e03b5b07f44997b9017393a1eb0871bde1fd57c5299fe5818538e038224269e3  out_confirm/confirm_summary.json" | sha256sum -c -
       - name: Record output checksum
         if: always()
         shell: bash
@@ -69,12 +73,15 @@ jobs:
       - name: Install research dependencies
         run: |
           python -m pip install -U pip
-          python -m pip install -r requirements.txt
+          python -m pip install -r requirements.lock.txt
           python -m pip freeze > universe_environment.txt
+          diff -u requirements.lock.txt universe_environment.txt
       - name: Replay the frozen 598-action sensitivity
         run: python scripts/reproduce_universe.py
       - name: Compare against frozen sensitivity results
-        run: python scripts/verify_universe.py out_audit/universe_summary.json
+        run: |
+          python scripts/verify_universe.py out_audit/universe_summary.json
+          echo "5809d09d034f6ba2a09b1436e02eddbccb0220a6b9b6040dfa5010c27343d612  out_audit/universe_summary.json" | sha256sum -c -
       - name: Record output checksum
         if: always()
         shell: bash
