@@ -1,10 +1,17 @@
 cff-version: 1.2.0
-message: "When using this software, cite the associated TRUSTMORE paper and the original WebLINX dataset."
-title: "Web-Agent Evidence Retention: Reproducibility Artifact"
+message: "Cite this artifact and the original WebLINX dataset when using the code and published results."
+title: "Web-Agent Evidence Retention: TRUSTMORE 2026 Reproducibility Artifact"
 type: software
 authors:
   - family-names: Lee
     given-names: Moon Hwan
-repository-code: "https://github.com/risu-research/web-agent-evidence-retention"
-url: "https://github.com/risu-research/web-agent-evidence-retention"
-abstract: "Reproduction code and numerical evidence for candidate omission, evidence collision, exact-locator baselines, and selective evidence-retention costs on WebLINX."
+    affiliation: RISU Institute
+version: 1.0.0
+date-released: 2026-11-22
+repository-code: https://github.com/risu-research/web-agent-evidence-retention
+url: https://github.com/risu-research/web-agent-evidence-retention
+abstract: >-
+  Frozen reproducibility package for the 600-action WebLINX candidate omission,
+  evidence-collision and measured selective-retention study, including the
+  598-action candidate-expansion sensitivity, exact locator baselines,
+  independent verified source reruns, and rights/redistribution notices.
