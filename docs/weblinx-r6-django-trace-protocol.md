@@ -53,3 +53,11 @@ The trace auditor is a **conservative machine-readable-field evaluator**, not a 
 Use Python 3.11, `Django==5.2.12`, `playwright==1.65.2`, Chromium pinned by Playwright. Re-run all 48 cases independently. Compare source/event/SQL results and audit verdicts exactly. Report actual trace ZIP size drift separately (trace may vary by runtime, timestamps). All original 48 episodes included.
 
 Do not revise the TRUSTMORE manuscript or create a Zenodo DOI until source verification, trace parser correctness, and independent complete rerun pass. A next study on additional apps would be needed for cross-site generalization.
+
+## Pre-valid-results harness corrections and rejected execution
+
+The original run `45064250360` was rejected before analysis because the Django ORM attempted to seed test users inside the Playwright sync API's event-loop thread. User seeding now occurs through the **same native Django ORM** in an isolated non-async Python thread.
+
+A subsequent complete initial test execution `45064424365` failed the **frozen baseline and overlay controls**. The harness had assumed the literal user-change `href` began with `/admin/auth/user/`, but the original admin markup can render relative native href values; the exact-`href` locator timed out even in baseline cases. The fixed-screen overlay also moved relative to page content when Playwright subsequently scrolled the click target into view. Those 48 invalid test outcomes are **excluded from scientific measurement**, but retained as failed setup run evidence.
+
+Before any scientifically valid R6 result, the harness was corrected to (a) capture A's exact source-native original link `href` before DOM mutation and construct an exact-attribute CSS locator, and (b) scroll A's native link into view **before** placing a fixed-position overlay. These are corrections to experimental instrument validity, not changes to the frozen 2 × 3 × 8 matrix, the application source, the outcome oracle or the audit questions. The experiment must now be rerun in full, with all baseline A-commit and standard-overlay zero-commit cases passing before accepting results. Any further invalid run is likewise recorded and excluded from study statistics.
