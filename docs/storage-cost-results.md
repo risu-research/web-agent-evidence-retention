@@ -2,7 +2,7 @@
 
 November 22, 2026. The calculation uses the same frozen 600 WebLINX actions from 55 demonstrations, with the official dataset at revision `36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8`.
 
-The source screen files, candidate records and ground truth were read again. Every storage policy creates a real encoded evidence packet and then decodes it to identify the target. The original confirmatory, identifier and 70-case audit outputs matched their recorded SHA-256 values.
+The original source screenshots, candidate records, and labels were read again. Compact metadata policies serialize a target signature and candidate list, then decode the record to measure unique identification. Lossless crops are encoded as PNG and checked using both the original pHash rule and exact RGB comparison. The full-screenshot policy counts original publisher image bytes plus encoded descriptors; its 530/600 recovery applies the original pHash outcome, without an independent full-screenshot packet decoder. The confirmatory, identifier, and 70-case audit outputs matched their recorded SHA-256 values.
 
 ## Full-cohort costs
 
@@ -41,7 +41,7 @@ The self-contained adaptive record uses the first level that uniquely distinguis
 
 This policy stores more evidence only when the previous level is ambiguous in the collected snapshot. Against the semantic-plus-selective-pHash policy, it retains 70 more uniquely identified targets for 69,447 additional total bytes across the whole cohort (8.76% more storage).
 
-For target-only locator records, where the candidate list would need to be available elsewhere, the compressed measurements are **50,556 bytes for the event XPath** and **34,665 bytes for the event UID** across 600 actions. Those two totals depend on a separately retained candidate index or screenshot and are distinct from the self-contained comparisons above.
+For target-only locator records, where the candidate list would need to be available elsewhere, the compressed measurements are **50,556 bytes for the DMR target's published `[[xpath]]`** and **34,665 bytes for its dataset UID** across 600 actions. Those two totals depend on a separately retained candidate index or screenshot and are distinct from the self-contained comparisons above.
 
 ## Three failure mechanisms
 

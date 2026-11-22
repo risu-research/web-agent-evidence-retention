@@ -65,6 +65,20 @@ class StorageArchiveTests(unittest.TestCase):
         self.assertEqual(totals["png_pixel_exact_recovery_n"],545)
         self.assertEqual(totals["png_phash_recovery_n"],530)
 
+    def test_png_phash_parity_and_exact_rgb_outcome(self):
+        # Pixel-equivalence evidence must remain separate from pHash scoring.
+        self.assertTrue(all(
+            int(r["semantic_plus_crops_phash_unique"]) ==
+            int(r["all_hashes_unique"])
+            for r in self.rows
+        ))
+        self.assertEqual(
+            sum(int(r["semantic_plus_crops_phash_unique"]) for r in self.rows), 530
+        )
+        self.assertEqual(
+            sum(int(r["semantic_plus_crops_unique"]) for r in self.rows), 545
+        )
+
     def test_residual_mechanisms_and_escalation(self):
         s=self.summary["cohorts"]
         self.assertEqual(s["residual_70"]["actions"],70)

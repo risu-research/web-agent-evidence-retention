@@ -6,6 +6,18 @@ The study measures whether the target of a recorded web-agent action appears in 
 
 The confirmatory analysis uses 600 WebLINX actions from 55 demonstrations. With the top 10 DMR candidates, target coverage was 70.83% and end-to-end recovery was 69.17%. Joint evidence over the full released candidate sets uniquely identified 88.33% of targets.
 
+## Camera-ready manuscript reproduction
+
+Start with the [paper-to-code reproduction guide](docs/PAPER_REPRODUCTION.md), which maps every numbered paper table to its exact archived result, script, and successful full-data source run. The [offline artifact validator](scripts/verify_paper_artifact.py) checks the headline counts, 600 action-level storage records, the DMR-versus-Replay XPath distinction, and bootstrap point estimates without downloading data.
+
+```bash
+python scripts/verify_paper_artifact.py
+```
+
+The official WebLINX-full data remain with the publisher. The dataset has a [CC BY-NC-SA 4.0 license and additional terms](docs/DATASET_TERMS.md), separate from the MIT license for original code in this repository. Published outputs contain derived numeric and categorical records, without raw HTML, screenshots, sessions, or literal XPath values.
+
+R5–R8B browser-runtime work is preserved here as exploratory extensions. The camera-ready paper's main quantitative tables use the frozen 600-action WebLINX cohort and the separately identified 598-action sensitivity study.
+
 ## Reproduce
 
 Use Python 3.11 in a clean working directory.
@@ -205,7 +217,7 @@ The **two full source-execution repetitions** agreed on all 48 case results and 
 - [All 5 question-category scores and actual byte costs](results/weblinx_r7_DOM_vs_packets_summary.json)
 - [Independent 48-case/50-field repeat comparison](results/weblinx_r7_independent_repeat.json)
 
-The accepted manuscript and Zenodo DOI remain unchanged while the audit validity questions are being evaluated.
+These exploratory runtime measurements are kept separate from the camera-ready paper's quantitative tables. No archival DOI was issued for this experiment.
 
 
 ## R8B: browser-equivalent workflows with different hidden server effects
@@ -220,4 +232,4 @@ This is a **constructed observation-boundary test**, not a naturally occurring D
 
 Research sources: [R8 strict failed calibration protocol](docs/weblinx-r8-server-divergence-protocol.md), [R8B prospectively frozen protocol](docs/weblinx-r8b-transactional-protocol.md), [full R8B results and limitations](docs/weblinx-r8b-transactional-results.md), [original browser and SQL runner](scripts/weblinx_r8_server_divergence.py), [R8B network comparator](scripts/weblinx_r8b_transactional.py), [12 verified case outcomes](results/weblinx_r8b_transactional_12_cases.csv), [source aggregate](results/weblinx_r8b_transactional_summary.json), and [two-run SHA-256 and stable-field comparison](results/weblinx_r8b_independent_repeat.json).
 
-The existing accepted manuscript and Zenodo DOI remain unchanged while the new study's external validity is assessed.
+This controlled server-effect experiment is retained as an exploratory extension, outside the camera-ready paper's numerical tables. No archival DOI was issued for this round.

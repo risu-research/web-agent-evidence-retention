@@ -365,7 +365,14 @@ def summarize(rows,*,expected_residual_keys):
     assert group_all["policies"]["staged"]["unique_recovery_n"]==600
     assert group_all["policies"]["xpath"]["unique_recovery_n"]==600
     assert group_all["policies"]["uid"]["unique_recovery_n"]==600
-    assert group_all["policies"]["semantic_plus_crops_phash_unique"]["unique_recovery_n"] if False else True
+    # Reconstructed PNG pHashes must agree with original candidate pHashes.
+    # Exact RGB is a separate, stricter image-comparison measurement.
+    assert all(
+        int(r["semantic_plus_crops_phash_unique"]) == int(r["all_hashes_unique"])
+        for r in rows
+    )
+    assert sum(int(r["semantic_plus_crops_phash_unique"]) for r in rows) == 530
+    assert sum(int(r["semantic_plus_crops_unique"]) for r in rows) == 545
     assert sum(r["source_screenshot_new_bytes"] for r in rows)<=sum(
         r["source_screenshot_bytes"] for r in rows)
     assert sum(r["crop_png_n"]>0 for r in rows)==197

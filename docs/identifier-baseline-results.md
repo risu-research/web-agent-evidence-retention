@@ -4,7 +4,7 @@ Computed on November 22, 2026 using [GitHub Actions run 45033429624](https://git
 
 ## Main results
 
-The original 600 actions from 55 WebLINX demonstrations were replayed at the same pinned dataset revision. The confirmatory summary was reproduced byte for byte (SHA-256 `e03b5b07f44997b9017393a1eb0871bde1fd57c5299fe5818538e038224269e3`).
+The original 600 actions from 55 WebLINX demonstrations were replayed at the same pinned dataset revision. Throughout this baseline, XPath means the `[[xpath]]` in the published DMR candidate document; it is separate from the Replay action's `action.arguments.element.xpath` field, whose agreement with saved source HTML is measured in the [R3C study](weblinx-continuity-r3c-results.md). The confirmatory summary was reproduced byte for byte (SHA-256 `e03b5b07f44997b9017393a1eb0871bde1fd57c5299fe5818538e038224269e3`).
 
 | Candidate set | Target present | Joint text+semantic DOM+visual | XPath alone | UID oracle |
 | --- | ---: | ---: | ---: | ---: |

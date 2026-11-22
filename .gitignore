@@ -18,3 +18,31 @@ out_missing_crop/
 out_identifier/
 out_residual/
 out_pixel/
+
+# Source-data downloads and browser outputs are never commit-ready.
+# Previously published numeric files under results/ remain tracked.
+wl_*/
+out_*/
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.har
+*.trace
+*.webm
+test-results/
+playwright-report/
+artifacts/
+export/
+bundle/
+r8b_primary/
+r8b_repeat/
+
+# Inspect original webpage media and HTML before any explicit publication.
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.html
