@@ -1,0 +1,31 @@
+{
+  "demonstrations": 31,
+  "method": "resample original demonstrations, retaining all their selected actions",
+  "metrics": {
+    "canonical_xpath_proxy_recovery": {
+      "ci95": [
+        0.8076923076923077,
+        0.971830985915493
+      ],
+      "estimate": 0.8933333333333333
+    },
+    "paired_replay_minus_canonical": {
+      "ci95": [
+        0.028169014084507043,
+        0.19230769230769232
+      ],
+      "estimate": 0.10666666666666667
+    },
+    "replay_xpath_proxy_recovery": {
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "estimate": 1.0
+    }
+  },
+  "replicates": 5000,
+  "scope": "post-observation 75 source-native id proxies, NOT independent logical-element ground truth",
+  "seed": 2026112239,
+  "selected_actions": 75
+}
