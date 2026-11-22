@@ -1,0 +1,111 @@
+{
+  "blank_text_association": {
+    "blank_residual": 63,
+    "blank_residual_rate": 0.16153846153846155,
+    "blank_total": 390,
+    "nonblank_residual": 7,
+    "nonblank_residual_rate": 0.03333333333333333,
+    "nonblank_total": 210,
+    "risk_difference": 0.12820512820512822,
+    "risk_ratio": 4.846153846153847
+  },
+  "bootstrap": {
+    "blank_minus_nonblank_risk_difference_ci95": [
+      0.07855419043440105,
+      0.1806675780359991
+    ],
+    "overall_residual_rate_ci95": [
+      0.08166666666666667,
+      0.15397631133671744
+    ],
+    "replicates": 5000,
+    "seed": 2026112211,
+    "unit": "demonstration",
+    "valid_resamples": 5000
+  },
+  "candidate_rank_bands": {
+    "01-10": 29,
+    "101+": 12,
+    "11-20": 10,
+    "21-50": 8,
+    "51-100": 11
+  },
+  "comparison": {
+    "confirmatory_total": 600,
+    "identifier_xpath_success": 600,
+    "original_joint_success": 530,
+    "residual_count": 70
+  },
+  "counts": {
+    "competing_candidates_total": 308,
+    "exact_phash_competitors_total": 161,
+    "missing_crop_competitors_total": 84,
+    "near_phash_competitors_total": 63,
+    "valid_crop_competitors_total": 224
+  },
+  "dataset_sha": "36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8",
+  "joint_width_histogram": {
+    "2": 26,
+    "3": 8,
+    "4": 7,
+    "5": 8,
+    "6": 4,
+    "7": 4,
+    "8": 3,
+    "9": 1,
+    "11": 1,
+    "12": 1,
+    "13": 2,
+    "15": 2,
+    "16": 1,
+    "24": 1,
+    "30": 1
+  },
+  "mechanisms": {
+    "missing_visual_only": 19,
+    "mixed_missing_and_valid": 10,
+    "valid_visual_matches": 41
+  },
+  "orthogonal_diagnostics": {
+    "at_least_one_disjoint_bbox_competitor": 53,
+    "at_least_one_equal_phash_different_bbox": 25,
+    "at_least_one_exact_phash_competitor": 42,
+    "at_least_one_iou50_competitor": 26,
+    "at_least_one_missing_visual_competitor": 29,
+    "at_least_one_near_phash_competitor": 20,
+    "at_least_one_same_bbox_competitor": 17,
+    "at_least_one_valid_visual_competitor": 51,
+    "bbox_alone_is_unique": 49,
+    "ordinary_html_id_available": 6,
+    "strict_phash_zero_resolves": 7,
+    "xpath_available": 70
+  },
+  "population": {
+    "actions": 600,
+    "demonstrations": 55,
+    "residual_actions": 70,
+    "residual_demonstrations": 33
+  },
+  "protocol": "frozen-confirmatory-2026100403-residual-20261122",
+  "target_roles": {
+    "absent": 69,
+    "other": 1
+  },
+  "target_tags": {
+    "a": 1,
+    "b": 1,
+    "button": 2,
+    "div": 44,
+    "i": 5,
+    "img": 1,
+    "li": 1,
+    "other": 1,
+    "path": 2,
+    "span": 9,
+    "svg": 3
+  },
+  "target_text": {
+    "0": 7,
+    "1": 63
+  }
+}
