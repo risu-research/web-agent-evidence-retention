@@ -39,6 +39,10 @@ jobs:
           python -m compileall -q scripts
       - name: Verify captured replay root ID terminal expressions on all 86 cases
         run: python scripts/weblinx_continuity_r4b.py
+      - name: Verify independent run recreates exact R4B results
+        run: |
+          echo "957fedbe94d53cc538dba340f1f8343d98b5a3dc9ea7d9f0f41e569c5a092f7e  out_continuity_r4b/r4b_xpath_root_summary.json" | sha256sum -c -
+          echo "96845e26767d49356437a87c92bff03ef892986e2f422b06146ec9d785e34480  out_continuity_r4b/r4b_xpath_root_cases_86.csv" | sha256sum -c -
       - name: Validate source-population and syntax outcome metadata
         run: |
           python - <<'PY'
