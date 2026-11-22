@@ -1,0 +1,55 @@
+{
+  "browser_execution_trace_evaluated": false,
+  "cohort_overlap_n": 0,
+  "dataset_revision": "36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8",
+  "fetched_html_count": 152,
+  "independent_logical_element_identity_labels": false,
+  "initial_action_locator_anomalies_n": 11,
+  "original_anomaly_root_ancestors_confirmed": 4,
+  "original_anomaly_root_anchor_statuses": {
+    "root_anchor_absent": 7,
+    "root_anchor_unique": 4
+  },
+  "original_anomaly_xpath_statuses": {
+    "no_node": 10,
+    "unique_other_node": 1
+  },
+  "original_cohort_n": 600,
+  "population_selected_after_original_R3C_results": true,
+  "protocol": "post-observation fixed 11+75 source XPath diagnostics",
+  "proxy_canonical_path_changed_n": 16,
+  "proxy_canonical_xpath_outcomes": {
+    "no_node": 7,
+    "unique_other_node": 1,
+    "unique_proxy_node": 67
+  },
+  "proxy_paired_recovery": {
+    "both": 67,
+    "replay_only": 8
+  },
+  "proxy_replay_xpath_outcomes": {
+    "unique_proxy_node": 75
+  },
+  "proxy_url_strata": {
+    "different": {
+      "canonical_xpath_unique_proxy_n": 1,
+      "n": 2,
+      "replay_xpath_unique_proxy_n": 2
+    },
+    "same": {
+      "canonical_xpath_unique_proxy_n": 66,
+      "n": 73,
+      "replay_xpath_unique_proxy_n": 73
+    },
+    "unknown": {
+      "canonical_xpath_unique_proxy_n": 0,
+      "n": 0,
+      "replay_xpath_unique_proxy_n": 0
+    }
+  },
+  "selected_action_n": 86,
+  "site_native_proxy_n": 75,
+  "source_fetch_statuses": {
+    "fetched": 152
+  }
+}
