@@ -1,0 +1,107 @@
+name: R5B external Flaskr browser, server SQLite, and trace comparison
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-round5b-external-flaskr.yml"
+      - "scripts/weblinx_round5b_flaskr.py"
+      - "tests/test_weblinx_round5b_flaskr.py"
+      - "docs/weblinx-round5b-flaskr-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONUNBUFFERED: "1"
+  UPSTREAM_FLASK_SHA: "49943b5a94413a530761350f04e896f76e8d620e"
+
+jobs:
+  external_app_sql_truth:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Pin published Playwright and Flask versions
+        run: |
+          python -m pip install 'playwright==1.65.2' 'Flask==3.1.2'
+          python -m playwright install --with-deps chromium
+          python -m pip freeze > round5b_environment.txt
+      - name: Retrieve unmodified official Flaskr sources at immutable upstream commit
+        run: |
+          curl -fLsS --retry 3 --connect-timeout 25 \
+            "https://codeload.github.com/pallets/flask/tar.gz/${UPSTREAM_FLASK_SHA}" \
+            -o upstream-flask-source.tar.gz
+          mkdir -p _upstream_unpack .r5b_upstream
+          tar -xzf upstream-flask-source.tar.gz -C _upstream_unpack
+          cp -a "_upstream_unpack/flask-${UPSTREAM_FLASK_SHA}/examples/tutorial/flaskr" .r5b_upstream/flaskr
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          root=Path('.r5b_upstream/flaskr')
+          assert (root/'blog.py').is_file()
+          assert (root/'schema.sql').is_file()
+          assert (root/'templates/blog/update.html').is_file()
+          print('OFFICIAL_FLASKR_SOURCE_FILES',sum(p.is_file() for p in root.rglob('*')))
+          print('OFFICIAL_FLASKR_SOURCE_SHA256',hashlib.sha256(
+              (root/'blog.py').read_bytes()).hexdigest())
+          PY
+          rm -rf _upstream_unpack upstream-flask-source.tar.gz
+      - name: Test frozen matrix and independent database reader
+        run: |
+          python -m unittest discover -s tests -p 'test_weblinx_round5b_flaskr.py' -v
+          python -m py_compile scripts/weblinx_round5b_flaskr.py
+      - name: Run 48 real external-app browser episodes with SQLite outcome oracle
+        run: python scripts/weblinx_round5b_flaskr.py
+      - name: Audit all 48 effects, cookie-free publication, and trace baseline metadata
+        run: |
+          python - <<'PY'
+          import csv,json
+          from collections import Counter
+          p='out_round5b/'
+          with open(p+'round5b_flaskr_actions_48.csv',newline='',encoding='utf-8') as f:
+              reader=csv.DictReader(f); fields=set(reader.fieldnames); rows=list(reader)
+          data=json.load(open(p+'round5b_flaskr_summary.json',encoding='utf-8'))
+          assert len(rows)==48 and data['total']['n']==48
+          assert len({(r['operation'],r['locator'],r['condition']) for r in rows})==48
+          assert Counter(r['operation'] for r in rows)=={'edit':24,'delete':24}
+          assert Counter(r['locator'] for r in rows)=={
+              'positional':16,'href_exact':16,'contextual_role':16}
+          assert all(r['rendered_matches_SQL']=='1' for r in rows)
+          assert all(int(r['trace_zip_bytes'])>0 for r in rows)
+          assert all(int(r['trace_event_lines'])>0 for r in rows)
+          assert all(r['sqlite_effect_record'] in ('A','B','none') for r in rows)
+          assert all(r['sqlite_effect_record']=='A' and r['first_click_status']=='returned'
+              for r in rows if r['condition']=='baseline')
+          assert all(r['sqlite_effect_record']=='none'
+              for r in rows if r['condition']=='overlay_standard')
+          assert data['independent_authoritative_SQLite_readback'] is True
+          assert data['raw_playwright_traces_published'] is False
+          assert fields.isdisjoint({
+              'cookie','password','session_key','trace_zip','html','raw_html',
+              'literal_href','user_data','sqlite_dump','secret','full_response'})
+          print('R5B_ALL_EXTERNAL_APP_EPISODES_VALIDATED',len(rows))
+          PY
+      - name: Hash actual externally backed experiment records
+        if: always()
+        run: |
+          if test -e out_round5b/round5b_flaskr_summary.json; then
+            sha256sum out_round5b/round5b_flaskr_summary.json \
+                      out_round5b/round5b_flaskr_actions_48.csv > round5b_sha256.txt
+          fi
+      - name: Archive only numeric audit and source provenance
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weblinx-round5b-external-flaskr-sql-trace
+          path: |
+            out_round5b/round5b_flaskr_summary.json
+            out_round5b/round5b_flaskr_actions_48.csv
+            round5b_environment.txt
+            round5b_sha256.txt
+          retention-days: 90
+          if-no-files-found: warn
