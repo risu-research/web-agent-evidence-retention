@@ -1,0 +1,107 @@
+{
+  "action_count": 600,
+  "action_intents": {
+    "click": 507,
+    "submit": 15,
+    "textInput": 78
+  },
+  "changed_source_url_strata": {
+    "different": {
+      "changed_html_pairs": 114,
+      "native_id_proxy_candidates": 2,
+      "native_id_relocated_xpath": 1
+    },
+    "same": {
+      "changed_html_pairs": 299,
+      "native_id_proxy_candidates": 73,
+      "native_id_relocated_xpath": 15
+    },
+    "unknown": {
+      "changed_html_pairs": 0,
+      "native_id_proxy_candidates": 0,
+      "native_id_relocated_xpath": 0
+    }
+  },
+  "continuity_proxy_statuses": {
+    "identical_html_bytes": 147,
+    "next_id_absent": 11,
+    "no_site_native_id": 323,
+    "site_native_proxy_candidate": 75,
+    "source_id_duplicated": 4,
+    "source_not_eligible": 40
+  },
+  "current_html_fetch_statuses": {
+    "fetched": 600
+  },
+  "current_html_parse_statuses": {
+    "parsed": 600
+  },
+  "current_target_uid_statuses": {
+    "target_uid_unique": 600
+  },
+  "dataset": "McGill-NLP/WebLINX-full",
+  "dataset_revision": "36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8",
+  "demonstration_count": 55,
+  "eligible_proxy_changed_recorded_uid_n": 4,
+  "eligible_proxy_changed_xpath_n": 16,
+  "eligible_same_site_native_id_proxy_n": 75,
+  "experiment": "Round 3 original action provenance and proxy continuity",
+  "independent_browser_event_recipient_ground_truth": false,
+  "independent_logical_identity_ground_truth": false,
+  "next_html_fetch_statuses": {
+    "fetched": 560,
+    "no_next_html": 40
+  },
+  "next_html_parse_statuses": {
+    "no_next_html": 40,
+    "parsed": 560
+  },
+  "numeric_totals": {
+    "action_args_uid_available": 0,
+    "action_args_uid_equals_positive_uid": 0,
+    "action_element_present": 600,
+    "action_element_uid_available": 600,
+    "action_site_id_matches_html": 121,
+    "action_uid_equals_positive_uid": 600,
+    "action_xpath_available": 600,
+    "action_xpath_equals_computed_source_xpath": 0,
+    "direct_current_html": 600,
+    "direct_next_html": 560,
+    "dmr_attribute_uid_available": 600,
+    "dmr_site_id_matches_html": 122,
+    "dmr_tag_equals_action_tag": 600,
+    "dmr_uid_matches_dmr_attribute": 600,
+    "dmr_xpath_available": 600,
+    "dmr_xpath_equals_action_xpath": 0,
+    "dmr_xpath_equals_computed_source_xpath": 600,
+    "has_next_browser_turn": 585,
+    "next_site_id_unique": 76,
+    "recorded_uid_equals_html_site_node": 600,
+    "site_native_anchor_has_same_tag": 75,
+    "site_native_anchor_same_parent_id": 12,
+    "site_native_anchor_same_text": 67,
+    "site_native_anchor_same_webtasks_uid": 71,
+    "site_native_anchor_same_xpath": 59,
+    "source_target_has_site_id": 122,
+    "source_target_site_id_unique": 117
+  },
+  "original_to_next_html_equal_counts": {
+    "-1": 40,
+    "0": 413,
+    "1": 147
+  },
+  "positive_candidate_count_total": 600,
+  "raw_source_html_exported": false,
+  "source_cohort": "same 600 actions in 55 demos as storage-cost baseline",
+  "source_retrieval_statuses": {
+    "fetched": 927
+  },
+  "source_selection_preceded_content_analysis": true,
+  "target_identity_inference_used_in_sample_selection": false,
+  "unique_named_html_sources": 927,
+  "url_context_hint_counts": {
+    "different": 126,
+    "same": 435,
+    "unknown": 39
+  }
+}
