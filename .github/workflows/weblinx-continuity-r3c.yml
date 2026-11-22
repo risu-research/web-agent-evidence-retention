@@ -37,6 +37,10 @@ jobs:
           python -m unittest discover -s tests -p 'test_weblinx_continuity_r3c.py' -v
       - name: Evaluate 600 original captured XPath expressions on source and next DOM
         run: python scripts/weblinx_continuity_r3c.py
+      - name: Verify independent rerun preserves original R3C outputs
+        run: |
+          echo "39ebd980e586d277c9d9c9f6c9e5eefdbcc127cc1b895f86531809b9890c2d0d  out_continuity_r3c/r3c_summary.json" | sha256sum -c -
+          echo "3b7b48d0dcec1f681ee3ffb4888533c76ec524cbb30130c08d493deef5add71b  out_continuity_r3c/r3c_action_xpath_600.csv" | sha256sum -c -
       - name: Validate complete original cohort and distinct proxy evaluation
         run: |
           python - <<'PY'
