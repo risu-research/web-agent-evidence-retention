@@ -1,0 +1,42 @@
+{
+  "browser_action_reexecution_measured": false,
+  "changed_next_html_pairs": 413,
+  "current_expression_results": {
+    "no_node": 10,
+    "unique_other_node": 1,
+    "unique_recorded_target": 589
+  },
+  "dataset_revision": "36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8",
+  "logical_element_identity_independently_adjudicated": false,
+  "next_expression_results": {
+    "html_unavailable": 40,
+    "no_node": 102,
+    "unique_node": 458
+  },
+  "next_expression_uid_relations": {
+    "different_or_unset_uid": 26,
+    "same_uid": 432,
+    "unavailable": 142
+  },
+  "protocol": "Recorded action XPath expression evaluation on frozen 600 raw DOM sources",
+  "retrieved_html_sources": 927,
+  "same_url_site_native_proxy_expression_results": {
+    "unique_proxy_node": 73
+  },
+  "site_native_proxy_eligible_n": 75,
+  "site_native_proxy_eligible_same_url_n": 73,
+  "site_native_proxy_expression_results": {
+    "unique_proxy_node": 75
+  },
+  "site_native_proxy_not_independent_ground_truth": true,
+  "source_action_n": 600,
+  "source_fetch_statuses": {
+    "fetched": 927
+  },
+  "source_next_html_pairs": 560,
+  "source_unique_target_recovered_n": 589,
+  "xpath_dialects": {
+    "absolute_path": 32,
+    "xpath_id_function": 568
+  }
+}
