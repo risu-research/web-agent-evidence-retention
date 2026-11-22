@@ -144,3 +144,26 @@ The experiment measured compact event and effect log payloads: **5,500 bytes** f
 - [Successful full run 2](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45060914497)
 
 The applications are synthetic testbeds and the second is a layout holdout; the experiment does not re-execute WebLINX recordings or measure a real externally maintained application's authoritative effects. Future work must compare an external app/event or server-state oracle and a real Playwright Trace. No Zenodo DOI or paper revision was made during R5A.
+
+## Round 5B: externally maintained Flaskr with independent SQLite effects
+
+The [Round 5B-1 report](docs/weblinx-round5b-flaskr-results.md) uses the original **Flaskr** blog application maintained by [Pallets Flask](https://github.com/pallets/flask/tree/49943b5a94413a530761350f04e896f76e8d620e/examples/tutorial/flaskr), pinned at Git commit `49943b5a94413a530761350f04e896f76e8d620e`. The backend source is unchanged. The harness runs 48 independent authenticated browser sessions, Flask server instances and SQLite databases, crossing two genuine post operations, three locator methods and eight controlled DOM interventions.
+
+In 48 operations, the separately read committed database outcome was **A changed 16, B changed eight, neither changed 24**. Twelve Playwright first-click operations returned normally despite no stored effect. Crucially, among eight wrong-B database effects, four followed a trusted click on the visible A article's Edit link, because source article identity and link destination can differ. Two correct A effects followed a click on the visible B article's link. Browser event, server route and committed database effect therefore answer different questions.
+
+The same 48 episodes were captured using genuine Playwright Trace ZIPs with DOM snapshots and network records. Measured baseline Trace ZIPs totaled **343,784 bytes**; purpose-built request+event+server+SQLite-effect packets totaled **10,123 bytes** when each was zlib-compressed independently. The information coverage differs, so the size ratio is descriptive rather than a matched evidence-equivalence claim.
+
+Two full external Flaskr source runs matched all 48 action/SQL outcomes across **31 comparable fields**. Trace ZIP byte totals changed slightly across runs (**343,784** and **343,294**), and this source variation is retained separately from result reproducibility.
+
+A distinct [six-case Flaskr server-validation negative control](docs/weblinx-round5b2-server-rejection-results.md) used the real original Flaskr title-required check. **Six genuine HTTP POST requests received HTTP 200 with the validation message and left SQLite entirely unchanged.** The server source remained unmodified, and only the browser's client-side `required` constraint was removed for this controlled test.
+
+- [R5B-1 pinned protocol](docs/weblinx-round5b-flaskr-protocol.md)
+- [R5B-1 source code](scripts/weblinx_round5b_flaskr.py)
+- [Full 48-case SQL-linked casebook](results/weblinx_round5b_flaskr_cases.csv)
+- [R5B-1 complete results and actual Trace byte metrics](results/weblinx_round5b_flaskr_summary.json)
+- [R5B-1 independent repeat comparator](scripts/weblinx_round5b_compare.py)
+- [R5B-2 protocol](docs/weblinx-round5b2-server-rejection-protocol.md)
+- [R5B-2 source code](scripts/weblinx_round5b2_server_rejection.py)
+- [Six original server rejection cases](results/weblinx_round5b2_rejection_cases.csv)
+
+These are controlled interventions on one genuine externally maintained educational application. They establish distinguishable evidence channels and actual authoritative SQL effects, without yielding a real-world agent error frequency or a general conclusion about the adequacy of Playwright's existing Trace. Raw Trace ZIPs and dummy login sessions are not released. The main manuscript and Zenodo DOI remain unchanged pending substantive synthesis.
