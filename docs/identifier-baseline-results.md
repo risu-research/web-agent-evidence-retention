@@ -47,3 +47,12 @@ The original workflow artifacts recorded:
 - `out_confirm/confirm_summary.json` SHA-256: `e03b5b07f44997b9017393a1eb0871bde1fd57c5299fe5818538e038224269e3`
 
 The public summary JSON was reconstructed from the successful job's printed JSON values and reformatted for readability. Its content agrees with the runner-produced summary.
+
+## Independent repeat with exact matching files
+
+A separate [locked-environment run 45033934800](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45033934800) on November 22, 2026 repeated the entire 600-action calculation. The confirmatory JSON, identifier summary JSON, per-action CSV, environment file, and generated checksum file matched the first run byte for byte. All five locator unit tests passed.
+
+- [Independent repeat artifact](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45033934800/artifacts/14758094190)
+- Comparison source commit: `e531ac31b63c49e3a18d9ea998e08527b969fe69` for the locked baseline workflow
+- Exact environment: `requirements.lock.txt`
+
