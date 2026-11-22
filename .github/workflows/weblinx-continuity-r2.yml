@@ -1,0 +1,77 @@
+name: WebLINX R2 pinned consecutive HTML source verification
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-continuity-r2.yml"
+      - "scripts/weblinx_continuity_r2.py"
+      - "tests/test_weblinx_continuity_r2.py"
+      - "results/weblinx_continuity_r1_frozen_pairs.csv"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONUNBUFFERED: "1"
+  HF_HUB_DISABLE_TELEMETRY: "1"
+
+jobs:
+  verify_sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Freeze small independent HTML parser environment
+        run: |
+          python -m pip install 'requests==2.34.2' 'lxml==5.4.0'
+          python -m pip freeze > continuity_r2_environment.txt
+      - name: Verify rules, parser code and absence of label leakage
+        run: |
+          python -m unittest discover -s tests -p 'test_weblinx_continuity_r1.py' -v
+          python -m unittest discover -s tests -p 'test_weblinx_continuity_r2.py' -v
+          python -m py_compile scripts/weblinx_continuity_r2.py
+          echo "0a739071530c8a7e16aaebf7900590689270539ed7ec60e25368c8a179a668a8  results/weblinx_continuity_r1_frozen_pairs.csv" | sha256sum -c -
+      - name: Use only the R1-frozen 165 preselected pairs
+        run: |
+          mkdir -p out_continuity_r1
+          cp results/weblinx_continuity_r1_frozen_pairs.csv out_continuity_r1/source_pairs_frozen.csv
+          python scripts/weblinx_continuity_r2.py
+      - name: Validate zero unreported source exclusions
+        run: |
+          python - <<'PY'
+          import csv,json
+          with open('out_continuity_r2/source_pair_diagnostics_165.csv',
+                    newline='',encoding='utf-8') as f:
+              rd=csv.DictReader(f)
+              cols=set(rd.fieldnames); rows=list(rd)
+          s=json.load(open('out_continuity_r2/source_pair_summary.json'))
+          assert len(rows)==165
+          assert len({(r['demo'],r['from_turn'],r['to_turn']) for r in rows})==165
+          assert sum(s['pair_statuses'].values())==165
+          assert s['R1_source_pair_count']==165
+          assert s['cross_state_ground_truth_status']=='NOT_INDEPENDENTLY_ADJUDICATED'
+          assert cols.isdisjoint({'url','element_text','html','uid','xpath','event_target','page_content'})
+          assert all(r['result_status'] in {
+              'source_unavailable','html_parse_unavailable',
+              'identical_bytes','different_bytes_parsed'} for r in rows)
+          print('R2_COMPLETE_SOURCE_CASEBOOK',len(rows),s['pair_statuses'])
+          PY
+      - name: Pin resulting original HTML source comparisons
+        run: |
+          sha256sum out_continuity_r2/source_pair_summary.json out_continuity_r2/source_pair_diagnostics_165.csv > continuity_r2_sha256.txt
+      - name: Archive numerical source verification only
+        uses: actions/upload-artifact@v4
+        with:
+          name: weblinx-continuity-r2-source
+          path: |
+            out_continuity_r2/source_pair_summary.json
+            out_continuity_r2/source_pair_diagnostics_165.csv
+            continuity_r2_environment.txt
+            continuity_r2_sha256.txt
+          retention-days: 90
+          if-no-files-found: error
