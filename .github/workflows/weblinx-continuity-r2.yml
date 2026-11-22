@@ -34,6 +34,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_weblinx_continuity_r1.py' -v
           python -m unittest discover -s tests -p 'test_weblinx_continuity_r2.py' -v
+          python -m unittest discover -s tests -p 'test_weblinx_continuity_r2_html.py' -v
           python -m py_compile scripts/weblinx_continuity_r2.py
           echo "0a739071530c8a7e16aaebf7900590689270539ed7ec60e25368c8a179a668a8  results/weblinx_continuity_r1_frozen_pairs.csv" | sha256sum -c -
       - name: Use only the R1-frozen 165 preselected pairs
@@ -41,6 +42,10 @@ jobs:
           mkdir -p out_continuity_r1
           cp results/weblinx_continuity_r1_frozen_pairs.csv out_continuity_r1/source_pairs_frozen.csv
           python scripts/weblinx_continuity_r2.py
+      - name: Verify independent byte-identical source findings
+        run: |
+          echo "d71168fd4ea9564c4cda16471fa6902cf0e7665089cfee16cfef7b3746df174a  out_continuity_r2/source_pair_summary.json" | sha256sum -c -
+          echo "8eeba01c2c385129bcc8238987844395e63211c5627af5078a6fc5fe1cc3536b  out_continuity_r2/source_pair_diagnostics_165.csv" | sha256sum -c -
       - name: Validate zero unreported source exclusions
         run: |
           python - <<'PY'
