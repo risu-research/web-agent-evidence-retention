@@ -112,7 +112,7 @@ def source_html(app,scenario):
       table,td {border:1px solid #999;border-collapse:collapse;}
     """
     return (f'<!doctype html><html><head><meta charset="utf-8">'
-            f'<style>{css}</style></head><body><h1>{app} fixture</h1>'
+            f'<script>{OBSERVE_SCRIPT}</script><style>{css}</style></head><body><h1>{app} fixture</h1>'
             f'<aside>Changed A <output id="count-A">0</output>. '
             f'Changed B <output id="count-B">0</output>.</aside>'
             f'{root}<script>window.__frozenScenario={json.dumps(scenario)};'
@@ -189,7 +189,9 @@ def encoded_bytes(obj):
 
 def one_episode(browser,app,scenario,method):
     context=browser.new_context(viewport={"width":1280,"height":800})
-    context.add_init_script(script=OBSERVE_SCRIPT)
+    # Instrumentation is the FIRST script of the new HTML document.
+    # document.open() invoked by set_content() clears earlier listeners
+    # attached to about:blank. This preserves the observer before app JS.
     page=context.new_page()
     try:
         content=source_html(app,scenario)
