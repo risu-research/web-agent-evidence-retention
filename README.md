@@ -167,3 +167,23 @@ A distinct [six-case Flaskr server-validation negative control](docs/weblinx-rou
 - [Six original server rejection cases](results/weblinx_round5b2_rejection_cases.csv)
 
 These are controlled interventions on one genuine externally maintained educational application. They establish distinguishable evidence channels and actual authoritative SQL effects, without yielding a real-world agent error frequency or a general conclusion about the adequacy of Playwright's existing Trace. Raw Trace ZIPs and dummy login sessions are not released. The main manuscript and Zenodo DOI remain unchanged pending substantive synthesis.
+
+## R6: second independent Django web application and actual Trace audit
+
+A second [third-party maintained web app](docs/weblinx-r6-django-trace-results.md) now replicates the R5B experimental taxonomy on **unmodified Django Admin user management**, pinned to Django 5.2.12 and official source commit `4f382ca672f86dd4a1e4d071c91d0caad0e124b3`. The complete study executes **48 native user edit/delete tasks** in new SQLite databases, WSGI server instances and real Chromium contexts. Django uses a distinct framework and codebase from the earlier Flaskr app.
+
+Both 48-case experiments found **16 intended stored effects, eight other-record effects and 24 no-change outcomes** under the deliberately imposed conditions. These are controlled interventions, not real-world failure rates. In each codebase, six cases differed between the visually clicked row and the actual database row affected. All validated source actions and actual SQLite changes were independently reproduced.
+
+The [direct parsed-Trace audit](results/weblinx_r6_audit_matrix.json) scored **five evidence questions** across all 48 Django trials. Actual Playwright Trace recorded the attempted selector, first-click return/error result and server POST route in **48/48**, with **48/48 exact agreement** against independent API and WSGI observations for the latter two. Native Trace does not itself contain an independent `isTrusted` receiver observer or a separate SQLite-state oracle; compact event and SQL readback packets recorded those respective facts. Trace DOM snapshots can support human inference and were not exhaustively decoded in the conservative machine-readable-field audit.
+
+The two complete Django runs recorded source SQL and audit outcomes identically, including all 48 cases across **36 nonvolatile categorical and packet-size fields**. Actual Trace ZIP size varied: **1,651,341 bytes** and **1,655,144 bytes**; the first run's request+event+server+SQL compact packets totaled **7,334 bytes** compressed per-episode. This is a descriptive comparison of **different information scopes**, not an equal-function compression claim.
+
+- [Frozen R6 protocol and all excluded calibration attempts](docs/weblinx-r6-django-trace-protocol.md)
+- [Full R6 scientific results](docs/weblinx-r6-django-trace-results.md)
+- [Django runner including original Trace ZIP JSONL parsing](scripts/weblinx_r6_django_trace.py)
+- [Original 48 Django casebook](results/weblinx_r6_django_cases.csv)
+- [Original aggregate and source hashes](results/weblinx_r6_django_summary.json)
+- [Five-question strict direct-evidence analysis](results/weblinx_r6_audit_matrix.json)
+- [Independent full rerun comparison](results/weblinx_r6_independent_repeat.json)
+
+All synthetic test material and derived categorical data are public. The original browser Trace ZIP files, disposable credentials and sessions are not distributed. The working manuscript and Zenodo DOI were left unchanged while these studies were frozen and independently reproduced.
