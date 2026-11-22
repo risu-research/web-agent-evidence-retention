@@ -1,0 +1,56 @@
+name: Publish SHA-checked R4 non-ID semantic source evidence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-continuity-r4.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve complete original source experiment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45058961877 -R risu-research/web-agent-evidence-retention -n weblinx-r4-id-blinded-semantics -D original
+      - name: Validate frozen original source data and safe exported schema
+        run: |
+          echo "55b98569ecb625dc1c3f113eb95b2dfc8a62c7340a46e3668aec165490c7343d  original/out_continuity_r4/r4_semantic_summary.json" | sha256sum -c -
+          echo "1ba4e6d6bdc0c5060f693a201bbe0d7696fef7ae27d89bc9f3da361eb271494d  original/out_continuity_r4/r4_semantic_cases_86.csv" | sha256sum -c -
+          python - <<'PY'
+          import csv,json
+          from collections import Counter
+          p='original/out_continuity_r4/'
+          s=json.load(open(p+'r4_semantic_summary.json',encoding='utf-8'))
+          with open(p+'r4_semantic_cases_86.csv',newline='',encoding='utf-8') as f:
+              rd=csv.DictReader(f);cols=set(rd.fieldnames);rows=list(rd)
+          assert s['case_count']==len(rows)==86
+          assert Counter(r['group'] for r in rows)=={
+              'source_xpath_anomaly':11,'captured_only_8':8,'both_67':67}
+          assert s['all_proxy_75']['blinded_semantic_outcomes']=={
+              'multi_family_corroborated':22,'single_family_corroborated':39,'none':14}
+          assert s['all_proxy_75']['root_id_relation']=={'target_node':75}
+          assert s['source_native_id_proxy_independently_adjudicated'] is False
+          assert cols.isdisjoint({'uid','xpath','url','html','text','site_id','href',
+                                  'source_doc','event_target','raw_html','screenshot'})
+          print('PASS: original redacted 86-case source outcomes and root-anchor dependence')
+          PY
+      - name: Preserve unchanged original outputs in results
+        run: |
+          cp original/out_continuity_r4/r4_semantic_summary.json results/weblinx_continuity_r4_summary.json
+          cp original/out_continuity_r4/r4_semantic_cases_86.csv results/weblinx_continuity_r4_cases.csv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_continuity_r4_*
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive 86 blind source-semantic comparisons and 75 source-root identity checks"
+            git push origin HEAD:main
+          fi
