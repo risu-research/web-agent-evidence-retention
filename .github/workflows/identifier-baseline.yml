@@ -40,6 +40,10 @@ jobs:
         run: |
           python scripts/verify_results.py out_confirm/confirm_summary.json
           echo "e03b5b07f44997b9017393a1eb0871bde1fd57c5299fe5818538e038224269e3  out_confirm/confirm_summary.json" | sha256sum -c -
+      - name: Confirm byte-identical independent results
+        run: |
+          echo "12444432bff93d75e3117a7e81eca9b764f7928bfd92a9a13685d63863004b58  out_identifier/identifier_summary.json" | sha256sum -c -
+          echo "6d18a92e487d3505431d9c9d1bf02beff85ea1d5b705d4556e7c06f2522781f3  out_identifier/identifier_action_metrics.csv" | sha256sum -c -
       - name: Record output integrity
         if: always()
         shell: bash
