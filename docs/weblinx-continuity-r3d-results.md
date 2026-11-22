@@ -1,5 +1,7 @@
 # Round 3D — Paired captured XPath vs source-canonical XPath
 
+> **Validity correction from Round 4 (November 22, 2026).** The captured XPath is exactly `id("the target's HTML id")` in all 75 native-ID proxy cases. The proxy selection itself requires that ID to remain unique in the next HTML. Consequently the captured XPath's 75/75 result is guaranteed by the shared reference key. The 67/75 canonical XPath result and eight-case paired difference remain reproducible **source-proxy comparisons** and measure how absolute source paths behave against the preserved-ID reference. These rates are not independent evidence of logical-element persistence. See the [R4 root-ID and independent semantic audit](weblinx-continuity-r4-results.md).
+
 ## Source, timing and scope
 
 This is a **post-observation exploratory follow-up**, frozen after the Round 3C source-executed action XPath experiment. Its union cohort is fixed from the archived [600-row R3C action table](../results/weblinx_continuity_r3c_actions.csv):
