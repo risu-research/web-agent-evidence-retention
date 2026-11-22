@@ -1,0 +1,61 @@
+name: R6 independent complete-reexecution audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-r6-repeat-compare.yml"
+      - "scripts/weblinx_r6_compare.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download first valid independent Django run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45064967915 -R risu-research/web-agent-evidence-retention -n weblinx-r6-django-real-db-trace -D source_run_first
+      - name: Download second valid independent Django run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45064981005 -R risu-research/web-agent-evidence-retention -n weblinx-r6-django-real-db-trace -D source_run_repeat
+      - name: Check immutable first-run source outputs
+        run: |
+          echo "2bd197d64449848229c84b7e58d09aa08398bbe44039523eb5efdb819d03002a  source_run_first/out_round6/r6_django_summary.json" | sha256sum -c -
+          echo "00b13fb0591562c9cef4ffe609878e6dc7f8f2ba07de90dc8887050df0d6e6a3  source_run_first/out_round6/r6_django_48.csv" | sha256sum -c -
+      - name: Compare every case and all non-volatile source results
+        run: |
+          python scripts/weblinx_r6_compare.py
+          python - <<'PY'
+          import json
+          x=json.load(open('results/weblinx_r6_independent_repeat.json'))
+          assert x['cases']==48 and x['differences_n']==0
+          assert x['trace_network_post_route_concordance_original']==48
+          assert x['trace_network_post_route_concordance_repeat']==48
+          assert x['oracle_effect_counts_original']==x['oracle_effect_counts_repeat']=={
+             'A':16,'B':8,'none':24}
+          assert x['trace_zip_bytes_original']!=x['trace_zip_bytes_repeat']
+          assert x['raw_traces_published'] is False
+          print('R6_INDEPENDENT_COMPLETE_EXECUTION_VERIFIED')
+          PY
+      - name: Preserve reproducibility assessment in public results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_r6_independent_repeat.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record independent 48-case Django source/effect reproducibility and Trace byte drift"
+            git push origin HEAD:main
+          fi
