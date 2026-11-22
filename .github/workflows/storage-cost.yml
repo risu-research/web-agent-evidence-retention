@@ -33,10 +33,21 @@ jobs:
           python -m pip install -r requirements.lock.txt
           python -m pip freeze > storage_environment.txt
           diff -u requirements.lock.txt storage_environment.txt
-      - name: Test packet serialization, PNG encoding and target recovery
+      - name: Test the camera-ready WebLINX and storage pipeline in its locked environment
         run: |
           python -m compileall -q scripts
-          python -m unittest discover -s tests -v
+          # Later browser/source-trace experiments have separate pinned dependencies
+          # and separate CI workflows. Keep the locked core pipeline reproducible.
+          for pattern in \
+            'test_archived_results.py' \
+            'test_identifier*.py' \
+            'test_residual*.py' \
+            'test_storage*.py' \
+            'test_protocol_rules.py' \
+            'test_verify*.py' \
+            'test_paper_artifact.py'; do
+            python -m unittest discover -s tests -p "$pattern" -v
+          done
       - name: Measure actual bytes on all 600 frozen WebLINX actions
         run: python scripts/storage_cost_casebook.py
       - name: Verify unchanged earlier experiments byte for byte
