@@ -39,6 +39,33 @@ These attributes were read from the released candidate descriptions. Additional 
 
 A matching pHash over two separate screen regions measures a collision of that image representation. Direct RGB-pixel comparisons are reported separately in the [pixel-inspection protocol](residual-pixel-protocol.md).
 
+## Direct RGB-pixel audit
+
+A second successful [GitHub Actions run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45035686194) reconstructed the same 70 actions from the pinned WebLINX screenshots. It repeated the original 600-action analysis and the identifier baseline with matching output hashes, and preserved the first 70-case category summary and casebook byte for byte.
+
+All 224 valid-crop competing candidates were compared against their targets using the exact cropped RGB pixels, then separately with a 32×32 normalized mean absolute RGB difference.
+
+| Competing-candidate mechanism | Number | Relationship to target |
+| --- | ---: | --- |
+| Missing or invalid visual crop | 84 | A crop comparison is unavailable |
+| Exact RGB crop pixels | 92 | Valid crop, pHash distance 0, identical pixel bytes |
+| Same pHash, different RGB crop pixels | 69 | Valid crop, pHash distance 0, different pixel bytes |
+| pHash distance 1–4 | 63 | Valid crop and a near, distinct hash |
+| **Total** | **308** | |
+
+Among the 161 candidates with identical pHash values, 92 (57.1%) have byte-identical crop pixels and 69 (42.9%) contain different pixels. Sixty-five of the exact pixel repetitions occur at different bounding boxes. At the action level, 34/70 cases contain an exactly repeated RGB crop, 14/70 have at least one hash-zero competitor with different RGB pixels, and 17/70 contain repeated crop pixels at different positions.
+
+Two concrete examples show different mechanisms:
+
+- `vhzkvri`, turn 18: a blank `i` element competes with 23 candidates at separate bounding boxes. All 23 competitors have the same pHash and exactly the same cropped RGB pixels as the target.
+- `jlzucpt`, turn 21: a blank `span` has 29 valid competing candidates. Of 26 competitors with identical pHash, eleven have exactly the same RGB pixels and fifteen differ at the pixel level. The other three candidates lie within pHash distance 1–4. Every competitor occupies a separate, nonoverlapping bounding box.
+- `vcptmwr`, turn 15: a nonblank `a` element remains ambiguous against two separate candidate crops at pHash distances 1–4. Both crops contain RGB pixels different from the target.
+- `zjkuqip`, turn 27: eleven competing candidates have unavailable visual crops, leaving twelve candidate matches including the target.
+
+The pixel comparison separates genuinely repeated crop images from the information loss caused by pHash. Identical cropped pixels at two locations also indicate where preserving a larger context region or element ancestry may be useful. These are direct observations from the released screenshot snapshots; the usefulness of any new logging policy remains a separate experiment.
+
+See the [pixel audit design](residual-pixel-protocol.md), [archived pixel summary](../results/residual_70_pixel_summary_2026-11-22.json), and [complete 70-row pixel diagnostics](../results/residual_70_pixel_cases_2026-11-22.csv). The latter include crop equality indicators and normalized RGB difference statistics, with source images retained at the original publisher.
+
 ## Multiplicity and candidate ranks
 
 The median residual case has four compatible candidates including the true target. The range is two to 30. Twenty-six cases have exactly two. The 70 target ranks are distributed as follows: 29 in Top-10, ten in ranks 11–20, eight in 21–50, eleven in 51–100, and twelve after 100. This emphasizes the distinction between candidate coverage and evidence discrimination: a case may experience both, depending on the candidate budget.
@@ -70,6 +97,9 @@ The earlier identifier-retention study recovered all 600 targets when it preserv
 - [Reproduction script](../scripts/residual_casebook.py)
 - [Evidence diagnostics](../scripts/residual_diagnostics.py)
 - [Machine-readable summary](../results/residual_70_summary_2026-11-22.json)
+- [Complete redacted 70-case CSV](../results/residual_70_cases_2026-11-22.csv)
+- [Complete pixel-level 70-case CSV](../results/residual_70_pixel_cases_2026-11-22.csv)
+- [Pixel-level aggregate summary](../results/residual_70_pixel_summary_2026-11-22.json)
 - [Full run and redacted 70-row casebook](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45035439394)
 - `residual_summary.json` SHA-256: `a141e76d34b11a9dd63828293dd8cc06fc96d4aaf3292ec1ef4293bdc041e05b`
 - `residual_70_cases.csv` SHA-256: `a1d603af041fc5dd27a52f6c4e46a29b2761a6cb5ea3fbdf801fa8485302a5e3`
