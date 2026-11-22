@@ -38,6 +38,10 @@ jobs:
           python -m compileall -q scripts
       - name: Compare the captured and DMR XPath expressions for all frozen eligible cases
         run: python scripts/weblinx_continuity_r3d.py
+      - name: Verify independent R3D source results exactly
+        run: |
+          echo "66a8e5767d58a0fe6eb4c5560841c424202dbbeb6a7e6653eee25af06454a158  out_continuity_r3d/r3d_summary.json" | sha256sum -c -
+          echo "234352ddb7656d7f8d8f60a65f5222fc971f37a6dea0f1b983bfb6dc54646e61  out_continuity_r3d/r3d_selected_cases.csv" | sha256sum -c -
       - name: Verify every selected anomaly and proxy was evaluated
         run: |
           python - <<'PY'
