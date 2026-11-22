@@ -90,3 +90,21 @@ python scripts/storage_cost_casebook.py
 ```
 
 The code retrieves source images from the original publisher and exports derived numeric records. The Zenodo release remains scheduled for the final artifact audit.
+
+## Consecutive-state source verification
+
+The [R1 source inventory](docs/weblinx-continuity-r1-results.md) independently retrieved the 55 original WebLINX demonstration replays underlying the frozen 600-action cohort. There were 1,125 adjacent browser-state pairs with directly recorded HTML on both sides. The protocol fixed 165 source pairs, three from each demonstration, before inspecting their HTML bytes.
+
+The [R2 source verification](docs/weblinx-continuity-r2-results.md) retrieved 233 pinned HTML files and parsed all 165 pairs. Twenty-six pairs contained identical HTML bytes despite different filenames. In 139 byte-changed pairs, 84 contained at least one identical XPath mapped to a different dataset UID. This also occurred in 34 of 88 byte-changed pairs with the same recorded URL hint.
+
+These values measure syntactic changes between real recorded DOM snapshots. Neither dataset UID repetition nor a stable-looking XPath is an independently verified cross-state logical-element label. The next experiment requires independent target linkage before estimating incorrect identification or browser execution outcomes.
+
+Both R1 and R2 were fully repeated with byte-identical artifacts. The public source scripts are:
+
+```bash
+python scripts/weblinx_continuity_r1.py
+# Use its pinned 165-pair CSV as out_continuity_r1/source_pairs_frozen.csv
+python scripts/weblinx_continuity_r2.py
+```
+
+The R1/R2 workflows, complete numeric casebooks, original replay digests, and immutable source revision are retained in this repository. No release or Zenodo DOI was issued.
