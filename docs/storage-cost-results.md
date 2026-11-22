@@ -66,6 +66,19 @@ The lossless PNG criterion resolves 15 of the original 70 cases by requiring ide
 - Exact same-snapshot XPath matching identifies every target and uses less space than the adaptive protocol in this dataset. The implication is strongest for systems able to collect and retain reliable event-time locators.
 - The 70-case audit remains a useful characterization of ambiguity under the restricted descriptive-evidence representation. The observed savings and target recovery refer to that fixed representation and candidate collection.
 
+## Variation across demonstrations
+
+A separate [5,000-replicate demonstration-cluster bootstrap](../results/storage_cost_cluster_bootstrap_2026-11-22.json) resamples the 55 demonstrations with replacement (seed `2026112237`) and recalculates cost and recovery from their original action records.
+
+| Paired quantity | Observed estimate | Cluster-bootstrap 95% interval |
+| --- | ---: | ---: |
+| Selective pHash byte saving against all-candidate pHash | 52.5% | 49.3%–55.7% |
+| Extra storage for complete staged policy against selective pHash | 8.8% | 0.9%–17.3% |
+| Additional target identification from staged policy | 11.7 percentage points | 8.2–15.3 points |
+| Lossless crop / full-frame storage ratio | 1.50× | 1.00–2.12× |
+
+The image-cost ratio varies substantially by demonstration and contains considerable high-cost outliers. The observed corpus total remains 309.5 MB for selective lossless crops and 206.3 MB for the full-frame comparison. Cluster intervals characterize variation across this fixed study's demonstrations; the small number of selected demonstrations limits broader claims.
+
 ## Measurement boundaries
 
 The numbers are byte counts of a specified recorder schema. Candidate order is retained implicitly in each packet; target labels and correct-candidate indices are used only during evaluation. The exact event-time target's signature is available to the hypothetical logger. Metadata is compressed per action, without cross-action string deduplication.
