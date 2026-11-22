@@ -1,0 +1,53 @@
+name: Publish R5B first validated external Flaskr SQL-backed result
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-weblinx-round5b.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve first verified Flaskr real browser test outputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45062479226 -R risu-research/web-agent-evidence-retention -n weblinx-round5b-external-flaskr-sql-trace -D upstream_run
+      - name: Verify complete original outcomes and hashes
+        run: |
+          echo "ca60140c7e54eabc1619558ea6f53740cb9b878dafb85e5465c9a0b118ca7c6e  upstream_run/out_round5b/round5b_flaskr_summary.json" | sha256sum -c -
+          echo "c3959fd7a7867e434d3a35932a421343b8998f6f2dd0688ea042e3f608b858f3  upstream_run/out_round5b/round5b_flaskr_actions_48.csv" | sha256sum -c -
+          python - <<'PY'
+          import json,csv
+          d=json.load(open("upstream_run/out_round5b/round5b_flaskr_summary.json"))
+          with open("upstream_run/out_round5b/round5b_flaskr_actions_48.csv",newline="") as f:
+              rd=csv.DictReader(f);cols=set(rd.fieldnames);rows=list(rd)
+          assert d["upstream_commit"]=="49943b5a94413a530761350f04e896f76e8d620e"
+          assert len(rows)==48
+          assert d["total"]["sqlite_effect_counts"]=={"A":16,"B":8,"none":24}
+          assert d["total"]["returned_clicks_without_SQL_effect"]==12
+          assert d["total"]["mismatched_event_article_and_SQL_effect"]==6
+          assert d["independent_authoritative_SQLite_readback"] is True
+          assert d["raw_playwright_traces_published"] is False
+          assert cols.isdisjoint({"password","cookie","session","raw_trace","raw_html","user_text","sql_dump"})
+          print("VALIDATED_FIRST_EXTERNAL_SERVER_DB_AUDIT",len(rows))
+          PY
+      - name: Commit identical numeric source records to public research repo
+        run: |
+          cp upstream_run/out_round5b/round5b_flaskr_summary.json results/weblinx_round5b_flaskr_summary.json
+          cp upstream_run/out_round5b/round5b_flaskr_actions_48.csv results/weblinx_round5b_flaskr_cases.csv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_round5b_flaskr_*
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive actual 48-case external Flaskr SQLite and Playwright Trace evidence"
+            git push origin HEAD:main
+          fi
