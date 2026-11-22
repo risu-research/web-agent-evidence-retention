@@ -1,0 +1,25 @@
+{
+  "case_counts": {
+    "any_different_bbox_same_pixels": 17,
+    "any_exact_rgb_equal": 34,
+    "any_hash0_but_different_pixels": 14,
+    "no_valid_competitor_crop": 19
+  },
+  "case_n": 70,
+  "competitor_counts": {
+    "different_bbox_same_rgb_competitors": 65,
+    "exact_rgb_equal_competitors": 92,
+    "pixel_valid_comparisons": 224,
+    "same_phash_different_rgb_competitors": 69,
+    "same_phash_same_rgb_competitors": 92
+  },
+  "dataset_sha": "36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8",
+  "mechanism_counts": {
+    "missing_visual_only": 19,
+    "mixed_missing_and_valid": 10,
+    "valid_visual_matches": 41
+  },
+  "protocol": "RGB-exact-and-resized-MAE-on-original-70-collisions-20261122",
+  "source_joint_residual": 70,
+  "source_residual_member_count": 70
+}
