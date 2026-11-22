@@ -1,5 +1,7 @@
 # R6 — A second independent web application and a real Playwright Trace audit
 
+> **Round 7 DOM-reconstruction follow-up (November 22, 2026).** The earlier 0/48 Trace counts below refer only to **explicit independent `isTrusted` receiver and SQLite-oracle records**. A subsequent [actual DOM snapshot auditor](weblinx-r7-dom-auditor-results.md) reconstructed Playwright's compact DOM snapshots and predicted both the clicked row and eventual SQL-effect label correctly in **all 48 fixed Django cases**. Its answers were independently verified against the native event and SQLite measurements, then exactly reproduced in a second complete execution. This materially strengthens the Playwright Trace baseline. Browser-visible inference and independent event/SQL attestation remain different evidence sources.
+
 **Scientific status:** Complete fixed 48-case Django admin experiment, two independent source runs, real Trace ZIP parsing, all five questions scored; no main-paper or Zenodo changes.
 
 ## Original source and preregistration
