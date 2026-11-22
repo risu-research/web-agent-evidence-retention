@@ -99,4 +99,12 @@ First-run SHA-256:
 - Summary JSON: `ca60140c7e54eabc1619558ea6f53740cb9b878dafb85e5465c9a0b118ca7c6e`
 - Complete CSV: `c3959fd7a7867e434d3a35932a421343b8998f6f2dd0688ea042e3f608b858f3`
 
-Do not report raw Playwright trace parity based on these SHA values. Independent browser trace files include timing and runtime-dependent records; their actual sizes are retained separately as descriptive measurements. The rerun compares the full 48 original categorical outcomes and purpose-built log packet fields exactly, and reports actual Trace ZIP byte variation.
+### Independent complete execution audit
+
+A fully independent [second 48-case run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45062819532) downloaded the exact same upstream Git commit, started a new server and database per episode, reran Chromium click and follow-through actions, and checked **31 fields across all 48 original source cases** against the first published results. **Every compared field matched**, including intended-action results, trusted-event article identity, server route and actual SQLite effects; there were zero categorical discrepancies.
+
+The Playwright Trace archives were generated afresh. First-run Trace ZIP bytes totaled **343,784**, second-run **343,294**. Both runs contained **3,132 trace records and 312 network records**, although median Trace ZIP bytes were **8,093** and **8,101** respectively. These are actual recorded differences, and binary Trace ZIP equality was never treated as a scientific requirement.
+
+The repeat [comparison program](../scripts/weblinx_round5b_compare.py) is public, checks the complete source casebook, and preserves a machine-readable discrepancy report on every run.
+
+Do not report raw Playwright trace parity based on the first-run SHA values. Independent browser trace files include timing and runtime-dependent records; their actual sizes are retained separately as descriptive measurements. The source outcome and serialized evidence classifications are exactly reproducible.
