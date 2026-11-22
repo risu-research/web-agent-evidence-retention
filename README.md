@@ -109,6 +109,14 @@ python scripts/weblinx_continuity_r2.py
 
 The R1/R2 workflows, complete numeric casebooks, original replay digests, and immutable source revision are retained in this repository. No release or Zenodo DOI was issued.
 
+## Round 4: native-ID reference overlap and independent semantic evidence
+
+The [Round 4 audit](docs/weblinx-continuity-r4-results.md) identified a critical validity constraint on the R3C/R3D source-proxy experiment. In all **75** previously reported native-ID proxy matches, the captured Replay XPath is precisely `id("target-html-id")` with no suffix, and the proxy criterion requires the same ordinary HTML `id` to be unique in the next snapshot. Accordingly **75/75 captured XPath matches follow by construction**, and the earlier 8/75 difference from the canonical DMR absolute XPath is a **source-proxy comparison**, not independently measured logical-element robustness.
+
+A [blinded non-ID source matcher](scripts/weblinx_continuity_r4.py) then checked original vs next HTML using only unique text, link destinations, form metadata, test fields and accessible labels. Within those same 75 cases, **22** had two or more separate matching semantic families, **39** had one, and **14** had none; no unique non-ID channel pointed to a conflicting node. All eight previous generator-disagreement cases had non-ID corroboration (three multi-family, five single-family). The separate 11 original action XPath source discrepancies had four uniquely descriptive source targets and seven without a unique non-ID cue.
+
+These findings assess source evidence and construct dependence. The next validity gate remains independently adjudicated target identity or instrumented browser event-delivery records. No manuscript, GitHub release or Zenodo DOI was created as part of the Round 4 audit.
+
 ## Recorded action provenance and XPath generator comparison
 
 [Round 3](docs/weblinx-continuity-r3-results.md) rechecked the same 600 original candidate targets against Replay action-element annotations and directly recorded HTML. All 600 target UIDs agreed with the Replay action element and resolved to exactly one element in their source HTML. The DMR candidate XPath equaled the parser-generated source XPath in all 600 actions.
