@@ -386,6 +386,17 @@ def run():
     if not all(x["equivalent"] and x["q6_truth_divergent"] and
                x["q6_trace_indistinguishable"] and
                x["q6_packet_distinguishable"] for x in pair_details):
+        diagnostic = {
+            "status":"INVALID_CALIBRATION_EQUIVALENCE_GATE",
+            "pair_details":pair_details,
+            "unapproved_cases":len(episodes),
+            "raw_traces_exported":False,
+        }
+        (OUT / "r8_equivalence_diagnostics.json").write_text(
+            json.dumps(diagnostic, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8")
+        print("R8_EQUIVALENCE_GATE_FAILED",
+              json.dumps(diagnostic,sort_keys=True),flush=True)
         raise AssertionError("R8 strict browser-equivalence gate failed")
     report = {
         "experiment": "R8 genuine Django browser Trace, response-transparent shadow B SQL",
