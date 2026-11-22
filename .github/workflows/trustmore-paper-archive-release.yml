@@ -1,0 +1,146 @@
+name: TRUSTMORE 2026 paper-only archive and optional Zenodo-linked release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trustmore-paper-archive-release.yml"
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: "Publish verified GitHub release after Zenodo GitHub integration is ON"
+        type: boolean
+        required: true
+        default: false
+      zenodo_enabled:
+        description: "Type YES only after enabling this repository on Zenodo"
+        type: string
+        required: false
+        default: ""
+
+env:
+  FREEZE_SHA: f2333815efc93fffc882533387aed6618007dcdd
+  RELEASE_TAG: trustmore2026-artifact-v1.0.0
+  ARCHIVE_NAME: TRUSTMORE2026_WEB_AGENT_EVIDENCE_RETENTION_ARTIFACT_v1.0.0
+
+jobs:
+  verify-and-package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the exact curated frozen commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.FREEZE_SHA }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Require exact public file allowlist and clean source
+        run: |
+          python - <<'PY'
+          import os, pathlib, re, subprocess
+          paths=[p.decode() for p in subprocess.check_output(["git","ls-files","-z"]).split(b"\0") if p]
+          expected=pathlib.Path("FROZEN_FILE_LIST.txt").read_text(encoding="utf-8").split("\n\n",1)[1].splitlines()
+          assert sorted(paths)==sorted(expected), ("archive file mismatch",
+                  sorted(set(paths)-set(expected)),sorted(set(expected)-set(paths)))
+          assert len(paths)==107,(len(paths))
+          assert len(paths)==len(set(paths))
+          forbidden=re.compile(r'\.(?:png|jpe?g|webp|html?|sqlite3?|db|har|trace|zip|pdf)$',re.I)
+          assert not any(forbidden.search(p) for p in paths)
+          assert not any(p.startswith(("wl_","out_","r8b_primary/","r8b_repeat/"))
+                         for p in paths)
+          secret_patterns=[
+              re.compile(rb'-----BEGIN (?:RSA|EC|OPENSSH|PRIVATE) KEY-----'),
+              re.compile(rb'github_pat_[a-zA-Z0-9_]{20,}'),
+              re.compile(rb'ghp_[a-zA-Z0-9]{20,}'),
+              re.compile(rb'sk-[a-zA-Z0-9]{30,}'),
+              re.compile(rb'AKIA[A-Z0-9]{16}'),
+          ]
+          for p in paths:
+              blob=pathlib.Path(p).read_bytes()
+              assert not any(pattern.search(blob) for pattern in secret_patterns),p
+          print("PASS: exact curated allowlist",len(paths),"paths, no raw assets or credential-like patterns")
+          PY
+      - name: Install pinned WebLINX study plus pinned lxml for saved-action XPath tests
+        run: |
+          python -m pip install -r requirements.lock.txt
+          python -m pip install 'lxml==5.4.0'
+          python -m pip freeze > archive_python_environment.txt
+      - name: Verify archived numbers and all 22 core test modules
+        run: |
+          python scripts/verify_paper_artifact.py
+          python -m unittest discover -s tests -v
+      - name: Create deterministic, exact-path ZIP with per-file SHA-256
+        run: |
+          python - <<'PY'
+          import hashlib,pathlib,subprocess,zipfile
+          paths=sorted(p.decode() for p in subprocess.check_output(
+              ["git","ls-files","-z"]).split(b"\0") if p)
+          archive=pathlib.Path("dist")
+          archive.mkdir(exist_ok=True)
+          root=pathlib.Path("${{ env.ARCHIVE_NAME }}")
+          contents={}
+          for p in paths:
+              contents[p]=pathlib.Path(p).read_bytes()
+          manifest="".join(hashlib.sha256(contents[p]).hexdigest()+
+                          "  "+p+"\n" for p in paths).encode()
+          contents["MANIFEST_SHA256.txt"]=manifest
+          target=archive/("${{ env.ARCHIVE_NAME }}.zip")
+          with zipfile.ZipFile(target,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+              for p in sorted(contents):
+                  info=zipfile.ZipInfo(str(root/p),(2026,11,22,0,0,0))
+                  info.compress_type=zipfile.ZIP_DEFLATED
+                  info.external_attr=(0o100644<<16)
+                  z.writestr(info,contents[p],compress_type=zipfile.ZIP_DEFLATED,compresslevel=9)
+          with zipfile.ZipFile(target) as z:
+              assert z.testzip() is None
+              assert len(z.namelist())==108
+              names={name.removeprefix(str(root)+"/") for name in z.namelist()}
+              assert names==set(contents)
+              for p,original in contents.items():
+                  assert z.read(str(root/p))==original
+          (archive/(target.name+".sha256")).write_text(
+              hashlib.sha256(target.read_bytes()).hexdigest()+"  "+target.name+"\n")
+          print("PASS: reproducible 108-entry archive, 107 Git-tree files and exact SHA256 manifest")
+          print("ARCHIVE_SHA256",hashlib.sha256(target.read_bytes()).hexdigest())
+          PY
+      - name: Publish reviewable workflow artifact without GitHub Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: trustmore2026-frozen-paper-artifact
+          path: dist/*
+          retention-days: 90
+          if-no-files-found: error
+
+  publish-github-release:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_release == true && inputs.zenodo_enabled == 'YES' }}
+    needs: verify-and-package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: trustmore2026-frozen-paper-artifact
+          path: dist
+      - name: Verify ZIP checksum and publish exact frozen GitHub tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd dist
+          sha256sum -c "${{ env.ARCHIVE_NAME }}.zip.sha256"
+          if gh release view "${{ env.RELEASE_TAG }}" -R "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "A release already exists; refusing accidental overwrite."
+            exit 1
+          fi
+          gh release create "${{ env.RELEASE_TAG }}" \
+            "${{ env.ARCHIVE_NAME }}.zip" "${{ env.ARCHIVE_NAME }}.zip.sha256" \
+            -R "${{ github.repository }}" \
+            --target "${{ env.FREEZE_SHA }}" \
+            --title "TRUSTMORE 2026 Web-Agent Evidence Retention Artifact v1.0.0" \
+            --notes "Camera-ready reproducibility archive. This release points to the curated paper-only Git tree at ${{ env.FREEZE_SHA }}. It includes original scripts, locked environment, methods, exact derived numeric results, 600-action validation, saved-action XPath audit, and data rights. Raw WebLINX content and later R5-R8B browser experiments are excluded. After Zenodo archives this release, use the real published version DOI in the manuscript." \
+            --latest=false
+          echo "GitHub release published from exact curated source tree."
