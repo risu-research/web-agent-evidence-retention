@@ -64,7 +64,7 @@ The script also writes an action-level metrics CSV with no literal locator strin
 
 The original joint-evidence experiment left 70 of 600 actions with multiple compatible targets. A complete action-level audit found 41 cases with valid visual-hash collisions, 19 cases with unavailable competing visual crops, and ten cases with both. In those cases, 308 competing candidates survived the original evidence rule.
 
-Direct RGB-crop comparisons further separated 92 pixel-identical competitors from 69 candidates with equal perceptual hashes but different pixels. Another 63 had pHash distances from one to four; 84 lacked usable crops. These categories account for every competing candidate.
+Direct RGB-crop comparisons further separated 92 pixel-identical competitors from 69 candidates with equal perceptual hashes but different pixels. Another 63 had pHash distances from one to four; 84 lacked usable crops. Source-geometry checks traced those 84 crops to 41 boxes with a dimension of two pixels or less and 43 boxes clipped below three pixels within the screenshot. These categories account for every competing candidate.
 
 The [full 70-case findings](docs/residual-failure-results.md), [frozen classification rules](docs/residual-failure-protocol.md), [pixel audit method](docs/residual-pixel-protocol.md), and [redacted case-level CSV](results/residual_70_pixel_cases_2026-11-22.csv) are available in this repository. The computation can be repeated with:
 
