@@ -1,0 +1,132 @@
+name: Publish R8B only after two independent real Django source runs agree
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-weblinx-r8b-verified.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download both completed independent successful native source runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45069326392 -R risu-research/web-agent-evidence-retention -n weblinx-r8b-original-django-transactional-contrast -D r8b_primary
+          gh run download 45069329684 -R risu-research/web-agent-evidence-retention -n weblinx-r8b-independent-second-real-execution -D r8b_repeat
+      - name: Verify exact source manifests before comparing evaluation outcomes
+        run: |
+          (cd r8b_primary && sha256sum -c r8b_sha256.txt)
+          (cd r8b_repeat && sha256sum -c independent_r8b_sha256.txt)
+      - name: Check all 12 paired outcomes, original source fidelity, and reproduce stable fields
+        run: |
+          python - <<'PY'
+          import json,csv,hashlib,pathlib,collections
+          root=pathlib.Path('.')
+          summaries=[]
+          cases=[]
+          for label in ('r8b_primary','r8b_repeat'):
+              fold=root/label/'out_round8b'
+              sm=fold/'r8b_summary.json'
+              cs=fold/'r8b_12_source_cases.csv'
+              s=json.loads(sm.read_text())
+              with cs.open(newline='') as f:
+                  rows=list(csv.DictReader(f))
+                  cols=set(rows[0])
+              assert len(rows)==s['cases']==12
+              assert len({(r['pair'],r['mode']) for r in rows})==12
+              assert s['matched_pairs']==s['equivalent_pairs']==6
+              assert s['transactional_network_pairs_equal']==6
+              assert s['pairs_with_distinct_SQL_effect']==6
+              assert s['trace_Q6']=={'abstain':12}
+              assert s['packet_Q6_correct']==12
+              assert s['snapshot_totals']['failures']==0
+              assert len(s['pair_details'])==6
+              assert all(p['equivalent'] and p['q6_truth_divergent']
+                         for p in s['pair_details'])
+              assert s['raw_trace_published'] is False
+              assert s['raw_screenshots_published'] is False
+              assert cols.isdisjoint({'password','cookie','session','raw_trace',
+                                      'raw_html','csrf','sql_dump','last_login'})
+              assert collections.Counter(r['q6_truth'] for r in rows)=={
+                  'changed':6,'unchanged':6}
+              summaries.append(s)
+              cases.append(rows)
+          fields=['pair','operation','locator','mode','q1_selector','q2_click',
+                  'q3_POST','q4_UI_effect','q5_first_click_status',
+                  'q6_trace','q6_packet','q6_truth','unresolved_refs',
+                  'server_POST_count','B_before_NULL','B_after_nonNULL']
+          def ordered(rows):
+              return sorted(rows,key=lambda r:(int(r['pair']),r['mode']))
+          stable_diffs=[]
+          for a,b in zip(ordered(cases[0]),ordered(cases[1])):
+              for f in fields:
+                  if a[f]!=b[f]:
+                      stable_diffs.append({'pair':a['pair'],'mode':a['mode'],'field':f})
+          assert not stable_diffs,stable_diffs
+          assert len(fields)==16
+          assert summaries[0]['chromium_version']==summaries[1]['chromium_version']
+          assert summaries[0]['Django_version']==summaries[1]['Django_version']
+          assert summaries[0]['Playwright_version']==summaries[1]['Playwright_version']
+          source_files=[
+              ('r8b_primary/out_round8b/r8b_summary.json',
+               'results/weblinx_r8b_transactional_summary.json'),
+              ('r8b_primary/out_round8b/r8b_12_source_cases.csv',
+               'results/weblinx_r8b_transactional_12_cases.csv')]
+          for src,dest in source_files:
+              pathlib.Path(dest).write_bytes(pathlib.Path(src).read_bytes())
+          manifest={}
+          for label in ('r8b_primary','r8b_repeat'):
+              manifest[label]={}
+              for name in ('r8b_summary.json','r8b_12_source_cases.csv'):
+                  b=(root/label/'out_round8b'/name).read_bytes()
+                  manifest[label][name]=hashlib.sha256(b).hexdigest()
+          report={
+            'status':'two_independent_complete_source_runs_passed',
+            'primary_run':45069326392,
+            'repeat_run':45069329684,
+            'stable_fields_compared_per_case':fields,
+            'stable_fields_per_case':len(fields),
+            'cases_per_run':12,
+            'stable_field_disagreements':stable_diffs,
+            'pairwise_equivalence_primary':6,
+            'pairwise_equivalence_repeat':6,
+            'original_strict_admin_network_matches':[
+                 s['strict_all_admin_network_pairs_equal'] for s in summaries],
+            'transactional_network_matches':[6,6],
+            'supplementary_admin_auxiliary_differences_are_preserved':True,
+            'trace_Q6_abstentions':[s['trace_Q6']['abstain'] for s in summaries],
+            'packet_Q6_correct':[s['packet_Q6_correct'] for s in summaries],
+            'DOM_decode_counts':[s['snapshot_totals'] for s in summaries],
+            'trace_ZIP_byte_totals':[s['bytes']['actual_trace_ZIP_total']
+                                      for s in summaries],
+            'source_sha256':manifest,
+            'raw_trace_or_screenshot_published':False,
+            'old_R8_failed_calibrations_retained':[
+                  45068631082,45068796349,45068811353,45068961921],
+          }
+          (root/'results/weblinx_r8b_independent_repeat.json').write_text(
+              json.dumps(report,sort_keys=True,indent=2)+'\n')
+          print('R8B_INDEPENDENT_SOURCE_FIELD_COMPARISON_PASS',
+                'cases',12,'fields',len(fields),
+                'disagreements',len(stable_diffs))
+          PY
+      - name: Commit validated category-only artifacts to the public repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_r8b_transactional_summary.json results/weblinx_r8b_transactional_12_cases.csv results/weblinx_r8b_independent_repeat.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Preserve R8B real browser/SQL divergence with independent original-source repeat"
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
+          fi
