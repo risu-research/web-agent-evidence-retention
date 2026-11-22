@@ -1,0 +1,62 @@
+name: Frozen 600-action identifier baseline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/identifier-baseline.yml"
+      - "scripts/identifier_baseline.py"
+      - "tests/test_identifier_baseline.py"
+      - "requirements.lock.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  DATASETS_DISABLE_PROGRESS_BARS: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  identifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact reproduced environment
+        run: |
+          python -m pip install -r requirements.lock.txt
+          python -m pip freeze > identifier_environment.txt
+          diff -u requirements.lock.txt identifier_environment.txt
+      - name: Validate locator rules locally
+        run: python -m unittest discover -s tests -p test_identifier_baseline.py -v
+      - name: Reproduce the frozen sample with identifier baselines
+        run: python scripts/identifier_baseline.py
+      - name: Cross-check submitted results in the same experiment
+        run: |
+          python scripts/verify_results.py out_confirm/confirm_summary.json
+          echo "e03b5b07f44997b9017393a1eb0871bde1fd57c5299fe5818538e038224269e3  out_confirm/confirm_summary.json" | sha256sum -c -
+      - name: Record output integrity
+        if: always()
+        shell: bash
+        run: |
+          if test -f out_identifier/identifier_summary.json; then
+            sha256sum out_identifier/identifier_summary.json out_identifier/identifier_action_metrics.csv > identifier_sha256.txt
+          fi
+      - name: Keep derived metrics and exact environment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: identifier-baseline-frozen-600
+          path: |
+            out_identifier/identifier_summary.json
+            out_identifier/identifier_action_metrics.csv
+            out_confirm/confirm_summary.json
+            identifier_sha256.txt
+            identifier_environment.txt
+          if-no-files-found: warn
+          retention-days: 90
