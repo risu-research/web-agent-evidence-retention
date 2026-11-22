@@ -206,3 +206,18 @@ The **two full source-execution repetitions** agreed on all 48 case results and 
 - [Independent 48-case/50-field repeat comparison](results/weblinx_r7_independent_repeat.json)
 
 The accepted manuscript and Zenodo DOI remain unchanged while the audit validity questions are being evaluated.
+
+
+## R8B: browser-equivalent workflows with different hidden server effects
+
+The [R8B prospectively corrected paired experiment](docs/weblinx-r8b-transactional-results.md) follows R7's finding that reconstructing full Playwright DOM snapshots lets a Trace-only auditor correctly infer all 48 original Django outcomes. R8B tests a distinct, predeclared question: whether a browser observer can attest a *server-side field never shown in the observed workflow*.
+
+Using the **original unmodified Django 5.2.12 Admin** forms, the harness completes real edit/delete operations on dummy user A. An explicitly disclosed experimental WSGI boundary issues a separate after-response SQL update to dummy user B's **non-displayed** `last_login` field. The control updates it to its original NULL; the paired shadow mode writes a fixed synthetic timestamp. Both modes issue the same SQL statement and leave the native A operation unchanged.
+
+Across **six matched pairs (12 original browser episodes)**, pre/post screenshot pixels, reconstructed initial/final A/B list DOM, the R7 Trace auditor's Q1–Q5 answers and the ordered **account-related HTTP transaction** records agreed. An independent SQLite connection detected the hidden B effect difference in **all six pairs**. For the new Q6, the conservative Trace-only auditor abstained on all 12 episodes, and the independently observed SQLite effect packet answered all 12 correctly. A second full original-app execution reproduced all verdicts, with **zero differences in 16 stable fields per case (192 paired field checks)**, and zero DOM decoder failures.
+
+This is a **constructed observation-boundary test**, not a naturally occurring Django bug or an observed production error rate. The packet succeeds because it retains an additional privileged SQL observation. The **entire raw Trace ZIPs are not identical**: Django auxiliary translation-resource requests varied (full `/admin/` network projection equal in 5/6 pairs and 4/6 pairs across the two runs), and those differences remain reported. The earlier stricter R8 full-network equivalence calibration **failed** and was preserved as failed evidence. R8B was separately preregistered before its validated source runs. This result complements R7's strong Trace baseline.
+
+Research sources: [R8 strict failed calibration protocol](docs/weblinx-r8-server-divergence-protocol.md), [R8B prospectively frozen protocol](docs/weblinx-r8b-transactional-protocol.md), [full R8B results and limitations](docs/weblinx-r8b-transactional-results.md), [original browser and SQL runner](scripts/weblinx_r8_server_divergence.py), [R8B network comparator](scripts/weblinx_r8b_transactional.py), [12 verified case outcomes](results/weblinx_r8b_transactional_12_cases.csv), [source aggregate](results/weblinx_r8b_transactional_summary.json), and [two-run SHA-256 and stable-field comparison](results/weblinx_r8b_independent_repeat.json).
+
+The existing accepted manuscript and Zenodo DOI remain unchanged while the new study's external validity is assessed.
