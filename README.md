@@ -18,6 +18,8 @@ The official WebLINX-full data remain with the publisher. The dataset has a [CC 
 
 R5–R8B browser-runtime work is preserved here as exploratory extensions. The camera-ready paper's main quantitative tables use the frozen 600-action WebLINX cohort and the separately identified 598-action sensitivity study.
 
+For the final archival package, use the [reviewed public release boundary](docs/RELEASE_REVIEW.md) to exclude raw source material and unrelated exploratory runs.
+
 ## Reproduce
 
 Use Python 3.11 in a clean working directory.
@@ -52,17 +54,17 @@ That analysis uses an earlier, top-10-conditioned sample. Its results belong to 
 - `docs/protocol.md`: fixed data and experiment definitions
 - `docs/provenance.md`: links to the original computation commits and successful runs
 
-The reference tables record the submitted findings. The full dataset analysis needs to finish successfully before its outputs can be called independently reproduced in this repository.
+The frozen 600-action results and the separate 598-action sensitivity were independently rerun on clean GitHub runners. The successful source runs and their checksums are linked below.
 
 ## Source data
 
 WebLINX is hosted by its original publisher. The scripts download the necessary records. Local raw data and generated outputs stay outside the versioned source tree.
 
-The historical experiments were independently rerun on November 22, 2026. The resulting summaries and environment are preserved in [the reproduction record](docs/reproduction-2026-11-22.md). The archival DOI and citation metadata will be added after final validation and release.
+The historical experiments were independently rerun on November 22, 2026. The resulting summaries and environment are preserved in [the reproduction record](docs/reproduction-2026-11-22.md). Machine-readable software citation metadata is now in [CITATION.cff](CITATION.cff). A permanent archive DOI will be added only after the final release is reviewed.
 
 ## Identifier retention baseline
 
-The same 600 actions were tested with retained element identifiers. Within the published candidate sets, a stored XPath uniquely identifies all 600 targets; the original text, semantic DOM and visual evidence identifies 530. The conventional HTML `id` appears in 122 target descriptions and uniquely identifies 121. Exact UID matching gives the same-snapshot upper bound.
+The same 600 actions were tested with retained element identifiers. Within the published candidate sets, a stored DMR candidate `[[xpath]]` uniquely identifies all 600 targets; the original text, semantic DOM and visual evidence identifies 530. The conventional HTML `id` appears in 122 target descriptions and uniquely identifies 121. Exact UID matching gives the same-snapshot upper bound.
 
 See [the baseline results](docs/identifier-baseline-results.md) and [the frozen method](docs/identifier-baseline-protocol.md). The script runs as:
 
@@ -178,7 +180,7 @@ A distinct [six-case Flaskr server-validation negative control](docs/weblinx-rou
 - [R5B-2 source code](scripts/weblinx_round5b2_server_rejection.py)
 - [Six original server rejection cases](results/weblinx_round5b2_rejection_cases.csv)
 
-These are controlled interventions on one genuine externally maintained educational application. They establish distinguishable evidence channels and actual authoritative SQL effects, without yielding a real-world agent error frequency or a general conclusion about the adequacy of Playwright's existing Trace. Raw Trace ZIPs and dummy login sessions are not released. The main manuscript and Zenodo DOI remain unchanged pending substantive synthesis.
+These are controlled interventions on one genuine externally maintained educational application. They establish distinguishable evidence channels and actual authoritative SQL effects, without yielding a real-world agent error frequency or a general conclusion about the adequacy of Playwright's existing Trace. Raw Trace ZIPs and dummy login sessions are not released. These browser-runtime findings remain exploratory and outside the current paper's primary candidate-recovery tables; no new DOI was issued for them.
 
 ## R6: second independent Django web application and actual Trace audit
 
@@ -198,7 +200,7 @@ The two complete Django runs recorded source SQL and audit outcomes identically,
 - [Five-question strict direct-evidence analysis](results/weblinx_r6_audit_matrix.json)
 - [Independent full rerun comparison](results/weblinx_r6_independent_repeat.json)
 
-All synthetic test material and derived categorical data are public. The original browser Trace ZIP files, disposable credentials and sessions are not distributed. The working manuscript and Zenodo DOI were left unchanged while these studies were frozen and independently reproduced.
+All synthetic test material and derived categorical data are public. The original browser Trace ZIP files, disposable credentials and sessions are not distributed. The independent runtime repetitions remain separately documented; no new DOI was issued for these experiments.
 
 ## R7: real DOM snapshot auditor against selective evidence tiers
 
