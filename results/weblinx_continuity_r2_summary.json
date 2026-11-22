@@ -1,0 +1,33 @@
+{
+  "R1_source_pair_count": 165,
+  "changed_html_bytes_pairs": 139,
+  "changed_html_pairs_uid_overlaps_total": 180821,
+  "changed_html_pairs_uid_relocated_total": 3259,
+  "changed_html_pairs_with_no_uid_overlap": 34,
+  "changed_html_pairs_with_reused_uid": 105,
+  "changed_html_pairs_with_uid_relocated": 40,
+  "changed_html_pairs_with_xpath_uid_collision": 84,
+  "changed_html_pairs_xpath_reassigned_total": 14627,
+  "changed_html_pairs_xpath_same_uid_total": 177562,
+  "cross_state_ground_truth_status": "NOT_INDEPENDENTLY_ADJUDICATED",
+  "dataset_revision": "36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8",
+  "pair_statuses": {
+    "different_bytes_parsed": 139,
+    "identical_bytes": 26
+  },
+  "parsed_pairs": 165,
+  "protocol": "R2-source-HTML-adjacent-snapshot-UID-XPath-feasibility",
+  "published_outputs_are_derived_only": true,
+  "source_file_statuses": {
+    "fetched": 233
+  },
+  "tab_hints": {
+    "different": 1,
+    "same": 164
+  },
+  "unique_referenced_html_files": 233,
+  "url_hints": {
+    "different": 53,
+    "same": 112
+  }
+}
