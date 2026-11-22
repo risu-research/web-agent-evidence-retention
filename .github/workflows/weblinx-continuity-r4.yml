@@ -38,6 +38,10 @@ jobs:
           python -m unittest discover -s tests -p 'test_weblinx_continuity_r4.py' -v
       - name: Fetch pinned HTML sources and evaluate ID-blinded semantic evidence
         run: python scripts/weblinx_continuity_r4.py
+      - name: Verify independent rerun byte-for-byte against initial R4 study
+        run: |
+          echo "55b98569ecb625dc1c3f113eb95b2dfc8a62c7340a46e3668aec165490c7343d  out_continuity_r4/r4_semantic_summary.json" | sha256sum -c -
+          echo "1ba4e6d6bdc0c5060f693a201bbe0d7696fef7ae27d89bc9f3da361eb271494d  out_continuity_r4/r4_semantic_cases_86.csv" | sha256sum -c -
       - name: Validate every source case and privacy boundaries
         run: |
           python - <<'PY'
