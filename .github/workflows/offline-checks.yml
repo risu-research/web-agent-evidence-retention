@@ -25,6 +25,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install pixel test dependency
+        run: python -m pip install Pillow==11.3.0
       - name: Syntax and unit checks
         run: |
           python -m compileall -q scripts tests
