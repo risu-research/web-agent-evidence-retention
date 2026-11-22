@@ -13,3 +13,8 @@ out_audit/
 *.pdf
 *.log
 .DS_Store
+wl_missing_crop/
+out_missing_crop/
+out_identifier/
+out_residual/
+out_pixel/
