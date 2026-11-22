@@ -2,6 +2,8 @@
 
 The fixed population is the original 600 WebLINX actions in 55 demonstrations. This study followed the source-provenance [Round 3A/B result](weblinx-continuity-r3-results.md) using the protocol frozen **after** discovering that the action XPath strings differ from the canonical DMR XPath. All HTML was fetched from `McGill-NLP/WebLINX-full` at revision `36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8`.
 
+> **Validity correction from Round 4.** Every one of the 75 source-native-id proxy cases has a Replay locator whose full syntax is exactly `id("target HTML id")`. Because the proxy is also selected using that preserved HTML ID, its 75/75 Replay locator match follows by construction. See [Round 4](weblinx-continuity-r4-results.md) for a blinded test that excludes both IDs and both XPath representations.
+
 ## The XPath dialect matters
 
 Of the 600 captured `action.arguments.element.xpath` expressions, 568 start with an XPath `id(...)` function and 32 are absolute source paths. The DMR candidate `[[xpath]]` string equals the `lxml` source XPath for all 600 targets. **All 600 action XPath strings differ literally from the canonical DMR XPath**, but literal string inequality does not mean that two expressions select different source elements.
