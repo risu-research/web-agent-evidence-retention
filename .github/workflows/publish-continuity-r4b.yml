@@ -1,0 +1,52 @@
+name: Publish R4B terminal ID circularity audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-continuity-r4b.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve original R4B exact syntax study
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45059246779 -R risu-research/web-agent-evidence-retention -n weblinx-r4b-terminal-id-root -D raw_results
+      - name: Validate original R4B SHA256 and all fixed cases
+        run: |
+          echo "957fedbe94d53cc538dba340f1f8343d98b5a3dc9ea7d9f0f41e569c5a092f7e  raw_results/out_continuity_r4b/r4b_xpath_root_summary.json" | sha256sum -c -
+          echo "96845e26767d49356437a87c92bff03ef892986e2f422b06146ec9d785e34480  raw_results/out_continuity_r4b/r4b_xpath_root_cases_86.csv" | sha256sum -c -
+          python - <<'PY'
+          import json,csv
+          p='raw_results/out_continuity_r4b/'
+          s=json.load(open(p+'r4b_xpath_root_summary.json'))
+          with open(p+'r4b_xpath_root_cases_86.csv',newline='') as f:
+              r=csv.DictReader(f);fields=set(r.fieldnames);data=list(r)
+          assert len(data)==86
+          assert s['groups']['all_proxy_75']['complete_expression_is_id_only']==75
+          assert s['groups']['all_proxy_75']['id_root_equals_original_target_site_id']==75
+          assert s['groups']['all_proxy_75']['id_function_has_suffix']==0
+          assert s['independent_target_identity_ground_truth'] is False
+          assert fields.isdisjoint({'uid','xpath','html','url','text','site_id','raw_html'})
+          print('PASS: source id() circularity fully documented with no source content')
+          PY
+      - name: Archive original R4B numerical source records
+        run: |
+          cp raw_results/out_continuity_r4b/r4b_xpath_root_summary.json results/weblinx_continuity_r4b_summary.json
+          cp raw_results/out_continuity_r4b/r4b_xpath_root_cases_86.csv results/weblinx_continuity_r4b_cases.csv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_continuity_r4b_*
+          if ! git diff --cached --quiet; then
+            git commit -m "Document exact 75 of 75 id(target) locator-label overlap"
+            git push origin HEAD:main
+          fi
