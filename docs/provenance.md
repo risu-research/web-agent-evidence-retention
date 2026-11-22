@@ -18,4 +18,4 @@ The migrated scripts keep the original sampling, compatibility, and calculation 
 
 Both historical action artifact archives have expired. The submitted aggregate tables are preserved in `results/`. The checker validates a new confirmatory JSON summary against those reported aggregates after the full experiment runs.
 
-A complete new 600-action data replay has not yet been executed from this repository.
+The complete 600-action replay and 598-action candidate-expansion sensitivity both passed independently in [GitHub Actions run 45031621684](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45031621684) on November 22, 2026. See [the reproduction record](reproduction-2026-11-22.md) for the archived summaries, verified checksums, and exact environment.
