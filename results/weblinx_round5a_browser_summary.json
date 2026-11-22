@@ -1,0 +1,531 @@
+{
+  "application_effect_checked_against_rendered_counters": true,
+  "environment": {
+    "browser": "Chromium",
+    "browser_version": "159.0.8154.6",
+    "fixture_layouts": [
+      "list",
+      "table"
+    ],
+    "playwright_version": "1.65.2",
+    "python": "3.11.18"
+  },
+  "external_agent_trajectories": false,
+  "external_live_websites": false,
+  "frozen_case_spec": {
+    "apps": [
+      "list",
+      "table"
+    ],
+    "cases": 72,
+    "intended_record": "A",
+    "locators": [
+      "positional",
+      "native_id",
+      "accessible_role"
+    ],
+    "scenarios": [
+      "baseline",
+      "nested_icon",
+      "reorder",
+      "reuse_id",
+      "rerender_same_id",
+      "overlay_standard",
+      "overlay_force",
+      "disabled",
+      "handler_no_effect",
+      "stop_bubble",
+      "target_removed",
+      "duplicate_accessible_name"
+    ],
+    "timeout_ms": 650
+  },
+  "independent_browser_capture": true,
+  "original_weblinx_replay_reexecuted": false,
+  "per_app": {
+    "list": {
+      "correct_effects": 15,
+      "effect_counts": {
+        "A": 15,
+        "B": 3,
+        "none": 18
+      },
+      "episodes": 36,
+      "event_path_counts": {
+        "A": 21,
+        "B": 3,
+        "OVERLAY": 3,
+        "none": 9
+      },
+      "event_without_handler": 6,
+      "handler_item_counts": {
+        "A": 18,
+        "B": 3,
+        "none": 15
+      },
+      "handler_without_effect": 3,
+      "no_effects": 18,
+      "status_counts": {
+        "playwright_error_Error": 1,
+        "returned": 27,
+        "timeout": 8
+      },
+      "tool_returned_but_no_effect": 9,
+      "trusted_events_observed": 27,
+      "wrong_effects": 3
+    },
+    "table": {
+      "correct_effects": 15,
+      "effect_counts": {
+        "A": 15,
+        "B": 3,
+        "none": 18
+      },
+      "episodes": 36,
+      "event_path_counts": {
+        "A": 21,
+        "B": 3,
+        "OVERLAY": 3,
+        "none": 9
+      },
+      "event_without_handler": 6,
+      "handler_item_counts": {
+        "A": 18,
+        "B": 3,
+        "none": 15
+      },
+      "handler_without_effect": 3,
+      "no_effects": 18,
+      "status_counts": {
+        "playwright_error_Error": 1,
+        "returned": 27,
+        "timeout": 8
+      },
+      "tool_returned_but_no_effect": 9,
+      "trusted_events_observed": 27,
+      "wrong_effects": 3
+    }
+  },
+  "per_locator": {
+    "accessible_role": {
+      "correct_effects": 10,
+      "effect_counts": {
+        "A": 10,
+        "none": 14
+      },
+      "episodes": 24,
+      "event_path_counts": {
+        "A": 14,
+        "OVERLAY": 2,
+        "none": 8
+      },
+      "event_without_handler": 4,
+      "handler_item_counts": {
+        "A": 12,
+        "none": 12
+      },
+      "handler_without_effect": 2,
+      "no_effects": 14,
+      "status_counts": {
+        "playwright_error_Error": 2,
+        "returned": 16,
+        "timeout": 6
+      },
+      "tool_returned_but_no_effect": 6,
+      "trusted_events_observed": 16,
+      "wrong_effects": 0
+    },
+    "native_id": {
+      "correct_effects": 10,
+      "effect_counts": {
+        "A": 10,
+        "B": 2,
+        "none": 12
+      },
+      "episodes": 24,
+      "event_path_counts": {
+        "A": 14,
+        "B": 2,
+        "OVERLAY": 2,
+        "none": 6
+      },
+      "event_without_handler": 4,
+      "handler_item_counts": {
+        "A": 12,
+        "B": 2,
+        "none": 10
+      },
+      "handler_without_effect": 2,
+      "no_effects": 12,
+      "status_counts": {
+        "returned": 18,
+        "timeout": 6
+      },
+      "tool_returned_but_no_effect": 6,
+      "trusted_events_observed": 18,
+      "wrong_effects": 2
+    },
+    "positional": {
+      "correct_effects": 10,
+      "effect_counts": {
+        "A": 10,
+        "B": 4,
+        "none": 10
+      },
+      "episodes": 24,
+      "event_path_counts": {
+        "A": 14,
+        "B": 4,
+        "OVERLAY": 2,
+        "none": 4
+      },
+      "event_without_handler": 4,
+      "handler_item_counts": {
+        "A": 12,
+        "B": 4,
+        "none": 8
+      },
+      "handler_without_effect": 2,
+      "no_effects": 10,
+      "status_counts": {
+        "returned": 20,
+        "timeout": 4
+      },
+      "tool_returned_but_no_effect": 6,
+      "trusted_events_observed": 20,
+      "wrong_effects": 4
+    }
+  },
+  "per_scenario": {
+    "baseline": {
+      "correct_effects": 6,
+      "effect_counts": {
+        "A": 6
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "A": 6
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "A": 6
+      },
+      "handler_without_effect": 0,
+      "no_effects": 0,
+      "status_counts": {
+        "returned": 6
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 6,
+      "wrong_effects": 0
+    },
+    "disabled": {
+      "correct_effects": 0,
+      "effect_counts": {
+        "none": 6
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "none": 6
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "none": 6
+      },
+      "handler_without_effect": 0,
+      "no_effects": 6,
+      "status_counts": {
+        "timeout": 6
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 0,
+      "wrong_effects": 0
+    },
+    "duplicate_accessible_name": {
+      "correct_effects": 4,
+      "effect_counts": {
+        "A": 4,
+        "none": 2
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "A": 4,
+        "none": 2
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "A": 4,
+        "none": 2
+      },
+      "handler_without_effect": 0,
+      "no_effects": 2,
+      "status_counts": {
+        "playwright_error_Error": 2,
+        "returned": 4
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 4,
+      "wrong_effects": 0
+    },
+    "handler_no_effect": {
+      "correct_effects": 0,
+      "effect_counts": {
+        "none": 6
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "A": 6
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "A": 6
+      },
+      "handler_without_effect": 6,
+      "no_effects": 6,
+      "status_counts": {
+        "returned": 6
+      },
+      "tool_returned_but_no_effect": 6,
+      "trusted_events_observed": 6,
+      "wrong_effects": 0
+    },
+    "nested_icon": {
+      "correct_effects": 6,
+      "effect_counts": {
+        "A": 6
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "A": 6
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "A": 6
+      },
+      "handler_without_effect": 0,
+      "no_effects": 0,
+      "status_counts": {
+        "returned": 6
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 6,
+      "wrong_effects": 0
+    },
+    "overlay_force": {
+      "correct_effects": 0,
+      "effect_counts": {
+        "none": 6
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "OVERLAY": 6
+      },
+      "event_without_handler": 6,
+      "handler_item_counts": {
+        "none": 6
+      },
+      "handler_without_effect": 0,
+      "no_effects": 6,
+      "status_counts": {
+        "returned": 6
+      },
+      "tool_returned_but_no_effect": 6,
+      "trusted_events_observed": 6,
+      "wrong_effects": 0
+    },
+    "overlay_standard": {
+      "correct_effects": 0,
+      "effect_counts": {
+        "none": 6
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "none": 6
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "none": 6
+      },
+      "handler_without_effect": 0,
+      "no_effects": 6,
+      "status_counts": {
+        "timeout": 6
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 0,
+      "wrong_effects": 0
+    },
+    "reorder": {
+      "correct_effects": 4,
+      "effect_counts": {
+        "A": 4,
+        "B": 2
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "A": 4,
+        "B": 2
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "A": 4,
+        "B": 2
+      },
+      "handler_without_effect": 0,
+      "no_effects": 0,
+      "status_counts": {
+        "returned": 6
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 6,
+      "wrong_effects": 2
+    },
+    "rerender_same_id": {
+      "correct_effects": 6,
+      "effect_counts": {
+        "A": 6
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "A": 6
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "A": 6
+      },
+      "handler_without_effect": 0,
+      "no_effects": 0,
+      "status_counts": {
+        "returned": 6
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 6,
+      "wrong_effects": 0
+    },
+    "reuse_id": {
+      "correct_effects": 4,
+      "effect_counts": {
+        "A": 4,
+        "B": 2
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "A": 4,
+        "B": 2
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "A": 4,
+        "B": 2
+      },
+      "handler_without_effect": 0,
+      "no_effects": 0,
+      "status_counts": {
+        "returned": 6
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 6,
+      "wrong_effects": 2
+    },
+    "stop_bubble": {
+      "correct_effects": 0,
+      "effect_counts": {
+        "none": 6
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "A": 6
+      },
+      "event_without_handler": 6,
+      "handler_item_counts": {
+        "none": 6
+      },
+      "handler_without_effect": 0,
+      "no_effects": 6,
+      "status_counts": {
+        "returned": 6
+      },
+      "tool_returned_but_no_effect": 6,
+      "trusted_events_observed": 6,
+      "wrong_effects": 0
+    },
+    "target_removed": {
+      "correct_effects": 0,
+      "effect_counts": {
+        "B": 2,
+        "none": 4
+      },
+      "episodes": 6,
+      "event_path_counts": {
+        "B": 2,
+        "none": 4
+      },
+      "event_without_handler": 0,
+      "handler_item_counts": {
+        "B": 2,
+        "none": 4
+      },
+      "handler_without_effect": 0,
+      "no_effects": 4,
+      "status_counts": {
+        "returned": 2,
+        "timeout": 4
+      },
+      "tool_returned_but_no_effect": 0,
+      "trusted_events_observed": 2,
+      "wrong_effects": 2
+    }
+  },
+  "posthoc_case_selection": false,
+  "protocol": "Round 5A controlled trusted Chromium event, handler and effect audit",
+  "real_trusted_browser_clicks": true,
+  "total": {
+    "bytes_by_retention_tier": {
+      "effect": {
+        "sum_utf8": 21318,
+        "sum_zlib_per_episode": 13564
+      },
+      "event": {
+        "sum_utf8": 13416,
+        "sum_zlib_per_episode": 10221
+      },
+      "handler": {
+        "sum_utf8": 14910,
+        "sum_zlib_per_episode": 11064
+      },
+      "request": {
+        "sum_utf8": 5880,
+        "sum_zlib_per_episode": 5500
+      }
+    },
+    "correct_effects": 30,
+    "effect_counts": {
+      "A": 30,
+      "B": 6,
+      "none": 36
+    },
+    "episodes": 72,
+    "event_path_counts": {
+      "A": 42,
+      "B": 6,
+      "OVERLAY": 6,
+      "none": 18
+    },
+    "event_without_handler": 12,
+    "handler_item_counts": {
+      "A": 36,
+      "B": 6,
+      "none": 30
+    },
+    "handler_without_effect": 6,
+    "no_effects": 36,
+    "status_counts": {
+      "playwright_error_Error": 2,
+      "returned": 54,
+      "timeout": 16
+    },
+    "tool_returned_but_no_effect": 18,
+    "trusted_events_observed": 54,
+    "wrong_effects": 6
+  }
+}
