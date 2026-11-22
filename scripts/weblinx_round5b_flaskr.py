@@ -44,7 +44,7 @@ DB_NAMES=("R5B-A","R5B-B")
 
 # Python callback is outside the app; the installed browser listener runs
 # before page-authored handlers and does not block or mutate the click.
-CAPTURE_JS=r"""() => {
+CAPTURE_JS=r"""(() => {
  document.addEventListener("click",e=>{
    if(!e.isTrusted)return;
    const path=e.composedPath();
@@ -61,7 +61,7 @@ CAPTURE_JS=r"""() => {
    };
    window.__r5b_emit_capture(data);
  },true);
-}"""
+})();"""
 
 MUTATE_JS=r"""({condition,a,b}) => {
   const cards=Array.from(document.querySelectorAll("article.post"));
