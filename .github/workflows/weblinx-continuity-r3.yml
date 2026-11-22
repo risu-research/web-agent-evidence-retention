@@ -37,6 +37,10 @@ jobs:
           python -m unittest discover -s tests -p 'test_weblinx_continuity_r3.py' -v
       - name: Inspect all frozen action targets and directly recorded HTML sources
         run: python scripts/weblinx_continuity_r3.py
+      - name: Match original R3 full-run outputs byte for byte
+        run: |
+          echo "5d23045538a56bcf4faa1b9d7343fd4e75ca2585cfd33cd9e62d023b0a272c2e  out_continuity_r3/r3_summary.json" | sha256sum -c -
+          echo "d82723d1b7387f9c5784ee03604231efa79fa0024f39432ed8b440a5376a417f  out_continuity_r3/r3_action_source_600.csv" | sha256sum -c -
       - name: Verify complete action accounting and non-identifying public export
         run: |
           python - <<'PY'
