@@ -108,3 +108,13 @@ python scripts/weblinx_continuity_r2.py
 ```
 
 The R1/R2 workflows, complete numeric casebooks, original replay digests, and immutable source revision are retained in this repository. No release or Zenodo DOI was issued.
+
+## Recorded action provenance and XPath generator comparison
+
+[Round 3](docs/weblinx-continuity-r3-results.md) rechecked the same 600 original candidate targets against Replay action-element annotations and directly recorded HTML. All 600 target UIDs agreed with the Replay action element and resolved to exactly one element in their source HTML. The DMR candidate XPath equaled the parser-generated source XPath in all 600 actions.
+
+The action-element XPath used a different representation: 568 of 600 began with an XPath `id(...)` function. Executing the actual captured expressions on the original HTML selected the recorded element in **589** actions, selected no node in ten and a different node in one. The [focused source audit](docs/weblinx-continuity-r3d-results.md) traced seven mismatches to absent root IDs and four to a present root whose full path failed.
+
+The next-source audit included 560 directly linked HTML files and 413 changed-page pairs. Among 75 **site-native-id continuity proxies**, original captured action XPath expressions selected the proxy in **75/75** next snapshots; the DMR canonical XPath selected it in **67/75**. The 75 proxies span 31 demonstrations. This comparison is exploratory and does not supply independent logical-element ground truth or actual browser event delivery.
+
+See the [captured-expression study](docs/weblinx-continuity-r3c-results.md), [paired generator audit](docs/weblinx-continuity-r3d-results.md) and [cluster uncertainty](results/weblinx_continuity_r3d_cluster_bootstrap.json). Original source records and executable scripts remain pinned. The manuscript and Zenodo release were left unchanged.
