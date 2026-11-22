@@ -39,6 +39,23 @@ These attributes were read from the released candidate descriptions. Additional 
 
 A matching pHash over two separate screen regions measures a collision of that image representation. Direct RGB-pixel comparisons are reported separately in the [pixel-inspection protocol](residual-pixel-protocol.md).
 
+## Why 84 competing crops were unavailable
+
+A targeted [source-geometry audit](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45036608795) examined every missing-crop competitor in the 29 affected actions. It retrieved the original DMR bounding-box fields and replay screenshots at the frozen source revision.
+
+| Crop availability failure | Competitors |
+| --- | ---: |
+| Published bounding box has width or height of at most two pixels | 41 |
+| Bounding box clips to fewer than three pixels inside the screenshot | 43 |
+| Bounding-box field absent or incomplete | 0 |
+| **Total** | **84** |
+
+Twelve affected actions contain only the too-small mechanism, nine only the clipping mechanism, and eight both. All 84 missing hashes can be attributed to the original `crop_hash` geometry rule. The replay screenshots were retrieved successfully for these actions.
+
+This explains the missing-evidence branch more precisely: the screenshot exists, but some candidate boxes are too small or extend outside the usable viewport. The conservative rule includes those candidates among the plausible alternatives.
+
+The complete [29-row source-geometry casebook](../results/residual_missing_crop_29_cases_2026-11-22.csv), [source summary](../results/residual_missing_crop_summary_2026-11-22.json), and [frozen rules](residual-missing-crop-protocol.md) record the result.
+
 ## Direct RGB-pixel audit
 
 A second successful [GitHub Actions run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45035686194) reconstructed the same 70 actions from the pinned WebLINX screenshots. It repeated the original 600-action analysis and the identifier baseline with matching output hashes, and preserved the first 70-case category summary and casebook byte for byte.
