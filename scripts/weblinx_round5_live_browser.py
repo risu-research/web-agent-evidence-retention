@@ -193,9 +193,10 @@ def one_episode(browser,app,scenario,method):
     page=context.new_page()
     try:
         content=source_html(app,scenario)
-        import base64
-        uri="data:text/html;base64,"+base64.b64encode(content.encode("utf-8")).decode("ascii")
-        page.goto(uri,wait_until="load")
+        # A fresh context initializes the independent capture observer on
+        # about:blank. set_content runs the isolated first-party fixture with
+        # no network or data: navigation requirements.
+        page.set_content(content,wait_until="load")
         if not page.evaluate("!!window.__independentObserver"):
             raise AssertionError("Independent capture listener unavailable")
         chosen=locator_for(page,method)
