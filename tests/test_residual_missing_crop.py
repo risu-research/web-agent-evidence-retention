@@ -24,7 +24,7 @@ def get_rule():
 class MissingGeometryTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.rule=get_rule()
+        cls.rule=staticmethod(get_rule())
 
     def test_absent(self):
         self.assertEqual(self.rule("[[tag]] div",1920,1080),"bbox_absent")
