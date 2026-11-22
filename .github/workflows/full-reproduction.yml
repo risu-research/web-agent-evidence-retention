@@ -1,0 +1,95 @@
+name: Full historical WebLINX reproduction
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/full-reproduction.yml"
+      - "scripts/reproduce_confirm.py"
+      - "scripts/reproduce_universe.py"
+      - "scripts/verify_results.py"
+      - "scripts/verify_universe.py"
+      - "requirements.txt"
+
+permissions:
+  contents: read
+
+env:
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  DATASETS_DISABLE_PROGRESS_BARS: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  confirm:
+    name: 600-action confirmatory study
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install research dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install -r requirements.txt
+          python -m pip freeze > confirm_environment.txt
+      - name: Replay the frozen 600-action sample
+        run: python scripts/reproduce_confirm.py
+      - name: Compare against frozen submitted results
+        run: python scripts/verify_results.py out_confirm/confirm_summary.json
+      - name: Record output checksum
+        if: always()
+        shell: bash
+        run: |
+          if test -f out_confirm/confirm_summary.json; then
+            sha256sum out_confirm/confirm_summary.json > confirm_sha256.txt
+          fi
+      - name: Keep aggregate evidence and environment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: confirm-full-reproduction
+          path: |
+            out_confirm/confirm_summary.json
+            confirm_environment.txt
+            confirm_sha256.txt
+          if-no-files-found: warn
+          retention-days: 90
+
+  universe:
+    name: 598-action candidate-set sensitivity
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install research dependencies
+        run: |
+          python -m pip install -U pip
+          python -m pip install -r requirements.txt
+          python -m pip freeze > universe_environment.txt
+      - name: Replay the frozen 598-action sensitivity
+        run: python scripts/reproduce_universe.py
+      - name: Compare against frozen sensitivity results
+        run: python scripts/verify_universe.py out_audit/universe_summary.json
+      - name: Record output checksum
+        if: always()
+        shell: bash
+        run: |
+          if test -f out_audit/universe_summary.json; then
+            sha256sum out_audit/universe_summary.json > universe_sha256.txt
+          fi
+      - name: Keep aggregate evidence and environment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: universe-full-reproduction
+          path: |
+            out_audit/universe_summary.json
+            universe_environment.txt
+            universe_sha256.txt
+          if-no-files-found: warn
+          retention-days: 90
