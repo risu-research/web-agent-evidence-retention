@@ -1,0 +1,53 @@
+name: Preserve measured storage results
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-storage-results.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve completed measurement artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45045751574 -R risu-research/web-agent-evidence-retention -n actual-retention-cost-600 -D fetched
+      - name: Check recorded original byte hashes and export safety
+        run: |
+          echo "fa28e1b7981642ce4d8cb20d879129bf90cb4e5cbfbb531f018e7ff7ff549465  fetched/out_storage/storage_cost_summary.json" | sha256sum -c -
+          echo "1a7459d7a9fa1f81c1c4855ec85634db282e0ae9697e960eea030e1cb8741145  fetched/out_storage/storage_cost_600_actions.csv" | sha256sum -c -
+          python - <<'PY'
+          import csv,json
+          with open("fetched/out_storage/storage_cost_600_actions.csv",newline="",encoding="utf-8") as file:
+              reader=csv.DictReader(file)
+              keys=set(reader.fieldnames)
+              rows=list(reader)
+          assert len(rows)==600
+          assert len({(r["demo"],r["turn"]) for r in rows})==600
+          assert keys.isdisjoint({"uid","xpath","html_id","text","sem","screenshot","screenshot_path","raw_rgb","source_doc","page_html","url","label"})
+          s=json.load(open("fetched/out_storage/storage_cost_summary.json"))
+          assert s["cohorts"]["all_600"]["policies"]["staged"]["unique_recovery_n"]==600
+          assert s["cohorts"]["all_600"]["policies"]["selective_hashes"]["unique_recovery_n"]==530
+          assert s["cohorts"]["residual_70"]["actions"]==70
+          print("PASS: authentic runner-produced, numeric-only storage outputs")
+          PY
+      - name: Preserve results without releasing a DOI
+        run: |
+          cp fetched/out_storage/storage_cost_summary.json results/storage_cost_summary_2026-11-22.json
+          cp fetched/out_storage/storage_cost_600_actions.csv results/storage_cost_600_actions_2026-11-22.csv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/storage_cost_summary_2026-11-22.json results/storage_cost_600_actions_2026-11-22.csv
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive checked storage experiment summary and 600 action-level results"
+            git push origin HEAD:main
+          fi
