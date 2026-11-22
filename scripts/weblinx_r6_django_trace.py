@@ -145,18 +145,27 @@ def switch_database(path):
 
 
 def create_initial_users(dbfile):
+    # Playwright's synchronous Python API owns an asyncio event loop on its
+    # calling thread. Django deliberately rejects sync ORM calls in that
+    # thread. Run the unchanged ORM seeding in a different, non-async thread.
+    from concurrent.futures import ThreadPoolExecutor
     switch_database(dbfile)
-    from django.contrib.auth.models import User
-    admin=User.objects.create_superuser(
-        username="rootoperator",email="root@fixture.test",
-        password="r6-private-temp-password")
-    a=User.objects.create_user(username="r6_a",password="random-dummy",
-                               first_name="Seed-A",email="a@fixture.test")
-    b=User.objects.create_user(username="r6_b",password="random-dummy",
-                               first_name="Seed-B",email="b@fixture.test")
-    from django.db import connections
-    connections.close_all()
-    return {"A":a.pk,"B":b.pk}
+    def seed_using_original_django_orm():
+        from django.contrib.auth.models import User
+        from django.db import connections
+        try:
+            User.objects.create_superuser(
+                username="rootoperator",email="root@fixture.test",
+                password="r6-private-temp-password")
+            a=User.objects.create_user(username="r6_a",password="random-dummy",
+                                       first_name="Seed-A",email="a@fixture.test")
+            b=User.objects.create_user(username="r6_b",password="random-dummy",
+                                       first_name="Seed-B",email="b@fixture.test")
+            return {"A":a.pk,"B":b.pk}
+        finally:
+            connections.close_all()
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        return executor.submit(seed_using_original_django_orm).result()
 
 
 def sql_state(dbfile,ids):
