@@ -1,0 +1,56 @@
+name: Publish R7 genuine DOM reconstruction auditor results
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-weblinx-r7-dom.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve first fully verified 48-case Trace DOM auditor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45067176933 -R risu-research/web-agent-evidence-retention -n weblinx-r7-blind-dom-trace-vs-packet -D source
+      - name: Validate exact source casebook and graded questions
+        run: |
+          echo "2a72e1fae82360ca0ef255a6e00cbc6895ed0772048b80c1ea0fde0a5efa749c  source/out_round7/r7_trace_DOM_vs_packets_summary.json" | sha256sum -c -
+          echo "706fbd149da6de28fb62c28bb9d10dc531a1aff60022cb2e6e82fc6a604c77da  source/out_round7/r7_trace_DOM_vs_packets_48.csv" | sha256sum -c -
+          python - <<'PY'
+          import json,csv
+          p='source/out_round7/'
+          r=json.load(open(p+'r7_trace_DOM_vs_packets_summary.json'))
+          with open(p+'r7_trace_DOM_vs_packets_48.csv',newline='') as f:
+              reader=csv.DictReader(f);fields=set(reader.fieldnames);cases=list(reader)
+          assert r['cases']==len(cases)==48
+          assert r['original_source_effect_counts']=={'A':16,'B':8,'none':24}
+          assert r['DOM_snapshot_totals']['recorded']==1088
+          assert r['DOM_snapshot_totals']['successfully_decoded']==1088
+          assert r['DOM_snapshot_totals']['subtree_refs_resolved']==14825
+          assert r['DOM_snapshot_totals']['subtree_ref_failures']==0
+          for q in ('Q2_visible_click_row','Q3_server_mutating_POST','Q4_SQLite_effect','Q5_first_click_status'):
+              assert r['evaluations']['trace'][q]['correct']==48
+              assert r['evaluations']['effect'][q]['correct']==48
+          assert fields.isdisjoint({'cookie','password','raw_html','raw_trace','literal_selector','sql_dump'})
+          print('R7_VALID_BLIND_SOURCE_COMPARISON_ACCEPTED')
+          PY
+      - name: Preserve exact original blind source outcomes
+        run: |
+          cp source/out_round7/r7_trace_DOM_vs_packets_summary.json results/weblinx_r7_DOM_vs_packets_summary.json
+          cp source/out_round7/r7_trace_DOM_vs_packets_48.csv results/weblinx_r7_DOM_vs_packets_48.csv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_r7_DOM_vs_packets_*
+          if ! git diff --cached --quiet; then
+            git commit -m "Preserve actual 1088 Playwright DOM snapshots reconstructed and 48 blind Trace vs packet audit results"
+            git push origin HEAD:main
+          fi
