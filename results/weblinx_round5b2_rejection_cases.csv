@@ -1,0 +1,7 @@
+case,operation,locator,condition,intended,first_click_status,first_click_trusted_count,first_click_article,first_click_href_record,server_edit_route_record,server_edit_POST_count,server_edit_POST_status,server_side_validation_message,sql_rows_changed_count,sql_A_unchanged,sql_B_unchanged,browser_render_matches_SQL,playwright_trace_zip_bytes,playwright_trace_records,playwright_trace_network_records
+1,edit_blank_title,positional,baseline,A,returned,1,A,A,A,1,200,1,0,1,1,1,8881,83,8
+2,edit_blank_title,positional,reorder,A,returned,1,B,B,B,1,200,1,0,1,1,1,8907,83,8
+3,edit_blank_title,href_exact,baseline,A,returned,1,A,A,A,1,200,1,0,1,1,1,8877,83,8
+4,edit_blank_title,href_exact,reorder,A,returned,1,A,A,A,1,200,1,0,1,1,1,8912,83,8
+5,edit_blank_title,contextual_role,baseline,A,returned,1,A,A,A,1,200,1,0,1,1,1,8946,83,8
+6,edit_blank_title,contextual_role,reorder,A,returned,1,A,A,A,1,200,1,0,1,1,1,8989,83,8
