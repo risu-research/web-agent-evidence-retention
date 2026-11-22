@@ -1,0 +1,53 @@
+name: Preserve pinned WebLINX source inventory R1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-continuity-r1.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  preserve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download audited replay inventory and frozen source pairs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45055336663 -R risu-research/web-agent-evidence-retention -n weblinx-consecutive-source-r1 -D from_run
+      - name: Verify original hashes and redacted schema
+        run: |
+          echo "cf37fa54ee85c3d24e9ea834626591db29bf8138d742e63b6c52096c617b62f1  from_run/out_continuity_r1/source_inventory_summary.json" | sha256sum -c -
+          echo "5c0c213b5f47da8ef96f92e72304e25cdc7496ed692cd1e821edcf413a223af7  from_run/out_continuity_r1/replay_inventory_55.csv" | sha256sum -c -
+          echo "0a739071530c8a7e16aaebf7900590689270539ed7ec60e25368c8a179a668a8  from_run/out_continuity_r1/source_pairs_frozen.csv" | sha256sum -c -
+          python - <<'PY'
+          import json,csv
+          d="from_run/out_continuity_r1/"
+          obj=json.load(open(d+"source_inventory_summary.json"))
+          assert obj["demos"]==55 and obj["original_action_keys"]==600
+          assert obj["totals"]["selected_distinct_pairs"]==165
+          with open(d+"source_pairs_frozen.csv",newline="") as f:
+              rows=list(csv.DictReader(f))
+          assert len(rows)==165
+          assert not set(rows[0]).intersection({"url","text","uid","xpath","html","event_target"})
+          print("PASS: fixed official replays, 165 preselected HTML pairs, derived-only publication")
+          PY
+      - name: Publish original verified derived files
+        run: |
+          mkdir -p results
+          cp from_run/out_continuity_r1/source_inventory_summary.json results/weblinx_continuity_r1_summary.json
+          cp from_run/out_continuity_r1/replay_inventory_55.csv results/weblinx_continuity_r1_demos.csv
+          cp from_run/out_continuity_r1/source_pairs_frozen.csv results/weblinx_continuity_r1_frozen_pairs.csv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_continuity_r1*
+          if ! git diff --cached --quiet; then
+            git commit -m "Preserve R1 original-replay source audit and 165 frozen HTML pairs"
+            git push origin HEAD:main
+          fi
