@@ -217,9 +217,17 @@ def locator(page,method,ids):
     if method=="positional":
         return page.locator("#result_list tbody tr .field-username a").first
     if method=="href_exact":
+        # Django's own admin can render a relative change-link href.
+        # Read the exact source-native attribute from the ORIGINAL A row
+        # before the intervention and retain that unchanged locator.
+        source_row=page.locator("#result_list tbody tr").filter(
+            has=page.get_by_role("link",name="r6_a",exact=True))
+        exact_href=source_row.locator(".field-username a").get_attribute("href")
+        if not exact_href:
+            raise AssertionError("Native Django A change link has no href")
         return page.locator(
-            f'#result_list tbody tr .field-username a'
-            f'[href="/admin/auth/user/{ids["A"]}/change/"]')
+            '#result_list tbody tr .field-username a'
+            f'[href={json.dumps(exact_href)}]')
     if method=="contextual_row":
         return page.locator("#result_list tbody tr").filter(
             has=page.get_by_role("link",name="r6_a",exact=True)
@@ -347,6 +355,14 @@ def episode(browser,base_db,op,loc,cond,idx):
             if [s.strip() for s in source_names]!=["r6_a","r6_b"]:
                 raise AssertionError("Initial Django list ordering changed")
             chosen=locator(page,loc,ids)
+            if cond in ("overlay_standard","overlay_force"):
+                # A fixed overlay only covers the target if the original
+                # link has already been scrolled into the viewport. Avoid
+                # Playwright's later automatic scrolling moving the page
+                # underneath a fixed-position blocker.
+                row_A=page.locator("#result_list tbody tr").filter(
+                    has=page.get_by_role("link",name="r6_a",exact=True))
+                row_A.locator(".field-username a").scroll_into_view_if_needed()
             page.evaluate(MUTATE,{"condition":cond})
             if sql_state(db,ids)!=before:
                 raise AssertionError("DOM intervention changed stored data")
