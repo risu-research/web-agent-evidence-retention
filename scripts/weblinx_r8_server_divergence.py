@@ -245,8 +245,12 @@ def one_episode(browser, source_db, pair, op, loc, mode):
             screenshot_before = browser_image_hash(page)
             selected.click(timeout=r6.TIMEOUT_MS)
             if op == "edit":
-                if not page.locator("#id_first_name").count():
-                    raise AssertionError("Native change form unavailable")
+                # The selected native link may complete its click event before
+                # the destination navigation has finished. Wait for the
+                # unchanged upstream form rather than inspecting .count()
+                # at an arbitrary point in the navigation lifecycle.
+                page.locator("#id_first_name").wait_for(
+                    state="visible", timeout=5000)
                 page.locator("#id_first_name").fill(NEW_FIRST)
                 page.locator('input[name="_save"]').click()
             else:
