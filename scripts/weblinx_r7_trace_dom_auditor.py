@@ -219,18 +219,24 @@ def trace_auditor(trace_path,identity_map):
     # The after DOM is authoritative for a *screen state*, not a SQL commit.
     # Read both initial and final native admin result_list trees in the trace.
     table_snapshots=[]
-    for s in snapshots:
+    for n,s in enumerate(snapshots):
         if s["page"]=="/admin/auth/user/":
             rows=rows_from_admin_snapshot(s["root"])
             if rows is not None:
-                table_snapshots.append(rows)
-    before_rows=next((s for s in table_snapshots
-                     if set(s)=={"A","B"}),None)
-    after_rows=table_snapshots[-1] if table_snapshots else None
-    # Some early "frame-snapshot" records occur before page navigation
-    # settles; use only structurally recognizable Django table captures.
+                table_snapshots.append({
+                    "index":n,"rows":rows,"callId":s["callId"],
+                    "phase":s["phase"]})
+    before_item=next((s for s in table_snapshots
+                      if set(s["rows"])=={"A","B"}),None)
+    after_item=table_snapshots[-1] if table_snapshots else None
+    # A single snapshot must NEVER be read as proof of zero state change.
+    # Require a distinct, later captured native Django user-list state.
     effect_guess="abstain"
-    if before_rows is not None and after_rows is not None:
+    if (before_item is not None and after_item is not None and
+            after_item["index"]>before_item["index"] and
+            after_item["callId"]!=before_item["callId"]):
+        before_rows=before_item["rows"]
+        after_rows=after_item["rows"]
         changed=[k for k in ("A","B")
                  if after_rows.get(k)!=before_rows.get(k)]
         if len(changed)<=1:
