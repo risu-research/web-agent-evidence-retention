@@ -50,3 +50,7 @@ Treat multiple actions from a demonstration as correlated; provide counts by dem
 ## Decision gate
 
 Advance to human blinded adjudication only if original source evidence and presentation allow reviewers to decide logical persistence without seeing either locator or the site's ID. If the semantic evidence is too thin, document the feasibility limitation and pivot to instrumented browser events or authoritative application-record IDs. An identical public snapshot is never sufficient to reconstruct event delivery.
+
+## Root-ID dependence (declared before the R4 source run)
+
+For each of the 75 proxy cases, parse the captured XPath's initial `id(...)` reference in memory, record if that native ID is on the original target node, on one of its ancestors, elsewhere in the document, or absent, and record whether the same root native ID occurs uniquely in the next source HTML. Report categories separately from blinded semantic corroboration. This tests whether the recorded XPath's success depends on a shared site-native ID mechanism with the proxy's source label. It does not use the ID within the independent semantic matcher.
