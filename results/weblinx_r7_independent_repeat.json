@@ -1,0 +1,341 @@
+{
+  "cases": 48,
+  "differences": [],
+  "different_fields_n": 0,
+  "initial_DOM_snapshot_counts": {
+    "action_target_markers_found": 42,
+    "original_table_snapshots": 847,
+    "recorded": 1088,
+    "subtree_ref_failures": 0,
+    "subtree_refs_resolved": 14825,
+    "successfully_decoded": 1088
+  },
+  "initial_native_trace_zip_bytes": 1655362,
+  "initial_scores": {
+    "effect": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "event": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "server": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "trace": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    }
+  },
+  "repeat_DOM_snapshot_counts": {
+    "action_target_markers_found": 42,
+    "original_table_snapshots": 847,
+    "recorded": 1085,
+    "subtree_ref_failures": 0,
+    "subtree_refs_resolved": 14733,
+    "successfully_decoded": 1085
+  },
+  "repeat_native_trace_zip_bytes": 1654963,
+  "repeat_scores": {
+    "effect": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "event": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "server": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "trace": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    }
+  },
+  "sha256": {
+    "first_casebook": "706fbd149da6de28fb62c28bb9d10dc531a1aff60022cb2e6e82fc6a604c77da",
+    "first_summary": "2a72e1fae82360ca0ef255a6e00cbc6895ed0772048b80c1ea0fde0a5efa749c",
+    "repeat_casebook": "aaaef1780e40265148d5f27d0f8488b5c36057007335a13894e28f6a079fd8e3",
+    "repeat_summary": "538dc8767062d83f18011e0b9a2679699fa422bcdae7d595d8b25e92ac6f095c"
+  },
+  "source_tag_commit": "4f382ca672f86dd4a1e4d071c91d0caad0e124b3",
+  "stable_fields_compared_per_case": 50,
+  "study": "R7 blind Trace DOM reconstruction and selective evidence tier audit",
+  "trace_bytes_and_snapshot_counts_allowed_to_vary": true
+}
