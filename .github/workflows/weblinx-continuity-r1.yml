@@ -34,6 +34,11 @@ jobs:
           python -m py_compile scripts/weblinx_continuity_r1.py
       - name: Inventory all 55 pinned WebLINX demonstration replays
         run: python scripts/weblinx_continuity_r1.py
+      - name: Verify repeated source inventory is byte identical
+        run: |
+          echo "cf37fa54ee85c3d24e9ea834626591db29bf8138d742e63b6c52096c617b62f1  out_continuity_r1/source_inventory_summary.json" | sha256sum -c -
+          echo "5c0c213b5f47da8ef96f92e72304e25cdc7496ed692cd1e821edcf413a223af7  out_continuity_r1/replay_inventory_55.csv" | sha256sum -c -
+          echo "0a739071530c8a7e16aaebf7900590689270539ed7ec60e25368c8a179a668a8  out_continuity_r1/source_pairs_frozen.csv" | sha256sum -c -
       - name: Verify selected source-pair publication boundaries
         run: |
           python - <<'PY'
