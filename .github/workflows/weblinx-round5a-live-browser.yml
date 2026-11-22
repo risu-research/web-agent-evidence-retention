@@ -1,0 +1,107 @@
+name: R5A trusted Chromium event and effect pilot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-round5a-live-browser.yml"
+      - "scripts/weblinx_round5_live_browser.py"
+      - "docs/weblinx-continuity-r5a-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONUNBUFFERED: "1"
+  PLAYWRIGHT_BROWSERS_PATH: "0"
+
+jobs:
+  live_event_effect_audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Pin actual Chromium automation environment
+        run: |
+          python -m pip install 'playwright==1.65.2'
+          python -m playwright install --with-deps chromium
+          python -m pip freeze > round5a_environment.txt
+      - name: Verify full prospective case matrix before browsing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,"scripts")
+          from weblinx_round5_live_browser import (
+            episodes,source_html,APPS,SCENARIOS,LOCATORS
+          )
+          cases=episodes()
+          assert len(cases)==72 and len(set(cases))==72
+          assert set(x[0] for x in cases)==set(APPS)
+          assert set(x[1] for x in cases)==set(SCENARIOS)
+          assert set(x[2] for x in cases)==set(LOCATORS)
+          for app in APPS:
+            for scenario in SCENARIOS:
+              source=source_html(app,scenario)
+              assert 'data-entity="A"' in source
+              assert 'data-entity="B"' in source
+              assert 'window.__applicationHandlers' in source
+              assert 'window.__applicationState' in source
+          print("R5A_MATRIX_FROZEN",len(cases),"complete app × condition × locator cases")
+          PY
+          python -m py_compile scripts/weblinx_round5_live_browser.py
+      - name: Execute real trusted browser input and independent event and effect observation
+        run: python scripts/weblinx_round5_live_browser.py
+      - name: Validate all browser outcomes and basic fixture controls
+        run: |
+          python - <<'PY'
+          import csv,json
+          from collections import Counter
+          with open("out_round5a/round5a_actions_72.csv",newline="",encoding="utf-8") as f:
+            reader=csv.DictReader(f);cols=set(reader.fieldnames);rows=list(reader)
+          result=json.load(open("out_round5a/round5a_summary.json",encoding="utf-8"))
+          assert len(rows)==72 and len({(r["app"],r["condition"],r["locator"]) for r in rows})==72
+          assert Counter(r["app"] for r in rows)=={"list":36,"table":36}
+          assert Counter(r["locator"] for r in rows)=={"positional":24,"native_id":24,"accessible_role":24}
+          assert all(r["state_render_verified"]=="1" for r in rows)
+          assert all(int(r["trusted_event_count"])>=0 for r in rows)
+          assert all(r["effect_item"] in {"A","B","none"} for r in rows)
+          assert all(r["event_path_item"] in {"A","B","OVERLAY","none"} for r in rows)
+          assert all(r["handler_item"] in {"A","B","none"} for r in rows)
+          assert all(int(r["request_bytes"])<=int(r["effect_bytes"]) for r in rows)
+          assert all(r["click_status"]=="returned" and r["effect_item"]=="A"
+                     for r in rows if r["condition"]=="baseline")
+          assert all(r["handler_item"]=="A" and r["effect_item"]=="none"
+                     for r in rows if r["condition"]=="handler_no_effect")
+          assert all(r["event_path_item"]=="A" and r["handler_item"]=="none"
+                     for r in rows if r["condition"]=="stop_bubble")
+          assert all(r["event_path_item"]=="A" and r["event_raw_target_tag"]=="SPAN"
+                     for r in rows if r["condition"]=="nested_icon")
+          assert result["real_trusted_browser_clicks"] is True
+          assert result["external_live_websites"] is False
+          assert result["original_weblinx_replay_reexecuted"] is False
+          assert cols.isdisjoint({"html","url","raw_html","site_id","xpath","event_payload_raw","password","user_text"})
+          print("R5A_VERIFIED",len(rows),"independent browser recipient and effect episodes")
+          PY
+      - name: Pin exact output hashes
+        if: always()
+        run: |
+          if test -e out_round5a/round5a_summary.json; then
+            sha256sum out_round5a/round5a_summary.json out_round5a/round5a_actions_72.csv > round5a_sha256.txt
+          fi
+      - name: Archive numerical results and dependency environment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weblinx-round5a-browser-recipient-effects
+          path: |
+            out_round5a/round5a_summary.json
+            out_round5a/round5a_actions_72.csv
+            round5a_environment.txt
+            round5a_sha256.txt
+          retention-days: 90
+          if-no-files-found: warn
