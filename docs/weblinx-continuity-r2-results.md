@@ -70,3 +70,13 @@ A valid next identity study should obtain cross-state target labels from a sourc
 - R2 165-pair CSV SHA-256: `8eeba01c2c385129bcc8238987844395e63211c5627af5078a6fc5fe1cc3536b`
 
 The public artifacts contain counts, state-pair keys, document checksums and categorical context hints. Literal URLs, HTML content, browser screenshots and element values stay with the publisher's source data. The present source audit has no new trained model or released user trace, and no new Zenodo DOI is requested.
+
+## Independent execution and publication
+
+The [second complete R2 run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45055880614) retrieved and parsed the same 233 pinned HTML files again. Both derived result files, the exact parser environment, and the SHA-256 manifest were byte-identical to the [first completed run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45055628348). The 55-demo [R1 replay inventory was independently repeated](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45056042550) with all three original derived files and the manifest matching byte for byte.
+
+A final [offline audit](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45056082602) passed 70 tests, including synthetic HTML parsing, repeated UIDs, UID relocation, exact-source equality, source-pair membership and redacted export checks.
+
+Both rounds publish numeric source observations to `results/` in the [public repository](https://github.com/risu-research/web-agent-evidence-retention). The raw source replays and source HTML remain in the publisher's dataset at the recorded immutable revision.
+
+**Next scientific gate:** Establish an independently adjudicated same-element label for cross-state comparisons. The present R1/R2 audit establishes source availability and exact syntactic changes. A logical-identity error rate, re-executed browser action success, and causal event-target verification remain unmeasured.
