@@ -13,7 +13,7 @@ Use Python 3.11 in a clean working directory.
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.lock.txt
 python scripts/reproduce_confirm.py
 python scripts/verify_results.py out_confirm/confirm_summary.json
 ```
@@ -46,4 +46,4 @@ The reference tables record the submitted findings. The full dataset analysis ne
 
 WebLINX is hosted by its original publisher. The scripts download the necessary records. Local raw data and generated outputs stay outside the versioned source tree.
 
-The archival DOI and citation metadata will be added after final validation and release.
+The historical experiments were independently rerun on November 22, 2026. The resulting summaries and environment are preserved in [the reproduction record](docs/reproduction-2026-11-22.md). The archival DOI and citation metadata will be added after final validation and release.
