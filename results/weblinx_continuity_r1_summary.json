@@ -1,0 +1,25 @@
+{
+  "demos": 55,
+  "demos_with_any_html": 55,
+  "demos_with_selected_pair": 55,
+  "max_selected_pairs_per_demo": 3,
+  "no_imputed_html_paths": true,
+  "original_action_keys": 600,
+  "protocol": "R1-pinned-55-demonstration-direct-HTML-sequence-inventory",
+  "raw_revision": "36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8",
+  "replay_digest_set_sha256": "1b35a77d4f5092a95dfeacf8e551f111643cc8e962a9076b906de8ef8c12fc00",
+  "selection": "nearest of two endpoints to any original cohort action; then earlier replay turn",
+  "totals": {
+    "adjacent_browser_pairs_with_html": 1125,
+    "adjacent_distinct_html_filename": 1123,
+    "adjacent_distinct_invalid_filenames": 0,
+    "adjacent_same_html_filename": 2,
+    "browser_turns": 1387,
+    "chat_or_other_turns": 944,
+    "direct_html_turns": 1237,
+    "direct_screenshot_turns": 1233,
+    "original_action_keys": 600,
+    "selected_distinct_pairs": 165,
+    "total_turns": 2331
+  }
+}
