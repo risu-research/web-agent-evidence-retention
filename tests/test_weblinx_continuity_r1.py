@@ -12,7 +12,8 @@ def load_inventory_functions():
     names={"state_name","replay_data","pair_inventory"}
     nodes=[node for node in tree.body
            if isinstance(node,ast.FunctionDef) and node.name in names]
-    ns={"json":json,"SAFE_FILE":re.compile(r"^[A-Za-z0-9_.-]+\.html$",re.I)}
+    ns={"json":json,"SAFE_FILE":re.compile(r"^[A-Za-z0-9_.-]+\.html$",re.I),
+        "MAX_PAIRS_PER_DEMO":3}
     exec(compile(ast.fix_missing_locations(ast.Module(body=nodes,type_ignores=[])),
                  str(source),"exec"),ns)
     return ns
