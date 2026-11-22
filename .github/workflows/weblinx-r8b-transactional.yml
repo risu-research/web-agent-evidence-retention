@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/weblinx-r8b-transactional.yml"
       - "scripts/weblinx_r8b_transactional.py"
+      - "scripts/weblinx_r8_server_divergence.py"
       - "tests/test_weblinx_r8b_transactional.py"
       - "docs/weblinx-r8b-transactional-protocol.md"
   workflow_dispatch:
