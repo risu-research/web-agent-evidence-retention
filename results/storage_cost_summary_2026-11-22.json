@@ -10,7 +10,7 @@
       "policies": {
         "all_hashes": {
           "bytes_mean_per_action": 2783.4,
-          "bytes_median_per_action": 2466,
+          "bytes_median_per_action": 2466.0,
           "bytes_total": 1670040,
           "n": 600,
           "unique_recovery_n": 530,
@@ -18,7 +18,7 @@
         },
         "full_frame": {
           "bytes_mean_per_action": 343792.51666666666,
-          "bytes_median_per_action": 280317,
+          "bytes_median_per_action": 280317.0,
           "bytes_total": 206275510,
           "n": 600,
           "unique_recovery_n": 530,
@@ -26,7 +26,7 @@
         },
         "selective_hashes": {
           "bytes_mean_per_action": 1321.6333333333334,
-          "bytes_median_per_action": 1181,
+          "bytes_median_per_action": 1181.0,
           "bytes_total": 792980,
           "n": 600,
           "unique_recovery_n": 530,
@@ -42,7 +42,7 @@
         },
         "semantic_plus_crops": {
           "bytes_mean_per_action": 515905.31833333336,
-          "bytes_median_per_action": 1500,
+          "bytes_median_per_action": 1500.0,
           "bytes_total": 309543191,
           "n": 600,
           "unique_recovery_n": 545,
@@ -50,11 +50,11 @@
         },
         "staged": {
           "bytes_mean_per_action": 1437.3783333333333,
-          "bytes_median_per_action": 1095,
+          "bytes_median_per_action": 1095.0,
           "bytes_total": 862427,
           "n": 600,
           "unique_recovery_n": 600,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "text": {
           "bytes_mean_per_action": 446.49666666666667,
@@ -70,7 +70,7 @@
           "bytes_total": 1794620,
           "n": 600,
           "unique_recovery_n": 600,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "xpath": {
           "bytes_mean_per_action": 1036.3466666666666,
@@ -78,11 +78,11 @@
           "bytes_total": 621808,
           "n": 600,
           "unique_recovery_n": 600,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         }
       },
       "source_screenshot_bytes_deduplicated": 186931927,
-      "source_screenshot_bytes_median": 278856,
+      "source_screenshot_bytes_median": 278856.0,
       "source_screenshot_bytes_sum": 204723458,
       "staged_levels": {
         "bbox": 53,
@@ -106,7 +106,7 @@
           "bytes_total": 48454,
           "n": 19,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "full_frame": {
           "bytes_mean_per_action": 305555.15789473685,
@@ -114,7 +114,7 @@
           "bytes_total": 5805548,
           "n": 19,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "selective_hashes": {
           "bytes_mean_per_action": 1762.421052631579,
@@ -122,7 +122,7 @@
           "bytes_total": 33486,
           "n": 19,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "semantic": {
           "bytes_mean_per_action": 1013.5263157894736,
@@ -130,7 +130,7 @@
           "bytes_total": 19257,
           "n": 19,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "semantic_plus_crops": {
           "bytes_mean_per_action": 2726775.5263157897,
@@ -138,7 +138,7 @@
           "bytes_total": 51808735,
           "n": 19,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "staged": {
           "bytes_mean_per_action": 2269.9473684210525,
@@ -146,7 +146,7 @@
           "bytes_total": 43129,
           "n": 19,
           "unique_recovery_n": 19,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "text": {
           "bytes_mean_per_action": 455.10526315789474,
@@ -154,7 +154,7 @@
           "bytes_total": 8647,
           "n": 19,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "uid": {
           "bytes_mean_per_action": 2923.2631578947367,
@@ -162,7 +162,7 @@
           "bytes_total": 55542,
           "n": 19,
           "unique_recovery_n": 19,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "xpath": {
           "bytes_mean_per_action": 994.1578947368421,
@@ -170,7 +170,7 @@
           "bytes_total": 18889,
           "n": 19,
           "unique_recovery_n": 19,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         }
       },
       "source_screenshot_bytes_deduplicated": 5261439,
@@ -194,7 +194,7 @@
           "bytes_total": 33039,
           "n": 10,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "full_frame": {
           "bytes_mean_per_action": 277771.1,
@@ -202,7 +202,7 @@
           "bytes_total": 2777711,
           "n": 10,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "selective_hashes": {
           "bytes_mean_per_action": 2448.6,
@@ -210,23 +210,23 @@
           "bytes_total": 24486,
           "n": 10,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "semantic": {
           "bytes_mean_per_action": 1217.4,
-          "bytes_median_per_action": 1067,
+          "bytes_median_per_action": 1067.0,
           "bytes_total": 12174,
           "n": 10,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "semantic_plus_crops": {
           "bytes_mean_per_action": 3043671.8,
-          "bytes_median_per_action": 2193687,
+          "bytes_median_per_action": 2193687.0,
           "bytes_total": 30436718,
           "n": 10,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "staged": {
           "bytes_mean_per_action": 3155.8,
@@ -234,31 +234,31 @@
           "bytes_total": 31558,
           "n": 10,
           "unique_recovery_n": 10,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "text": {
           "bytes_mean_per_action": 554.3,
-          "bytes_median_per_action": 575,
+          "bytes_median_per_action": 575.0,
           "bytes_total": 5543,
           "n": 10,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "uid": {
           "bytes_mean_per_action": 3606.5,
-          "bytes_median_per_action": 3093,
+          "bytes_median_per_action": 3093.0,
           "bytes_total": 36065,
           "n": 10,
           "unique_recovery_n": 10,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "xpath": {
           "bytes_mean_per_action": 1225.2,
-          "bytes_median_per_action": 1124,
+          "bytes_median_per_action": 1124.0,
           "bytes_total": 12252,
           "n": 10,
           "unique_recovery_n": 10,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         }
       },
       "source_screenshot_bytes_deduplicated": 2245796,
@@ -283,7 +283,7 @@
           "bytes_total": 178978,
           "n": 70,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "full_frame": {
           "bytes_mean_per_action": 316091.5571428572,
@@ -291,27 +291,27 @@
           "bytes_total": 22126409,
           "n": 70,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "selective_hashes": {
           "bytes_mean_per_action": 1581.1285714285714,
-          "bytes_median_per_action": 1329,
+          "bytes_median_per_action": 1329.0,
           "bytes_total": 110679,
           "n": 70,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "semantic": {
           "bytes_mean_per_action": 1012.0428571428571,
-          "bytes_median_per_action": 897,
+          "bytes_median_per_action": 897.0,
           "bytes_total": 70843,
           "n": 70,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "semantic_plus_crops": {
           "bytes_mean_per_action": 1911089.4428571428,
-          "bytes_median_per_action": 971470,
+          "bytes_median_per_action": 971470.0,
           "bytes_total": 133776261,
           "n": 70,
           "unique_recovery_n": 15,
@@ -323,15 +323,15 @@
           "bytes_total": 145367,
           "n": 70,
           "unique_recovery_n": 70,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "text": {
           "bytes_mean_per_action": 425.35714285714283,
-          "bytes_median_per_action": 372,
+          "bytes_median_per_action": 372.0,
           "bytes_total": 29775,
           "n": 70,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "uid": {
           "bytes_mean_per_action": 3038.8142857142857,
@@ -339,19 +339,19 @@
           "bytes_total": 212717,
           "n": 70,
           "unique_recovery_n": 70,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "xpath": {
           "bytes_mean_per_action": 1039.6714285714286,
-          "bytes_median_per_action": 779,
+          "bytes_median_per_action": 779.0,
           "bytes_total": 72777,
           "n": 70,
           "unique_recovery_n": 70,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         }
       },
       "source_screenshot_bytes_deduplicated": 20856472,
-      "source_screenshot_bytes_median": 277249,
+      "source_screenshot_bytes_median": 277249.0,
       "source_screenshot_bytes_sum": 21957627,
       "staged_levels": {
         "bbox": 53,
@@ -372,7 +372,7 @@
           "bytes_total": 97485,
           "n": 41,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "full_frame": {
           "bytes_mean_per_action": 330320.73170731706,
@@ -380,7 +380,7 @@
           "bytes_total": 13543150,
           "n": 41,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "selective_hashes": {
           "bytes_mean_per_action": 1285.5365853658536,
@@ -388,7 +388,7 @@
           "bytes_total": 52707,
           "n": 41,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "semantic": {
           "bytes_mean_per_action": 961.2682926829268,
@@ -396,7 +396,7 @@
           "bytes_total": 39412,
           "n": 41,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "semantic_plus_crops": {
           "bytes_mean_per_action": 1256848.975609756,
@@ -412,7 +412,7 @@
           "bytes_total": 70680,
           "n": 41,
           "unique_recovery_n": 41,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "text": {
           "bytes_mean_per_action": 380.1219512195122,
@@ -420,7 +420,7 @@
           "bytes_total": 15585,
           "n": 41,
           "unique_recovery_n": 0,
-          "unique_recovery_rate": 0
+          "unique_recovery_rate": 0.0
         },
         "uid": {
           "bytes_mean_per_action": 2953.9024390243903,
@@ -428,7 +428,7 @@
           "bytes_total": 121110,
           "n": 41,
           "unique_recovery_n": 41,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         },
         "xpath": {
           "bytes_mean_per_action": 1015.5121951219512,
@@ -436,7 +436,7 @@
           "bytes_total": 41636,
           "n": 41,
           "unique_recovery_n": 41,
-          "unique_recovery_rate": 1
+          "unique_recovery_rate": 1.0
         }
       },
       "source_screenshot_bytes_deduplicated": 13349237,
