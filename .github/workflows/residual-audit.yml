@@ -1,0 +1,87 @@
+name: Frozen 70-case residual collision audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/residual-audit.yml"
+      - "scripts/residual_casebook.py"
+      - "scripts/residual_diagnostics.py"
+      - "tests/test_residual_diagnostics.py"
+      - "requirements.lock.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  DATASETS_DISABLE_PROGRESS_BARS: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install and confirm exact environment
+        run: |
+          python -m pip install -r requirements.lock.txt
+          python -m pip freeze > residual_environment.txt
+          diff -u requirements.lock.txt residual_environment.txt
+      - name: Verify taxonomy, geometry, and category edge cases
+        run: |
+          python -m compileall -q scripts
+          python -m unittest discover -s tests -v
+      - name: Analyze all 70 residual actions from the frozen WebLINX cohort
+        run: python scripts/residual_casebook.py
+      - name: Match both previous full-study outputs byte for byte
+        run: |
+          python scripts/verify_results.py out_confirm/confirm_summary.json
+          echo "e03b5b07f44997b9017393a1eb0871bde1fd57c5299fe5818538e038224269e3  out_confirm/confirm_summary.json" | sha256sum -c -
+          echo "12444432bff93d75e3117a7e81eca9b764f7928bfd92a9a13685d63863004b58  out_identifier/identifier_summary.json" | sha256sum -c -
+          echo "6d18a92e487d3505431d9c9d1bf02beff85ea1d5b705d4556e7c06f2522781f3  out_identifier/identifier_action_metrics.csv" | sha256sum -c -
+      - name: Verify safe export schema and residual membership
+        shell: bash
+        run: |
+          python - <<'PY'
+          import csv,json,pathlib
+          root=pathlib.Path("out_residual")
+          with (root/"residual_70_cases.csv").open(newline="",encoding="utf-8") as f:
+              reader=csv.DictReader(f)
+              columns=set(reader.fieldnames)
+              rows=list(reader)
+          assert len(rows)==70
+          assert len({(r["demo"],r["turn"]) for r in rows})==70
+          assert not columns.intersection({"uid","xpath","html_id","text","attributes","screenshot","url","href","dialogue"})
+          assert all(int(r["joint_match_n"])>1 for r in rows)
+          assert all(int(r["competitor_n"])==int(r["joint_match_n"])-1 for r in rows)
+          summary=json.loads((root/"residual_summary.json").read_text(encoding="utf-8"))
+          assert sum(summary["mechanisms"].values())==70
+          print("PASS: 70 unique redacted residual records, category totals and schema")
+          PY
+      - name: Hash outputs
+        if: always()
+        shell: bash
+        run: |
+          if test -f out_residual/residual_summary.json; then
+            sha256sum out_residual/residual_summary.json out_residual/residual_70_cases.csv > residual_sha256.txt
+          fi
+      - name: Retain redacted casebook, summary, and exact environment
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: residual-70-case-audit
+          path: |
+            out_residual/residual_summary.json
+            out_residual/residual_70_cases.csv
+            out_confirm/confirm_summary.json
+            out_identifier/identifier_summary.json
+            residual_environment.txt
+            residual_sha256.txt
+          if-no-files-found: warn
+          retention-days: 90
