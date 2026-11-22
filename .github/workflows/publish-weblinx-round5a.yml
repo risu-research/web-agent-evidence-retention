@@ -1,0 +1,59 @@
+name: Publish verified Round 5A real Chromium results
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-weblinx-round5a.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve full verified first corrected Round 5A run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45060903027 -R risu-research/web-agent-evidence-retention -n weblinx-round5a-browser-recipient-effects -D source_run
+      - name: Verify original byte-for-byte source results and matrix
+        run: |
+          echo "1196bc12db75aea9bfd4ced76a4894e34d12fda045ecd81e294de2934a8219cc  source_run/out_round5a/round5a_summary.json" | sha256sum -c -
+          echo "190e3317de1f0702981dfc76ba91c705cb7cee7097845c69b57cc3d08ac2b7f0  source_run/out_round5a/round5a_actions_72.csv" | sha256sum -c -
+          python - <<'PY'
+          import csv,json
+          from collections import Counter
+          p='source_run/out_round5a/'
+          s=json.load(open(p+'round5a_summary.json'))
+          with open(p+'round5a_actions_72.csv',newline='',encoding='utf-8') as f:
+              reader=csv.DictReader(f);cols=set(reader.fieldnames);rows=list(reader)
+          assert len(rows)==72 and len({(r['app'],r['condition'],r['locator']) for r in rows})==72
+          assert s['total']['effect_counts']=={'A':30,'B':6,'none':36}
+          assert s['total']['tool_returned_but_no_effect']==18
+          assert s['total']['trusted_events_observed']==54
+          assert s['total']['event_without_handler']==12
+          assert s['total']['handler_without_effect']==6
+          assert Counter(r['app'] for r in rows)=={'list':36,'table':36}
+          assert all(r['state_render_verified']=='1' for r in rows)
+          assert s['original_weblinx_replay_reexecuted'] is False
+          assert s['external_live_websites'] is False
+          assert cols.isdisjoint({'html','url','source_code','password','raw_html','user_text'})
+          print('PASS: 72 exact trusted Chromium episodes with separate event and effect evidence')
+          PY
+      - name: Commit original result files unchanged
+        run: |
+          mkdir -p results
+          cp source_run/out_round5a/round5a_summary.json results/weblinx_round5a_browser_summary.json
+          cp source_run/out_round5a/round5a_actions_72.csv results/weblinx_round5a_browser_cases.csv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_round5a_browser_*
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive first R5A trusted Chromium source-event and effect results"
+            git push origin HEAD:main
+          fi
