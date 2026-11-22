@@ -108,6 +108,12 @@ The evidence-level residuals divide into missing visual evidence and collisions 
 
 The earlier identifier-retention study recovered all 600 targets when it preserved the published same-state XPath. The present findings therefore apply to logs that retain the studied text, semantic DOM and crop-hash representations without the exact execution-time locator. A separate runtime audit would be needed to test how a recorded XPath relates to the element that actually received a browser event or to the page after later changes.
 
+## Independent repeat and permanent artifacts
+
+A second [full pixel-audit run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45036283958) regenerated the original 600-action confirmatory JSON, the locator-baseline result, the 70-case classification, and both pixel-audit outputs. All four 70-case JSON/CSV files passed byte-for-byte SHA-256 comparisons against the first successful runs. The separate [source-geometry job](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45036608795) reconciled all 84 unavailable crops across the 29 affected actions. The final public repository's offline suite passed 46 tests.
+
+The complete action-level records and their derived count summaries are committed directly to `results/`. Their contents can be audited after temporary GitHub Actions artifacts expire.
+
 ## Source and audit files
 
 - [Frozen categories and reporting rules](residual-failure-protocol.md)
