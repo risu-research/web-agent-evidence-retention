@@ -386,9 +386,25 @@ def run():
     if not all(x["equivalent"] and x["q6_truth_divergent"] and
                x["q6_trace_indistinguishable"] and
                x["q6_packet_distinguishable"] for x in pair_details):
+        network_differences = []
+        for pair in range(1, 7):
+            a, b = [x for x in episodes if x["pair"] == pair]
+            if a["network_projection"] == b["network_projection"]:
+                continue
+            network_differences.append({
+                "pair": pair,
+                "same_method_route_status_multiset": (
+                    Counter(map(tuple, a["network_projection"])) ==
+                    Counter(map(tuple, b["network_projection"]))),
+                "control": next(x["network_projection"] for x in (a,b)
+                                if x["mode"]=="control"),
+                "shadow": next(x["network_projection"] for x in (a,b)
+                               if x["mode"]=="shadow"),
+            })
         diagnostic = {
             "status":"INVALID_CALIBRATION_EQUIVALENCE_GATE",
             "pair_details":pair_details,
+            "normalized_network_differences": network_differences,
             "unapproved_cases":len(episodes),
             "raw_traces_exported":False,
         }
