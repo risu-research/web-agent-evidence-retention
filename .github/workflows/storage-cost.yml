@@ -49,6 +49,10 @@ jobs:
           echo "a1d603af041fc5dd27a52f6c4e46a29b2761a6cb5ea3fbdf801fa8485302a5e3  out_residual/residual_70_cases.csv" | sha256sum -c -
           echo "b26db3ca8707824551dc75dfa1a752a70138ad38362633abde79b46974facb0d  out_pixel/residual_pixel_summary.json" | sha256sum -c -
           echo "38591f3a5749a015a23642de4ac745d0e2cbd7f8e0ae6ef027f227ca6b8d305b  out_pixel/residual_pixel_cases.csv" | sha256sum -c -
+      - name: Confirm reproducible byte-identical measured outputs
+        run: |
+          echo "fa28e1b7981642ce4d8cb20d879129bf90cb4e5cbfbb531f018e7ff7ff549465  out_storage/storage_cost_summary.json" | sha256sum -c -
+          echo "1a7459d7a9fa1f81c1c4855ec85634db282e0ae9697e960eea030e1cb8741145  out_storage/storage_cost_600_actions.csv" | sha256sum -c -
       - name: Verify numeric-only 600-action export and recovery
         run: |
           python - <<'PY'
