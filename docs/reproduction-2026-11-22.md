@@ -25,6 +25,17 @@ Both historical WebLINX experiments were run from a clean GitHub-hosted Ubuntu r
 - ZIP SHA-256: `431ecc5b78661be60fbd5f20de3225976fb623fb3e18c4a92c43b51f28c7b0bc`
 - Original `out_audit/universe_summary.json` SHA-256: `5809d09d034f6ba2a09b1436e02eddbccb0220a6b9b6040dfa5010c27343d612`
 
+## Independent locked-environment repeat
+
+Both experiments were run again in [workflow 45032360039](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45032360039), using `requirements.lock.txt` for installation and checking the resulting `pip freeze` against that lockfile.
+
+- Confirmatory job `137238505617`: successful; `out_confirm/confirm_summary.json` SHA-256 matched the first run exactly
+- Candidate-expansion job `137238505318`: successful; `out_audit/universe_summary.json` SHA-256 matched the first run exactly
+- [Locked confirmatory artifact](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45032360039/artifacts/14758107179), ZIP digest `sha256:033c2d3afb9922fcd005ea8c88b00f6e3ef3095bf1f8a9db2972249df173c844`
+- [Locked sensitivity artifact](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45032360039/artifacts/14758631006), ZIP digest `sha256:0ed79079de8ca1d112c5a1e64bb4082c6b4dd5f3cc2377ca22e2ff0e47f5a8df`
+
+The second run's original summary JSON, environment list, and checksum files were downloaded and compared byte for byte against the first run. All six files matched.
+
 ## Exact environment
 
 Both runs yielded an identical `pip freeze` output, now recorded in `requirements.lock.txt` (SHA-256 `799972d01c564de25c5ace046ca6d51b72277930d3bafd435c90a3ec318bc357`).
