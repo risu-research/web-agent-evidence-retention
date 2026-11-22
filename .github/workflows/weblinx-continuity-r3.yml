@@ -1,0 +1,77 @@
+name: R3 WebLINX action and next-state original-source audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/weblinx-continuity-r3.yml"
+      - "scripts/weblinx_continuity_r3.py"
+      - "tests/test_weblinx_continuity_r3.py"
+      - "docs/weblinx-continuity-r3-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  DATASETS_DISABLE_PROGRESS_BARS: "1"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  target_sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact small dependency set
+        run: |
+          python -m pip install 'huggingface_hub==0.36.2' 'requests==2.34.2' 'lxml==5.4.0'
+          python -m pip freeze > r3_environment.txt
+      - name: Verify synthetic target provenance and source-state guardrails
+        run: |
+          python -m compileall -q scripts
+          python -m unittest discover -s tests -p 'test_weblinx_continuity_r3.py' -v
+      - name: Inspect all frozen action targets and directly recorded HTML sources
+        run: python scripts/weblinx_continuity_r3.py
+      - name: Verify complete action accounting and non-identifying public export
+        run: |
+          python - <<'PY'
+          import csv,json
+          with open('out_continuity_r3/r3_action_source_600.csv',
+                    newline='',encoding='utf-8') as f:
+              reader=csv.DictReader(f);cols=set(reader.fieldnames);rows=list(reader)
+          s=json.load(open('out_continuity_r3/r3_summary.json'))
+          assert s['action_count']==600 and s['demonstration_count']==55
+          assert len(rows)==600 and len({(r['demo'],r['turn']) for r in rows})==600
+          assert s['positive_candidate_count_total']==600
+          assert sum(s['current_target_uid_statuses'].values())==600
+          assert sum(s['continuity_proxy_statuses'].values())==600
+          assert s['independent_logical_identity_ground_truth'] is False
+          assert s['independent_browser_event_recipient_ground_truth'] is False
+          assert cols.isdisjoint({'uid','xpath','url','html','text','site_id','source_doc',
+                                  'event_target','screenshot','raw_html','dialogue'})
+          assert all(int(r['positive_candidate_count'])==1 for r in rows)
+          print('PASS: 600 source-traced original actions and separately labeled proxies')
+          PY
+      - name: Hash source-derived results
+        if: always()
+        run: |
+          if test -e out_continuity_r3/r3_summary.json; then
+            sha256sum out_continuity_r3/r3_summary.json out_continuity_r3/r3_action_source_600.csv > r3_sha256.txt
+          fi
+      - name: Retain redacted complete numeric casebook
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weblinx-original-action-continuity-r3
+          path: |
+            out_continuity_r3/r3_summary.json
+            out_continuity_r3/r3_action_source_600.csv
+            r3_environment.txt
+            r3_sha256.txt
+          if-no-files-found: warn
+          retention-days: 90
