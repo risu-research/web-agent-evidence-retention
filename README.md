@@ -74,3 +74,19 @@ python scripts/residual_pixel_casebook.py
 ```
 
 Both scripts use the frozen 600-action sample and reproduce the original confirmatory and locator-baseline results before producing the additional diagnostics.
+
+## Measured retention cost
+
+A full replay measured the actual encoded sizes of candidate text, semantic DOM, 64-bit pHash, exact same-state locators, the publisher's compressed screenshots, and generated lossless PNG element crops. Recovery was checked by decoding each retained record across the same 600 actions.
+
+Adding pHash only where semantic evidence is ambiguous takes **792,980 bytes** and identifies **530/600** targets. A text → semantic → pHash → bounding box → XPath record takes **862,427 bytes** and identifies **600/600** within the frozen candidate snapshots. A complete candidate XPath list with the recorded target XPath takes **621,808 bytes** and also identifies all 600.
+
+The selective lossless-crop variant takes **309,543,191 bytes** and identifies **545/600**. Original compressed screenshots plus candidate descriptions and box coordinates take **206,275,510 bytes** using the original pHash recovery rule.
+
+The [full measured results](docs/storage-cost-results.md), [frozen comparison protocol](docs/storage-cost-protocol.md), and [600-action numeric measurement table](results/storage_cost_600_actions_2026-11-22.csv) retain the exact costs and their interpretation.
+
+```bash
+python scripts/storage_cost_casebook.py
+```
+
+The code retrieves source images from the original publisher and exports derived numeric records. The Zenodo release remains scheduled for the final artifact audit.
