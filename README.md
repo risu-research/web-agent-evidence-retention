@@ -187,3 +187,22 @@ The two complete Django runs recorded source SQL and audit outcomes identically,
 - [Independent full rerun comparison](results/weblinx_r6_independent_repeat.json)
 
 All synthetic test material and derived categorical data are public. The original browser Trace ZIP files, disposable credentials and sessions are not distributed. The working manuscript and Zenodo DOI were left unchanged while these studies were frozen and independently reproduced.
+
+## R7: real DOM snapshot auditor against selective evidence tiers
+
+The [R7 frozen blind auditor study](docs/weblinx-r7-dom-auditor-results.md) **reconstructed the original Playwright DOM snapshots**, including historical subtree references, before comparing independent server/SQLite truth. The [actual source decoder](scripts/weblinx_r7_trace_dom_auditor.py) reads native `frame-snapshot` node arrays and prior-node references rather than guessing from plain Trace JSON. The source viewer recovered 1,088/1,088 DOM snapshots and 14,825 historical subtree references with zero parsing failures in its original full 48-case Django study.
+
+This changed the earlier **Round 6 strict explicit-evidence** interpretation: with real DOM reconstruction, a **Trace-only** auditor inferred the visible clicked user row and ultimate changed SQL-row label correctly in **48/48**, matching native independent event and SQLite truth for this controlled app. Trace's native network POST route and Playwright first-click status were likewise correct **48/48**. Selective event, server and DB packets also answered all questions correctly when given the necessary actual observations.
+
+The **two full source-execution repetitions** agreed on all 48 case results and 50 stable categorical fields per case, with zero disagreements. The two actual browser Trace ZIP sets used 1,655,362 and 1,654,963 bytes. The original first run's request/event/server/SQL packet used 7,290 bytes compressed in total (zlib level 9 per case). These different artifacts carry different information scopes; the size contrast is descriptive, not an equal-function compression claim.
+
+**Critical distinction:** The reconstructed Trace predicts the database effect **from final browser DOM state**. A separate SQLite query in the retained effect packet records the actual committed state. Those yield the same answers in R7's 48 deliberately controlled tasks, but their source provenance and evidentiary guarantees differ. The 48-case experiment does not demonstrate an accuracy advantage for selective evidence over full native Playwright Trace, nor does it include blinded human reviewers or production agent error-rate evidence.
+
+- [Full R7 result and implications](docs/weblinx-r7-dom-auditor-results.md)
+- [Actual raw Trace DOM decoder](scripts/weblinx_r7_trace_dom_auditor.py)
+- [Independent auditor runner](scripts/weblinx_r7_compare_auditors.py)
+- [Individual original 48-case predictions and truth](results/weblinx_r7_DOM_vs_packets_48.csv)
+- [All 5 question-category scores and actual byte costs](results/weblinx_r7_DOM_vs_packets_summary.json)
+- [Independent 48-case/50-field repeat comparison](results/weblinx_r7_independent_repeat.json)
+
+The accepted manuscript and Zenodo DOI remain unchanged while the audit validity questions are being evaluated.
