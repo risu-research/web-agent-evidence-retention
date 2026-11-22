@@ -47,4 +47,10 @@ Original-run SHA-256:
 
 The original source hashes of `flaskr/blog.py`, `schema.sql` and all relevant HTML templates are retained in the numeric summary. No user accounts, cookies, literal session IDs, real text, screenshots, or raw Trace ZIPs are exported.
 
+### Independent full rerun
+
+A second [complete six-case Flaskr browser+server+SQLite run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45063234987) independently downloaded the frozen upstream Git commit and recreated all the source cases with new server, database and browser contexts. Its [comparison program](../scripts/weblinx_round5b2_compare.py) checked **17 outcome and payload fields** for all six cases against the first source run. There were **zero discrepancies**: every episode again reached a real POST, received HTTP 200 with the original validation message, and left both database rows unchanged.
+
+The standard Trace ZIPs were independently regenerated and measured: **53,512** total bytes in the first six-case run versus **53,830** in the repeated run. Their byte inequality is a recorded execution characteristic, not a difference in application outcome.
+
 The principal R5B-1 dataset remains exactly 48 cases. R5B-2 adds six separate server-rejection negative controls. A future evaluation should use at least one different maintained web application and a separate action/effect reference for independent generalization.
