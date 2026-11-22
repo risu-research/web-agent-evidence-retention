@@ -1,0 +1,49 @@
+name: Reproduce clustered storage uncertainty
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/storage-uncertainty.yml"
+      - "scripts/storage_cost_bootstrap.py"
+      - "results/storage_cost_600_actions_2026-11-22.csv"
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Recompute demonstration-cluster intervals
+        run: python scripts/storage_cost_bootstrap.py
+      - name: Validate frozen point estimates
+        run: |
+          python - <<'PY'
+          import json
+          p="results/storage_cost_cluster_bootstrap_2026-11-22.json"
+          x=json.load(open(p))
+          assert x["n"]==600 and x["demonstrations"]==55
+          assert x["replicates"]==5000 and x["seed"]==2026112237
+          m=x["metrics"]
+          assert abs(m["gain_staged_vs_selective"]["estimate"]-70/600)<1e-12
+          assert abs(m["selective_hash_saving_vs_all_hash"]["estimate"]-
+                     (1-792980/1670040))<1e-12
+          assert abs(m["cost_ratio_png_to_fullframe"]["estimate"]-
+                     (309543191/206275510))<1e-12
+          print("PASS: fixed sample, policy costs and bootstrap seed")
+          PY
+      - name: Preserve uncertainty results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/storage_cost_cluster_bootstrap_2026-11-22.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Preserve 55-demonstration storage uncertainty intervals"
+            git push origin HEAD:main
+          fi
