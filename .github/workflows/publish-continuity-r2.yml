@@ -1,0 +1,52 @@
+name: Preserve independently repeated WebLINX R2 HTML source results
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/publish-continuity-r2.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  preserve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download independently reproduced original HTML observations
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 45055880614 -R risu-research/web-agent-evidence-retention -n weblinx-continuity-r2-source -D original
+      - name: Verify complete, derived-only original outputs
+        run: |
+          echo "d71168fd4ea9564c4cda16471fa6902cf0e7665089cfee16cfef7b3746df174a  original/out_continuity_r2/source_pair_summary.json" | sha256sum -c -
+          echo "8eeba01c2c385129bcc8238987844395e63211c5627af5078a6fc5fe1cc3536b  original/out_continuity_r2/source_pair_diagnostics_165.csv" | sha256sum -c -
+          python - <<'PY'
+          import csv,json
+          p="original/out_continuity_r2/"
+          with open(p+"source_pair_diagnostics_165.csv",newline="",encoding="utf-8") as f:
+              reader=csv.DictReader(f);columns=set(reader.fieldnames);rows=list(reader)
+          s=json.load(open(p+"source_pair_summary.json"))
+          assert len(rows)==165 and s["changed_html_bytes_pairs"]==139
+          assert s["parsed_pairs"]==165
+          assert s["source_file_statuses"]=={"fetched":233}
+          assert columns.isdisjoint({"url","html","element_text","uid","xpath","event_target","page_content"})
+          assert s["cross_state_ground_truth_status"]=="NOT_INDEPENDENTLY_ADJUDICATED"
+          print("PASS: 165 source-verified transitions, no raw page or locator data")
+          PY
+      - name: Commit byte-identical observed results
+        run: |
+          mkdir -p results
+          cp original/out_continuity_r2/source_pair_summary.json results/weblinx_continuity_r2_summary.json
+          cp original/out_continuity_r2/source_pair_diagnostics_165.csv results/weblinx_continuity_r2_pairs.csv
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/weblinx_continuity_r2*
+          if ! git diff --cached --quiet; then
+            git commit -m "Archive independently repeated 165-pair WebLINX source audit"
+            git push origin HEAD:main
+          fi
