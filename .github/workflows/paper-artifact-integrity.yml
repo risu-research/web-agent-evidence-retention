@@ -1,0 +1,40 @@
+name: Camera-ready paper artifact offline integrity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/PAPER_REPRODUCTION.md"
+      - "docs/DATASET_TERMS.md"
+      - "docs/storage-cost-results.md"
+      - "results/**"
+      - "scripts/verify_paper_artifact.py"
+      - "tests/test_paper_artifact.py"
+      - ".github/workflows/paper-artifact-integrity.yml"
+  pull_request:
+    paths:
+      - "docs/PAPER_REPRODUCTION.md"
+      - "docs/DATASET_TERMS.md"
+      - "docs/storage-cost-results.md"
+      - "results/**"
+      - "scripts/verify_paper_artifact.py"
+      - "tests/test_paper_artifact.py"
+      - ".github/workflows/paper-artifact-integrity.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check paper-to-code numeric consistency without a network download
+        run: |
+          python scripts/verify_paper_artifact.py
+          python -m unittest discover -s tests -p test_paper_artifact.py -v
