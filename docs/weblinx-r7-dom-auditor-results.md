@@ -76,6 +76,14 @@ Original R7 SHA-256:
 - 48-case JSON summary `2a72e1fae82360ca0ef255a6e00cbc6895ed0772048b80c1ea0fde0a5efa749c`;
 - 48-case full derived CSV `706fbd149da6de28fb62c28bb9d10dc531a1aff60022cb2e6e82fc6a604c77da`.
 
+## Independent full source reproduction
+
+A second full [48-case Django browser/Trace execution](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45067470635) independently recreated all 48 native Django edit/delete tasks, the original browser Trace ZIPs, DOM trees, separate event and WSGI observations and post-commit SQLite source labels. The [machine comparison](../scripts/weblinx_r7_compare_repeats.py) compared **50 nonvolatile fields on every case**, including every Trace auditor answer, abstention, packet auditor answer, source oracle label and compact packet cost. There were **zero differing source fields** and the exact five-question verdict aggregates matched.
+
+The native Trace archives themselves differed in content volume as expected. The first run decoded **1,088** snapshots and **14,825** cross-snapshot subtree references, totaling **1,655,362** ZIP bytes. The independent run decoded **1,085** snapshots and **14,733** historical references, totaling **1,654,963** ZIP bytes. Neither run had any decoder reference failures.
+
+The independent runner's **actual source experiment, source output comparison and 48-case gate all succeeded**. Its separate attempt to push the completed comparison directly to GitHub returned a non-fast-forward rejection because another documentation commit landed concurrently. This Git publishing race did not change or invalidate the execution. The complete verified comparison JSON was retained in the GitHub Actions artifact, byte-hashed, and published through a separate recovery workflow without rerunning or altering the scientific result.
+
 ## Reproduction and artifact links
 
 - [Fixed R7 protocol](weblinx-r7-dom-auditor-protocol.md)
