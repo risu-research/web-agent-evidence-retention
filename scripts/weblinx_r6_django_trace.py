@@ -76,16 +76,18 @@ MUTATE=r"""({condition}) => {
    body.appendChild(clone);
  }
  if(condition==="overlay_standard" || condition==="overlay_force"){
-   const box=la.getBoundingClientRect();
+   // A full-viewport pointer intercept is insensitive to responsive
+   // layout, CSS and automatic scrolling during Playwright actionability.
    const cover=document.createElement("div");
    cover.id="r6-cover";
    Object.assign(cover.style,{
-     position:"fixed",left:box.left+"px",top:box.top+"px",
-     width:Math.max(6,box.width)+"px",height:Math.max(6,box.height)+"px",
+     position:"fixed",inset:"0",width:"100vw",height:"100vh",
      zIndex:"2147483647",pointerEvents:"auto",
      background:"rgba(0,0,0,0.14)"
    });
-   document.body.appendChild(cover);
+   document.documentElement.appendChild(cover);
+   if (document.elementFromPoint(10,10)!==cover)
+     throw Error("Pointer interception fixture failed");
  }
  if(condition==="prevent_default")
    la.addEventListener("click",e=>e.preventDefault(),false);
