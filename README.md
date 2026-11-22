@@ -26,6 +26,7 @@ The earlier fixed-action candidate-expansion analysis can be run separately:
 
 ```bash
 python scripts/reproduce_universe.py
+python scripts/verify_universe.py out_audit/universe_summary.json
 ```
 
 That analysis uses an earlier, top-10-conditioned sample. Its results belong to a separate sensitivity test.
@@ -34,7 +35,7 @@ That analysis uses an earlier, top-10-conditioned sample. Its results belong to 
 
 - `scripts/reproduce_confirm.py`: final 600-action confirmatory analysis
 - `scripts/reproduce_universe.py`: fixed-action candidate-expansion sensitivity
-- `scripts/verify_results.py`: validates a freshly generated summary against the frozen results
+- `scripts/verify_results.py` and `scripts/verify_universe.py`: compare newly generated summaries with the frozen results
 - `results/`: published aggregate reference tables
 - `docs/protocol.md`: fixed data and experiment definitions
 - `docs/provenance.md`: links to the original computation commits and successful runs
