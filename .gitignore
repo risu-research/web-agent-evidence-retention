@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+wl_confirm/
+wl_audit/
+out_confirm/
+out_audit/
+*.part
+.env
+.env.*
+*.zip
+*.pdf
+*.log
+.DS_Store
