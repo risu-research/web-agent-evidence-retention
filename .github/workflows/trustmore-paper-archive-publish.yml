@@ -1,0 +1,79 @@
+name: Publish TRUSTMORE 2026 verified paper-only release for Zenodo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trustmore-paper-archive-publish.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: risu-research/web-agent-evidence-retention
+      FROZEN_COMMIT: f2333815efc93fffc882533387aed6618007dcdd
+      TAG: trustmore2026-artifact-v1.0.0
+      ZIPNAME: TRUSTMORE2026_WEB_AGENT_EVIDENCE_RETENTION_ARTIFACT_v1.0.0.zip
+      EXPECTED_SHA256: 503757f09731287a48228b44a2f35abfe256b6c196e5f328e6f673c90cf6a738
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve only the independently verified 107-file freeze artifact
+        run: |
+          mkdir -p freeze
+          gh run download 45080755946 -R "$REPO" \
+            -n trustmore2026-frozen-paper-artifact -D freeze
+      - name: Independently check frozen archive provenance and manifest
+        run: |
+          cd freeze
+          sha256sum -c "$ZIPNAME.sha256"
+          python - <<'PY'
+          import hashlib,os,pathlib,zipfile
+          root=pathlib.Path(".")
+          archive=root/os.environ["ZIPNAME"]
+          expected=os.environ["EXPECTED_SHA256"]
+          assert hashlib.sha256(archive.read_bytes()).hexdigest()==expected
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None
+              names=z.namelist()
+              assert len(names)==108, len(names)
+              prefix="TRUSTMORE2026_WEB_AGENT_EVIDENCE_RETENTION_ARTIFACT_v1.0.0/"
+              assert all(n.startswith(prefix) for n in names)
+              body=z.read(prefix+"MANIFEST_SHA256.txt").decode()
+              entries=[]
+              for row in body.splitlines():
+                  sha,path=row.split("  ",1)
+                  assert hashlib.sha256(z.read(prefix+path)).hexdigest()==sha,path
+                  entries.append(path)
+              assert len(entries)==107 and len(set(entries))==107
+              assert sorted(entries)==sorted(n.removeprefix(prefix) for n in names
+                                                if n!=prefix+"MANIFEST_SHA256.txt")
+              manifest=z.read(prefix+"FROZEN_FILE_LIST.txt").decode()
+              frozen_files=manifest.split("\n\n",1)[1].splitlines()
+              assert sorted(frozen_files)==sorted(entries)
+              assert not any(p.startswith(("scripts/weblinx_r6","scripts/weblinx_r7",
+                                            "scripts/weblinx_r8","scripts/weblinx_round5"))
+                             for p in entries)
+          print("PASS: verified paper-only 107-file source, SHA-256 manifest and exact ZIP digest")
+          PY
+      - name: Verify immutable tag target and publish GitHub release
+        run: |
+          branch_sha="$(gh api "repos/$REPO/branches/trustmore2026-artifact-v1" --jq '.commit.sha')"
+          test "$branch_sha" = "$FROZEN_COMMIT"
+          if gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
+            echo "Release exists. Stop to protect archival identity."
+            exit 1
+          fi
+          gh release create "$TAG" \
+            "freeze/$ZIPNAME" "freeze/$ZIPNAME.sha256" \
+            -R "$REPO" \
+            --target "$FROZEN_COMMIT" \
+            --title "TRUSTMORE 2026 Web-Agent Evidence Retention Artifact v1.0.0" \
+            --notes "Frozen camera-ready reproducibility archive for What Must a Web-Agent Log Remember? Candidate Omission, Evidence Collision, and Selective Retention. GitHub source tag points to the reviewed 107-file paper-only tree at $FROZEN_COMMIT. Two source-based 600-action reproductions, the independent 598-action sensitivity study, DMR-vs-Replay XPath, 70 residual cases, and measured storage cost are covered by the included code and numeric results. No raw WebLINX HTML, screenshots, sessions, Trace ZIPs, or exploratory R5-R8B artifacts are included. Source dataset terms: CC BY-NC-SA 4.0 plus publisher restrictions; original code MIT. Verified release ZIP SHA-256: $EXPECTED_SHA256." \
+            --latest=false
+          gh release view "$TAG" -R "$REPO" --json tagName,targetCommitish,url,isDraft,isPrerelease,assets
