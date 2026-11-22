@@ -4,6 +4,8 @@
 
 **Repository:** [risu-research/web-agent-evidence-retention](https://github.com/risu-research/web-agent-evidence-retention).
 
+**Published v1.0.0 archive:** [Zenodo DOI 10.5281/zenodo.24450361](https://doi.org/10.5281/zenodo.24450361) ([GitHub release](https://github.com/risu-research/web-agent-evidence-retention/releases/tag/trustmore2026-artifact-v1.0.0)); 107 allowlisted files; original reviewed source at commit `f2333815efc93fffc882533387aed6618007dcdd`.
+
 **Primary source:** `McGill-NLP/WebLINX-full` at revision `36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8`.
 
 **Main population:** frozen 600 actions from 55 demonstrations. The separate fixed-action candidate-expansion sensitivity uses 598 actions sampled under earlier top-10 eligibility conditions. R5–R8B controlled browser experiments address later-stage execution evidence and are exploratory extensions outside the paper's primary quantitative tables.
@@ -90,4 +92,4 @@ In the storage table, **621,808 bytes** for DMR XPath and **50,556 bytes** for t
 
 The previously published source runner artifacts are retained as numeric JSON/CSV under `results/`; GitHub Actions attachments have limited retention. Important source revisions, frozen seeds, checksums, and run IDs are recorded in [the reproduction record](reproduction-2026-11-22.md), [identifier results](identifier-baseline-results.md), [storage results](storage-cost-results.md), and [R3C results](weblinx-continuity-r3c-results.md).
 
-The repo's MIT license applies to original scripts. The source dataset has [separate third-party terms](DATASET_TERMS.md). Raw HTML, screenshots, literal XPaths, sessions, and Trace ZIPs are deliberately excluded from the release. A GitHub release, Zenodo archive DOI, and corresponding manuscript DOI insertion belong to a separate final freeze after the publication files and asset list are approved.
+The repo's MIT license applies to original scripts. The source dataset has [separate third-party terms](DATASET_TERMS.md). Raw HTML, screenshots, literal XPaths, sessions, and Trace ZIPs are deliberately excluded from the release. **Release completed:** The reviewed paper-only GitHub v1.0.0 release and its [Zenodo version DOI](https://doi.org/10.5281/zenodo.24450361) are published. The source archive is fixed at commit `f2333815efc93fffc882533387aed6618007dcdd`; the manuscript reproducibility section cites this DOI. The 86 core archive tests and the full 600-action source-rerun CI succeeded.

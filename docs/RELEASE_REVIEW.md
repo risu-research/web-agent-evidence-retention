@@ -1,4 +1,4 @@
-# Final release boundary and pre-Zenodo review
+# Final archival boundary and release audit
 
 This checklist defines the recommended source archive for the camera-ready paper *What Must a Web-Agent Log Remember? Candidate Omission, Evidence Collision, and Selective Retention*.
 
@@ -31,4 +31,4 @@ The repository's `.gitignore` reduces accidental commits of common raw outputs; 
 6. Freeze the Git commit or release tag; generate a SHA-256 file manifest from the actual archive contents, and validate it after downloading the archive.
 7. Confirm the final paper metadata and references. Publish the reviewed archive, then add the actual issued DOI to the manuscript and citation metadata.
 
-**Status (2026-11-22):** Reproduction code and derived numeric records are public. Artifact-maintenance checks and the source rerun are tracked in the repository's GitHub Actions. The paper-specific archive and its permanent DOI require a separate final release decision.
+**Final status:** Published paper-only archive v1.0.0 at [Zenodo record 24450361](https://zenodo.org/records/24450361), version DOI `10.5281/zenodo.24450361`, concept DOI `10.5281/zenodo.24450360`. Reviewed 107-file Git tree `f2333815efc93fffc882533387aed6618007dcdd`, source runner #45077986130 successful, clean archive validation #45080755946 with 86 tests, final release publishing #45080878472 successful. The tag is immutable; additional experiments remain on `main`.

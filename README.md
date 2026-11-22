@@ -8,6 +8,9 @@ The confirmatory analysis uses 600 WebLINX actions from 55 demonstrations. With 
 
 ## Camera-ready manuscript reproduction
 
+**Published, version-specific artifact DOI:** [10.5281/zenodo.24450361](https://doi.org/10.5281/zenodo.24450361). The [Zenodo record](https://zenodo.org/records/24450361) archives the exact [GitHub v1.0.0 paper-only release](https://github.com/risu-research/web-agent-evidence-retention/releases/tag/trustmore2026-artifact-v1.0.0), whose source tag points to the frozen 107-file Git tree `f2333815efc93fffc882533387aed6618007dcdd`. This curated release has a verified file manifest, 86 passing core tests, and an independently reproduced 600-action storage experiment.
+
+
 Start with the [paper-to-code reproduction guide](docs/PAPER_REPRODUCTION.md), which maps every numbered paper table to its exact archived result, script, and successful full-data source run. The [offline artifact validator](scripts/verify_paper_artifact.py) checks the headline counts, 600 action-level storage records, the DMR-versus-Replay XPath distinction, and bootstrap point estimates without downloading data.
 
 ```bash
@@ -18,7 +21,7 @@ The official WebLINX-full data remain with the publisher. The dataset has a [CC 
 
 R5–R8B browser-runtime work is preserved here as exploratory extensions. The camera-ready paper's main quantitative tables use the frozen 600-action WebLINX cohort and the separately identified 598-action sensitivity study.
 
-For the final archival package, use the [reviewed public release boundary](docs/RELEASE_REVIEW.md) to exclude raw source material and unrelated exploratory runs.
+The paper-only v1.0.0 archive follows the [reviewed public release boundary](docs/RELEASE_REVIEW.md), excluding raw source material and unrelated exploratory runs.
 
 ## Reproduce
 
@@ -103,7 +106,7 @@ The [full measured results](docs/storage-cost-results.md), [frozen comparison pr
 python scripts/storage_cost_casebook.py
 ```
 
-The code retrieves source images from the original publisher and exports derived numeric records. The Zenodo release remains scheduled for the final artifact audit.
+The code retrieves source images from the original publisher and exports derived numeric records. The verified paper-only release is archived on [Zenodo](https://zenodo.org/records/24450361) with DOI [10.5281/zenodo.24450361](https://doi.org/10.5281/zenodo.24450361).
 
 ## Consecutive-state source verification
 
@@ -121,7 +124,7 @@ python scripts/weblinx_continuity_r1.py
 python scripts/weblinx_continuity_r2.py
 ```
 
-The R1/R2 workflows, complete numeric casebooks, original replay digests, and immutable source revision are retained in this repository. No release or Zenodo DOI was issued.
+The R1/R2 workflows, complete numeric casebooks, original replay digests, and immutable source revision are retained in this repository. Their original experimental run preceded the final v1.0.0 artifact release.
 
 ## Round 4: native-ID reference overlap and independent semantic evidence
 
