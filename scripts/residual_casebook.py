@@ -484,5 +484,5 @@ with (RES_OUT/"residual_70_cases.csv").open("w",newline="",encoding="utf-8") as 
     writer.writeheader()
     writer.writerows(case_rows)
 (RES_OUT/"residual_summary.json").write_text(
-    json.dumps(summary70,sort_keys=True,indent=2)+"\n",encoding="utf-8")
-print("RESIDUAL_SUMMARY",json.dumps(summary70,sort_keys=True))
+    json.dumps(summary70,sort_keys=True,indent=2,default=jd)+"\n",encoding="utf-8")
+print("RESIDUAL_SUMMARY",json.dumps(summary70,sort_keys=True,default=jd))
