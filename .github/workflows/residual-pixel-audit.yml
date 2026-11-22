@@ -59,6 +59,12 @@ jobs:
           assert summ["competitor_counts"]["pixel_valid_comparisons"]==sum(int(r["valid_visual_competitor_n"]) for r in rows)
           print("PASS: complete 70-case pixel-level measurements, public schema")
           PY
+      - name: Reproduce all four archived audit files byte for byte
+        run: |
+          echo "a141e76d34b11a9dd63828293dd8cc06fc96d4aaf3292ec1ef4293bdc041e05b  out_residual/residual_summary.json" | sha256sum -c -
+          echo "a1d603af041fc5dd27a52f6c4e46a29b2761a6cb5ea3fbdf801fa8485302a5e3  out_residual/residual_70_cases.csv" | sha256sum -c -
+          echo "b26db3ca8707824551dc75dfa1a752a70138ad38362633abde79b46974facb0d  out_pixel/residual_pixel_summary.json" | sha256sum -c -
+          echo "38591f3a5749a015a23642de4ac745d0e2cbd7f8e0ae6ef027f227ca6b8d305b  out_pixel/residual_pixel_cases.csv" | sha256sum -c -
       - name: Hash results
         if: always()
         run: |
