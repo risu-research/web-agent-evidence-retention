@@ -1,4 +1,4 @@
-name: R10B2 Trace attached POST and header audit
+name: R10B3 exact CSRF input attribution and resource inventory
 on:
   push:
     branches: [research/r09-native-group-revocation]
@@ -180,11 +180,33 @@ jobs:
                       val=attrs["__playwright_target__"]
                       attrs["__playwright_target__"]=calls.get(val,val)
                   return [tag,attrs,[targetnorm(ch) for ch in children]]
+              csrf_inventory=Counter()
+              def csrf_check(node):
+                  if not isinstance(node,Node):return
+                  attrs=node.attrs
+                  if "__playwright_value_" in attrs:
+                      if node.name.upper()=="INPUT" and attrs.get("name")=="csrfmiddlewaretoken" and attrs.get("type","").lower()=="hidden":
+                          raw=str(attrs.get("__playwright_value_",""))
+                          native=str(attrs.get("value",""))
+                          if raw==native and re.fullmatch(r"[A-Za-z0-9]{64}",raw):
+                              csrf_inventory["hidden_csrf_runtime_matches_native_masked_token"]+=1
+                          else:csrf_inventory["hidden_csrf_runtime_other"]+=1
+                      else:csrf_inventory["other_input_runtime_value"]+=1
+                  for child in node.children:csrf_check(child)
+              def csrf_norm(x):
+                  if isinstance(x,str):return x
+                  if not isinstance(x,list) or len(x)!=3:return x
+                  tag,attrs,children=x
+                  attrs=dict(attrs)
+                  if tag.upper()=="INPUT" and attrs.get("name")=="csrfmiddlewaretoken" and attrs.get("type","").lower()=="hidden" and attrs.get("value")=="CSRF" and re.fullmatch(r"[A-Za-z0-9]{64}",str(attrs.get("__playwright_value_",""))):
+                      attrs["__playwright_value_"]="CSRF"
+                  return [tag,attrs,[csrf_norm(ch) for ch in children]]
               snaps=[]
               for meta,node in snapshots:
+                  csrf_check(node)
                   original=node_value(node,base)
                   key=[calls.get(meta.get("callId"),"unmapped"),meta.get("phase"),meta.get("snapshotName","").split("@")[0],urlsplit(meta.get("frameUrl","")).path]
-                  snaps.append((key,original,targetnorm(original)))
+                  snaps.append((key,original,csrf_norm(targetnorm(original))))
               def normobj(obj):
                   if isinstance(obj,str):return normalize(obj,base)
                   if isinstance(obj,list):return [normobj(x) for x in obj]
@@ -194,9 +216,9 @@ jobs:
               for e in events:
                   if e.get("type")=="before":
                       actions.append([e.get("class"),e.get("method"),e.get("apiName"),normobj(e.get("params"))])
-              resources=[]
+              resources=[]; schema=Counter(); content_keys=Counter(); response_keys=Counter(); post_keys=Counter()
               with zipfile.ZipFile(trace) as z:
-                  names=set(z.namelist())
+                  names=set(z.namelist()); schema["zip_resource_members"]=sum(n.startswith("resources/") for n in names)
                   for entry in net:
                       st=entry.get("snapshot",{})
                       req=st.get("request",{}); res=st.get("response",{})
@@ -233,11 +255,22 @@ jobs:
                               result.append((name,value))
                           return sorted(result)
                       content=res.get("content") or {}
-                      sha=content.get("_sha1")
-                      name="resources/"+str(sha)
-                      body="missing"
-                      if sha and name in names:
-                          b=z.read(name)
+                      content_keys.update(content.keys());response_keys.update(res.keys());post_keys.update(post.keys())
+                      sha=content.get("_sha1") or content.get("sha1") or content.get("_file")
+                      name=str(sha) if str(sha).startswith("resources/") else "resources/"+str(sha)
+                      body="missing"; b=None
+                      if sha:
+                          schema["response_attachment_reference"]+=1
+                          if name in names:b=z.read(name);schema["response_attachment_read"]+=1
+                          else:schema["response_attachment_not_found"]+=1
+                      elif isinstance(content.get("text"),str) and content["text"]:
+                          if content.get("encoding")=="base64":
+                              import base64
+                              b=base64.b64decode(content["text"],validate=True)
+                          else:b=content["text"].encode("utf-8")
+                          schema["response_inline_read"]+=1
+                      else:schema["response_no_body_reference_or_inline"]+=1
+                      if b is not None:
                           if "html" in str(content.get("mimeType","")):
                               body=digest(normalize(b.decode("utf-8",errors="strict"),base))
                           else:body=hashlib.sha256(b).hexdigest()
@@ -246,7 +279,7 @@ jobs:
                                         "request_headers":headers(req.get("headers",[])),"response_headers":headers(res.get("headers",[])),
                                         "request_header_names":sorted(h["name"].lower() for h in req.get("headers",[])),
                                         "response_header_names":sorted(h["name"].lower() for h in res.get("headers",[]))})
-              return {"snapshots":snaps,"actions":actions,"resources":resources}
+              return {"snapshots":snaps,"actions":actions,"resources":resources,"csrf_inventory":dict(csrf_inventory),"resource_schema":dict(schema),"content_keys":dict(content_keys),"response_keys":dict(response_keys),"post_keys":dict(post_keys)}
           def compare_trace(left,right):
               # Preserve unequal sequence and distinguish same-state duplicates from changes.
               a,b=left["snapshots"],right["snapshots"]
@@ -296,6 +329,8 @@ jobs:
                                   "header_value_differences":{f:sorted({name for r in ax[k]+bx[k] for name,value in r[f] if [[v for n,v in row[f] if n==name] for row in ax[k]]!=[[v for n,v in row[f] if n==name] for row in bx[k]]}) for f in ("request_headers","response_headers")}}
                   return out
               return {"snapshot_counts":[len(a),len(b)],"aligned":aligned,"raw_aligned_equal":raw_equal,
+                      "csrf_inventory":[left["csrf_inventory"],right["csrf_inventory"]],
+                      "resource_schema":[{k:side[k] for k in ("resource_schema","content_keys","response_keys","post_keys")} for side in (left,right)],
                       "marker_normalized_aligned_equal":equal,"unmatched":unmatched,"node_diff_counts":dict(diff),"redacted_diff_examples":examples,
                       "marker_normalized_snapshot_hash_sets_equal":set(x[1] for x in aa)==set(x[1] for x in bb),
                       "action_records_equal":left["actions"]==right["actions"],
@@ -444,7 +479,7 @@ jobs:
                           "gate":"Three equal-pre native collisions, same-loss negative control and visible-count positive control.",
                           "native_gate":all(all(p[k] for k in ("same_three_dom","same_document_records","same_native_admin_log","native_http_agreement","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","lost_different","alt_packet_differs")) for p in pairs[:3]) and all(pairs[3][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id")) and not pairs[3]["lost_different"] and not pairs[3]["alt_packet_differs"] and not pairs[4]["same_confirmation"] and pairs[4]["same_pre_effective_all"] and all(pairs[5][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","same_loss_margins","lost_pairs_differ","alt_packet_differs"))}
                   (out/"summary.json").write_text(json.dumps(result,indent=2,sort_keys=True))
-                  print("R10B2_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
+                  print("R10B3_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
                   assert result["native_gate"],"R10B native scientific gate failed"
           if __name__=="__main__":main()
           
@@ -456,7 +491,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: r10b2-derived-results-only
+          name: r10b3-derived-results-only
           path: |
             out_r09_first/summary.json
             out_r09/summary.json
