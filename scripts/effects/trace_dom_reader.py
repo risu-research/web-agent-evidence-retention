@@ -1,13 +1,4 @@
-"""R7 blind TRACE-ONLY DOM snapshot reader.
-
-Receives only a real Playwright Trace ZIP, synthetic public record identity
-map A/B, and no independent WSGI, SQLite, or injected event log.
-
-Reconstructs the compact DOM NodeSnapshot encoding from real frame-snapshot
-events, INCLUDING Playwright subtree references [[back, postorder_index]].
-Audits a strict first-click action and the before/final Django Admin table.
-Never exports source HTML or selector values.
-"""
+"""Decode Playwright DOM snapshots and their historical subtree references."""
 from __future__ import annotations
 import json
 import re

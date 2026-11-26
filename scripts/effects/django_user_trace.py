@@ -1,9 +1,4 @@
-"""R7 original Django 48-case matched comparison of two blinded auditors.
-
-Trace auditor sees ONLY Playwright raw Trace ZIP plus static A/B IDs.
-Packet auditor sees ONLY purpose-built layered observed packet values.
-Independent WSGI/browser-event/SQL truth is joined after both answer.
-"""
+"""Compare decoded browser Trace evidence with independent event, HTTP and database observations."""
 from __future__ import annotations
 
 import csv
@@ -159,7 +154,7 @@ def run():
     OUT.mkdir(parents=True,exist_ok=True)
     cases=r6.matrix()
     if len(cases)!=48 or len(set(cases))!=48:
-        raise AssertionError("R7 changed original 48-action cohort")
+        raise AssertionError("Unexpected 48-condition matrix")
     import django
     from playwright.sync_api import sync_playwright
     with tempfile.TemporaryDirectory(prefix="r7_master_") as folder:

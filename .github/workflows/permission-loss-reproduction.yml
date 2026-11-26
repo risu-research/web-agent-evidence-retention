@@ -2,17 +2,21 @@ name: Verify paper artifact and reproduce runtime experiments
 on:
   push:
     branches: [artifact/permission-loss-reproduction]
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   verify:
+    if: github.event_name != 'pull_request' || github.head_ref == 'artifact/permission-loss-reproduction'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -84,3 +88,27 @@ jobs:
             out_permission_first/summary.json
             release-verification/
           if-no-files-found: warn
+  publish:
+    needs: verify
+    if: github.event_name == 'pull_request' && github.head_ref == 'artifact/permission-loss-reproduction'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Publish verified version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=trustmore2026-artifact-v1.1.0
+          sha=$(git rev-parse HEAD)
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Existing release: inspect before changing it"
+            exit 1
+          fi
+          git archive --format=zip --prefix=web-agent-evidence-retention/ HEAD -o /tmp/source.zip
+          unzip -tq /tmp/source.zip
+          gh release create "$tag" --target "$sha" --title "TRUSTMORE 2026 reproducibility artifact v1.1.0" --notes "Version 1.1.0 adds the Django Admin Trace and permission-loss experiments, independent evidence packet checks, and finite SQLite model. The WebLINX source and results remain unchanged. See README.md and docs/EFFECT_REPRODUCTION.md for reproduction."

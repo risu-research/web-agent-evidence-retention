@@ -1,0 +1,21 @@
+{
+  "title": "Web-Agent Evidence Retention: TRUSTMORE 2026 Reproducibility Artifact",
+  "upload_type": "software",
+  "description": "Reproducibility code, derived results, and experiment protocols for WebLINX target identification and controlled Django Admin permission-loss experiments. Includes independent packet decoders, a finite SQLite model, and source-data reproduction instructions.",
+  "creators": [
+    {
+      "name": "Lee, Moon Hwan",
+      "affiliation": "RISU Institute"
+    }
+  ],
+  "license": "MIT",
+  "version": "1.1.0",
+  "keywords": [
+    "web agents",
+    "audit evidence",
+    "WebLINX",
+    "Django",
+    "reproducibility",
+    "permission loss"
+  ]
+}

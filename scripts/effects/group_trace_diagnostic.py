@@ -1,11 +1,4 @@
-"""R10A: prospectively fixed native deletion with equal PRE effective permissions.
-Same target ID, member IDs and group permissions, all seeded-user effective permission
-sets and pre-access verdicts. Vary only redundant direct/group grant paths.
-Three collision pairs, one non-collision control (different paths, same loss),
-one visible positive control. Independent SQL, native Django get_all_permissions,
-protected GET and pre-delete alternative-grant packet. No app/DOM modification.
-Report full Trace hash-set mismatch separately. No raw session data published.
-"""
+"""Native group deletion: compare decoded DOM and HTTP evidence across matched conditions."""
 import sys, json, re, hashlib, tempfile, shutil, threading, sqlite3, zlib, zipfile
 from collections import Counter, defaultdict
 from difflib import SequenceMatcher
@@ -454,5 +447,5 @@ def main():
                 "native_gate":all(all(p[k] for k in ("same_three_dom","same_document_records","same_native_admin_log","native_http_agreement","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","lost_different","alt_packet_differs")) for p in pairs[:3]) and all(pairs[3][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id")) and not pairs[3]["lost_different"] and not pairs[3]["alt_packet_differs"] and not pairs[4]["same_confirmation"] and pairs[4]["same_pre_effective_all"] and all(pairs[5][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","same_loss_margins","lost_pairs_differ","alt_packet_differs"))}
         (out/"summary.json").write_text(json.dumps(result,indent=2,sort_keys=True))
         print("TRACE_DIAGNOSTIC_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
-        assert result["native_gate"],"R10B native scientific gate failed"
+        assert result["native_gate"],"Native permission-loss comparison failed"
 if __name__=="__main__":main()

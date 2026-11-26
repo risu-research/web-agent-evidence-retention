@@ -1,11 +1,4 @@
-"""R6: second independently maintained web app (unmodified Django admin)
-and direct parsed Playwright Trace comparison.
-
-Controlled data only. 48 browser episodes with fresh per-case SQLite.
-The Django admin web app, auth model, backend routes and forms are upstream.
-Event observer, WSGI boundary, SQLite readback and Trace-only analyzer are
-independent sources. Raw browser traces and session data are never exported.
-"""
+"""Controlled Django Admin user-row browser fixtures and independent observations."""
 from __future__ import annotations
 
 import csv

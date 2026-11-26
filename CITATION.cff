@@ -6,7 +6,7 @@ authors:
   - family-names: Lee
     given-names: Moon Hwan
     affiliation: RISU Institute
-version: 1.1.0-rc.1
+version: 1.1.0
 repository-code: https://github.com/risu-research/web-agent-evidence-retention
 url: https://github.com/risu-research/web-agent-evidence-retention
 abstract: >-
