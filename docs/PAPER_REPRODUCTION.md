@@ -1,12 +1,12 @@
 # Camera-ready paper: table-to-artifact reproduction
 
-**Paper:** *What Must a Web-Agent Log Remember? Candidate Omission, Evidence Collision, and Selective Retention* (TRUSTMORE 2026 working camera-ready revision, November 22, 2026).
+**Paper:** *What Must a Web-Agent Log Remember? Candidate Omission, Evidence Collision, and Selective Retention* (TRUSTMORE 2026 revised camera-ready manuscript).
 
 **Repository:** [risu-research/web-agent-evidence-retention](https://github.com/risu-research/web-agent-evidence-retention).
 
 **Primary source:** `McGill-NLP/WebLINX-full` at revision `36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8`.
 
-**Main population:** frozen 600 actions from 55 demonstrations. The separate fixed-action candidate-expansion sensitivity uses 598 actions sampled under earlier top-10 eligibility conditions. R5–R8B controlled browser experiments address later-stage execution evidence and are exploratory extensions outside the paper's primary quantitative tables.
+**Main population:** frozen 600 actions from 55 demonstrations. The separate fixed-action candidate-expansion sensitivity uses 598 actions sampled under earlier top-10 eligibility conditions. Section IX adds selected controlled Django experiments. See [runtime reproduction](EFFECT_REPRODUCTION.md) for Tables VIII and IX.
 
 ## Fast independent check (offline)
 
@@ -14,9 +14,10 @@ Use Python 3.11; the following check relies on the standard library and shipped 
 
 ```bash
 python scripts/verify_paper_artifact.py
+python scripts/effects/verify_effects.py
 ```
 
-It checks the sample, headline coverage/recovery, 70-case partition, DMR and Replay XPath distinction, encoded storage totals, individual 600-row cost aggregation, bootstrap point estimates, and separation of screenshot/pHash from exact-RGB scoring. This is an **archived-output consistency audit**, so it should be followed by source reruns when independently reproducing the experiment.
+It checks the sample, headline coverage/recovery, 70-case partition, DMR and Replay XPath distinction, encoded storage totals, individual 600-row cost aggregation, bootstrap point estimates, and separation of screenshot/pHash from exact-RGB scoring. The second command verifies the runtime evidence and runs the finite SQLite model. The following sections describe fresh computations from the original sources.
 
 ## Source-data reproduction
 
@@ -72,10 +73,14 @@ The R3C script reads original replay-action XPath strings and evaluates them aga
 | VIII: fixed-action 598 sensitivity | `scripts/reproduce_universe.py` | `results/rerun-2026-11-22/universe_summary.json`, `results/fixed_action_sensitivity.csv` | [main run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45031621684) |
 | VIII, Table VII: 64-bit pHash thresholds | `scripts/reproduce_confirm.py` | `results/phash_sensitivity_final.csv`, confirmatory JSON | [locked repeat](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45032360039) |
 
+## Section IX, Tables VIII–IX
+
+The [runtime reproduction guide](EFFECT_REPRODUCTION.md) maps both new tables and the 48-condition Trace comparison to exact source runs, data and offline verification. Run `python scripts/effects/verify_effects.py`.
+
 ## The two XPath measurements
 
 - **600/600:** exact equality using the `[[xpath]]` field of the *published DMR candidate records* for the target and all released candidates in the **same recorded state**. The positive dataset label chooses the field retained in the hypothetical target signature. `scripts/identifier_baseline.py` also checks the dataset UID oracle separately.
-- **589/600:** the *different* XPath string in `Replay.action.arguments.element.xpath` selects the dataset-UID-labeled element when evaluated against the publisher's saved source HTML. Ten select no element and one selects a different element. These observations concern saved-source agreement. They do not measure independently observed click delivery.
+- **589/600:** the *different* XPath string in `Replay.action.arguments.element.xpath` selects the dataset-UID-labeled element when evaluated against the publisher's saved source HTML. Ten select no element and one selects a different element. These observations measure agreement with the saved source HTML.
 
 In the storage table, **621,808 bytes** for DMR XPath and **50,556 bytes** for target-only DMR XPath both derive from the published candidate field, with the latter depending on an external candidate index or page state.
 
@@ -83,11 +88,11 @@ In the storage table, **621,808 bytes** for DMR XPath and **50,556 bytes** for t
 
 - `all_hashes` and `selective_hashes` serialize compact candidate/target signatures and use the original pHash compatibility criterion; both identify **530/600**.
 - `semantic_plus_crops` creates lossless RGB PNGs, verifies their reconstructed pHashes, and scores **545/600** under **exact RGB** comparison. Under the original pHash rule the same crops recover **530/600**.
-- `full_frame` adds the publisher's actual screenshot-file bytes to compressed target/candidate metadata. Its **530/600** figure uses the original pHash outcome for those regions; there is no independent full-frame packet decoder. Source screenshots retain page context beyond the narrow identification benchmark.
+- `full_frame` adds the publisher's actual screenshot-file bytes to compressed target/candidate metadata. Its **530/600** figure uses the original pHash outcome for those regions; the score comes from region-level pHash recovery. Source screenshots retain page context beyond the narrow identification benchmark.
 - These sizes measure specific JSON/zlib/PNG encodings, excluding network, runtime capture latency, filesystem metadata, encryption, and raw webpage redistribution.
 
 ## Integrity and release boundary
 
 The previously published source runner artifacts are retained as numeric JSON/CSV under `results/`; GitHub Actions attachments have limited retention. Important source revisions, frozen seeds, checksums, and run IDs are recorded in [the reproduction record](reproduction-2026-11-22.md), [identifier results](identifier-baseline-results.md), [storage results](storage-cost-results.md), and [R3C results](weblinx-continuity-r3c-results.md).
 
-The repo's MIT license applies to original scripts. The source dataset has [separate third-party terms](DATASET_TERMS.md). Raw HTML, screenshots, literal XPaths, sessions, and Trace ZIPs are deliberately excluded from the release. A GitHub release, Zenodo archive DOI, and corresponding manuscript DOI insertion belong to a separate final freeze after the publication files and asset list are approved.
+The repo's MIT license applies to original scripts. The source dataset has [separate third-party terms](DATASET_TERMS.md). Raw HTML, screenshots, literal XPaths, sessions, and Trace ZIPs are deliberately excluded from the release. The release tag identifies the archived source version.

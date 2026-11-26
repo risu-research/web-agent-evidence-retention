@@ -1,0 +1,114 @@
+name: Verify paper artifact and reproduce runtime experiments
+on:
+  push:
+    branches: [artifact/permission-loss-reproduction]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: github.event_name != 'pull_request' || github.head_ref == 'artifact/permission-loss-reproduction'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python scripts/verify_paper_artifact.py
+          python scripts/effects/verify_effects.py
+          python -m compileall -q scripts/effects
+          python - <<'PY'
+          import hashlib, pathlib, subprocess, re
+          paths=subprocess.check_output(['git','ls-files','-z']).decode().strip('\0').split('\0')
+          bad=[]
+          for name in paths:
+              p=pathlib.Path(name)
+              if re.search(r'(^|/)(?:\.env(?:\..*)?|__pycache__|\.venv|node_modules|.*\.sqlite3?|.*\.trace|.*\.network|.*\.zip|.*\.pem|.*\.key|.*handoff.*|.*conversation.*)(?:/|$)',name,re.I):
+                  bad.append(name)
+          assert not bad,bad
+          added=subprocess.check_output(['git','diff','--name-only','trustmore2026-artifact-v1.0.0','HEAD']).decode().splitlines()
+          print('Changed paths:', '\n'.join(added))
+          print('Tracked files:',len(paths))
+          out=pathlib.Path('release-verification');out.mkdir(exist_ok=True)
+          (out/'SHA256SUMS').write_text(''.join(hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()+'  '+p+'\n' for p in sorted(paths)))
+          (out/'FILES.txt').write_text('\n'.join(sorted(paths))+'\n')
+          PY
+          git archive --format=zip --prefix=web-agent-evidence-retention/ HEAD -o release-verification/source.zip
+          unzip -tq release-verification/source.zip
+      - run: |
+          python -m pip install -r requirements-effects.txt
+          python -m playwright install --with-deps chromium
+      - run: |
+          python scripts/effects/django_user_trace.py
+          python scripts/effects/group_trace_diagnostic.py
+          mv out_permission_loss out_trace_diagnostic
+          python scripts/effects/group_permission_packets.py
+          mv out_permission_loss out_permission_first
+          python scripts/effects/group_permission_packets.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.loads(Path('out_round7/r7_trace_DOM_vs_packets_summary.json').read_text())
+          assert s['cases']==48 and all(v['correct']==48 for v in s['evaluations']['trace'].values())
+          for folder in ('out_trace_diagnostic','out_permission_loss'):
+              s=json.loads(Path(folder,'summary.json').read_text())
+              assert s['native_gate']
+          s=json.loads(Path('out_permission_loss/summary.json').read_text())
+          assert all(v['correct']==12 for v in s['packet_totals'].values())
+          expected=json.loads(Path('results/effects/group_permission_packets.json').read_text())[0]
+          for folder in ('out_permission_first','out_permission_loss'):
+              actual=json.loads(Path(folder,'summary.json').read_text())
+              assert actual['native_gate'] and actual['packet_totals']==expected['packet_totals']
+              assert actual['observed_collision']==expected['observed_collision']
+              assert [r['packets'] for r in actual['cases']]==[r['packets'] for r in expected['cases']]
+              assert [r['lost_pairs'] for r in actual['cases']]==[r['truth'] for r in expected['cases']]
+          d=json.loads(Path('out_trace_diagnostic/summary.json').read_text())
+          core=[p for p in d['pairs'] if p['kind'] not in ('same_loss_control','visible_count_control')]
+          assert len(core)==4
+          assert all(p['trace_decomposition']['aligned']>0 and p['trace_decomposition']['marker_normalized_aligned_equal']==p['trace_decomposition']['aligned'] for p in core)
+          print('Packet payloads, loss sets and counts match archived source in both repeats')
+          print('Runtime reproduction gates passed')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: derived-runtime-reproduction
+          path: |
+            out_round7/r7_trace_DOM_vs_packets_48.csv
+            out_round7/r7_trace_DOM_vs_packets_summary.json
+            out_trace_diagnostic/summary.json
+            out_permission_loss/summary.json
+            out_permission_first/summary.json
+            release-verification/
+          if-no-files-found: warn
+  publish:
+    needs: verify
+    if: github.event_name == 'pull_request' && github.head_ref == 'artifact/permission-loss-reproduction' && github.base_ref == 'artifact/v1.0.0-baseline'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Publish verified version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=trustmore2026-artifact-v1.1.0
+          sha=$(git rev-parse HEAD)
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Existing release: inspect before changing it"
+            exit 1
+          fi
+          git archive --format=zip --prefix=web-agent-evidence-retention/ HEAD -o /tmp/source.zip
+          unzip -tq /tmp/source.zip
+          gh release create "$tag" --target "$sha" --title "TRUSTMORE 2026 reproducibility artifact v1.1.0" --notes "Version 1.1.0 adds the Django Admin Trace and permission-loss experiments, independent evidence packet checks, and finite SQLite model. The WebLINX source and results remain unchanged. See README.md and docs/EFFECT_REPRODUCTION.md for reproduction."

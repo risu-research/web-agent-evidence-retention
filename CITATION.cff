@@ -6,8 +6,7 @@ authors:
   - family-names: Lee
     given-names: Moon Hwan
     affiliation: RISU Institute
-version: 1.0.0
-date-released: 2026-11-22
+version: 1.1.0
 repository-code: https://github.com/risu-research/web-agent-evidence-retention
 url: https://github.com/risu-research/web-agent-evidence-retention
 abstract: >-
@@ -15,3 +14,6 @@ abstract: >-
   evidence-collision and measured selective-retention study, including the
   598-action candidate-expansion sensitivity, exact locator baselines,
   independent verified source reruns, and rights/redistribution notices.
+  The revised artifact adds controlled Django Admin browser experiments,
+  permission-loss counterexamples, exact evidence packet comparison,
+  and a finite relational model with independent SQLite verification.
