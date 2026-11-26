@@ -1,0 +1,208 @@
+{
+  "DOM_snapshot_totals": {
+    "action_target_markers_found": 42,
+    "original_table_snapshots": 847,
+    "recorded": 1088,
+    "subtree_ref_failures": 0,
+    "subtree_refs_resolved": 14825,
+    "successfully_decoded": 1088
+  },
+  "LLM_as_judge": false,
+  "audit_with_human_DOM_review": false,
+  "cases": 48,
+  "chromium": "159.0.8154.6",
+  "database_oracle": "fresh independent sqlite3.connect",
+  "django": "5.2.12",
+  "evaluations": {
+    "effect": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "event": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "server": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 48,
+        "accuracy_among_answered": null,
+        "answered": 0,
+        "correct": 0,
+        "coverage": 0.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    },
+    "trace": {
+      "Q2_visible_click_row": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q3_server_mutating_POST": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q4_SQLite_effect": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      },
+      "Q5_first_click_status": {
+        "abstain": 0,
+        "accuracy_among_answered": 1.0,
+        "answered": 48,
+        "correct": 48,
+        "coverage": 1.0,
+        "denominator": 48,
+        "wrong": 0
+      }
+    }
+  },
+  "first_click_oracle": "independent trusted browser capture",
+  "name": "R7 live authentic Django trace DOM reconstruction versus selective tier auditors",
+  "native_trace_DOM_decoder": "frame-snapshot HTML node arrays plus resolved subtree references",
+  "native_trace_zip_total_bytes": 1655362,
+  "original_source_effect_counts": {
+    "A": 16,
+    "B": 8,
+    "none": 24
+  },
+  "packet_bytes_by_tier": {
+    "effect": {
+      "raw_utf8": 11032,
+      "zlib9_per_episode": 7290
+    },
+    "event": {
+      "raw_utf8": 6376,
+      "zlib9_per_episode": 5026
+    },
+    "request": {
+      "raw_utf8": 3676,
+      "zlib9_per_episode": 3670
+    },
+    "server": {
+      "raw_utf8": 7744,
+      "zlib9_per_episode": 5734
+    }
+  },
+  "playwright": "1.65.2",
+  "production_agent_error_frequency": false,
+  "python": "3.11.18",
+  "raw_trace_ZIP_published": false,
+  "server_oracle": "independent WSGI route log",
+  "source_app": "Django original admin/auth user-management 5.2.12",
+  "source_tag_commit": "4f382ca672f86dd4a1e4d071c91d0caad0e124b3",
+  "tier_auditors_evaluated_with_no_trace_input": true,
+  "trace_Q2_evidence": "DOM locator/action inference, not isTrusted observation",
+  "trace_Q4_evidence": "DOM rendered-result inference, not committed SQL oracle",
+  "trace_auditor_evaluated_with_no_oracle_input": true
+}

@@ -1,0 +1,50 @@
+name: Verify paper artifact and reproduce runtime experiments
+on:
+  push:
+    branches: [artifact/permission-loss-reproduction]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python scripts/verify_paper_artifact.py
+          python scripts/effects/verify_effects.py
+          python -m compileall -q scripts/effects
+      - run: |
+          python -m pip install -r requirements-effects.txt
+          python -m playwright install --with-deps chromium
+      - run: |
+          python scripts/effects/django_user_trace.py
+          python scripts/effects/group_trace_diagnostic.py
+          mv out_permission_loss out_trace_diagnostic
+          python scripts/effects/group_permission_packets.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.loads(Path('out_round7/r7_trace_DOM_vs_packets_summary.json').read_text())
+          assert s['cases']==48 and all(v['correct']==48 for v in s['evaluations']['trace'].values())
+          for folder in ('out_trace_diagnostic','out_permission_loss'):
+              s=json.loads(Path(folder,'summary.json').read_text())
+              assert s['native_gate']
+          s=json.loads(Path('out_permission_loss/summary.json').read_text())
+          assert all(v['correct']==12 for v in s['packet_totals'].values())
+          print('Runtime reproduction gates passed')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: derived-runtime-reproduction
+          path: |
+            out_round7/r7_trace_DOM_vs_packets_48.csv
+            out_round7/r7_trace_DOM_vs_packets_summary.json
+            out_trace_diagnostic/summary.json
+            out_permission_loss/summary.json
+          if-no-files-found: warn

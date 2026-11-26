@@ -1,0 +1,1956 @@
+[
+  {
+    "cases": [
+      {
+        "kind": "backup_group_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_a\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 73
+          }
+        },
+        "trace_bytes": 263862,
+        "truth": [],
+        "variant": 0
+      },
+      {
+        "kind": "backup_group_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 99,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 41,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_user\"]]]",
+            "zlib_bytes": 49
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0100\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 46,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[]]]",
+            "zlib_bytes": 51
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 74
+          }
+        },
+        "trace_bytes": 386579,
+        "truth": [
+          [
+            "member_a",
+            "change_user"
+          ]
+        ],
+        "variant": 1
+      },
+      {
+        "kind": "direct_grant_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 74
+          }
+        },
+        "trace_bytes": 236683,
+        "truth": [],
+        "variant": 0
+      },
+      {
+        "kind": "direct_grant_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 99,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 41,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_user\"]]]",
+            "zlib_bytes": 49
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0100\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 46,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[]]]",
+            "zlib_bytes": 51
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 74
+          }
+        },
+        "trace_bytes": 254566,
+        "truth": [
+          [
+            "member_a",
+            "change_user"
+          ]
+        ],
+        "variant": 1
+      },
+      {
+        "kind": "two_members_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 59,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],\"01\"]]",
+            "zlib_bytes": 59
+          },
+          "post_effective_before_after": {
+            "bytes": 99,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 59
+          },
+          "post_loss_list": {
+            "bytes": 41,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_b\",\"change_user\"]]]",
+            "zlib_bytes": 49
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0001\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 59,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],\"10\"]]",
+            "zlib_bytes": 57
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 83,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 59
+          },
+          "pre_full_relationships": {
+            "bytes": 102,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_a\",2],[\"member_b\",1]],[[1,\"change_user\"],[2,\"change_user\"]],[]]]",
+            "zlib_bytes": 72
+          }
+        },
+        "trace_bytes": 258785,
+        "truth": [
+          [
+            "member_b",
+            "change_user"
+          ]
+        ],
+        "variant": 0
+      },
+      {
+        "kind": "two_members_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 59,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],\"10\"]]",
+            "zlib_bytes": 59
+          },
+          "post_effective_before_after": {
+            "bytes": 99,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 41,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_user\"]]]",
+            "zlib_bytes": 49
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0100\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 59,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],\"01\"]]",
+            "zlib_bytes": 57
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 83,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 61
+          },
+          "pre_full_relationships": {
+            "bytes": 102,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",1],[\"member_b\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[]]]",
+            "zlib_bytes": 71
+          }
+        },
+        "trace_bytes": 272952,
+        "truth": [
+          [
+            "member_a",
+            "change_user"
+          ]
+        ],
+        "variant": 1
+      },
+      {
+        "kind": "same_loss_control",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_a\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 73
+          }
+        },
+        "trace_bytes": 254397,
+        "truth": [],
+        "variant": 0
+      },
+      {
+        "kind": "same_loss_control",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 125,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 71
+          }
+        },
+        "trace_bytes": 258797,
+        "truth": [],
+        "variant": 1
+      },
+      {
+        "kind": "visible_count_control",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 36,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[],[\"change_user\"],\"\"]]",
+            "zlib_bytes": 44
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 36,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[],[\"change_user\"],\"\"]]",
+            "zlib_bytes": 41
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 36,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[],[\"change_user\"],[]]]",
+            "zlib_bytes": 42
+          },
+          "pre_full_relationships": {
+            "bytes": 111,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 65
+          }
+        },
+        "trace_bytes": 245202,
+        "truth": [],
+        "variant": 0
+      },
+      {
+        "kind": "visible_count_control",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 125,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 71
+          }
+        },
+        "trace_bytes": 258072,
+        "truth": [],
+        "variant": 1
+      },
+      {
+        "kind": "equal_marginals_two_permissions",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"1001\"]]",
+            "zlib_bytes": 70
+          },
+          "post_effective_before_after": {
+            "bytes": 183,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_group\"],[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"]]]]",
+            "zlib_bytes": 70
+          },
+          "post_loss_list": {
+            "bytes": 69,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_group\"],[\"member_b\",\"change_user\"]]]",
+            "zlib_bytes": 61
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"1001\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0110\"]]",
+            "zlib_bytes": 67
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 126,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"]]]]",
+            "zlib_bytes": 74
+          },
+          "pre_full_relationships": {
+            "bytes": 160,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",1]],[[1,\"change_group\"],[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"]]]]",
+            "zlib_bytes": 85
+          }
+        },
+        "trace_bytes": 272303,
+        "truth": [
+          [
+            "member_a",
+            "change_group"
+          ],
+          [
+            "member_b",
+            "change_user"
+          ]
+        ],
+        "variant": 0
+      },
+      {
+        "kind": "equal_marginals_two_permissions",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0110\"]]",
+            "zlib_bytes": 70
+          },
+          "post_effective_before_after": {
+            "bytes": 183,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_group\"],[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_group\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 73
+          },
+          "post_loss_list": {
+            "bytes": 69,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"]]]",
+            "zlib_bytes": 61
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0110\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"1001\"]]",
+            "zlib_bytes": 67
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 126,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],[[\"member_a\",\"change_group\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 74
+          },
+          "pre_full_relationships": {
+            "bytes": 160,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",1]],[[1,\"change_group\"],[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_group\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 85
+          }
+        },
+        "trace_bytes": 257715,
+        "truth": [
+          [
+            "member_a",
+            "change_user"
+          ],
+          [
+            "member_b",
+            "change_group"
+          ]
+        ],
+        "variant": 1
+      }
+    ],
+    "native_gate": true,
+    "observed_collision": {
+      "pre_effective_plus_loss_margins": {
+        "distinct_records": 6,
+        "observed_ambiguous_episodes": 2,
+        "observed_conflicting_classes": 1
+      },
+      "target_and_native_log": {
+        "distinct_records": 1,
+        "observed_ambiguous_episodes": 12,
+        "observed_conflicting_classes": 1
+      },
+      "target_members_permissions_pre_effective": {
+        "distinct_records": 4,
+        "observed_ambiguous_episodes": 11,
+        "observed_conflicting_classes": 3
+      }
+    },
+    "packet_totals": {
+      "post_candidate_loss_bits": {
+        "correct": 12,
+        "max_zlib": 70,
+        "min_zlib": 44,
+        "raw": 635,
+        "zlib": 673
+      },
+      "post_effective_before_after": {
+        "correct": 12,
+        "max_zlib": 73,
+        "min_zlib": 59,
+        "raw": 1518,
+        "zlib": 742
+      },
+      "post_loss_list": {
+        "correct": 12,
+        "max_zlib": 61,
+        "min_zlib": 23,
+        "raw": 392,
+        "zlib": 456
+      },
+      "post_universe_loss_bits": {
+        "correct": 12,
+        "max_zlib": 70,
+        "min_zlib": 68,
+        "raw": 912,
+        "zlib": 828
+      },
+      "pre_candidates_alternative_bits": {
+        "correct": 12,
+        "max_zlib": 67,
+        "min_zlib": 41,
+        "raw": 635,
+        "zlib": 646
+      },
+      "pre_candidates_alternative_list": {
+        "correct": 12,
+        "max_zlib": 74,
+        "min_zlib": 42,
+        "raw": 906,
+        "zlib": 687
+      },
+      "pre_full_relationships": {
+        "correct": 12,
+        "max_zlib": 85,
+        "min_zlib": 65,
+        "raw": 1450,
+        "zlib": 888
+      }
+    }
+  },
+  {
+    "cases": [
+      {
+        "kind": "backup_group_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_a\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 73
+          }
+        },
+        "trace_bytes": 272417,
+        "truth": [],
+        "variant": 0
+      },
+      {
+        "kind": "backup_group_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 99,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 41,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_user\"]]]",
+            "zlib_bytes": 49
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0100\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 46,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[]]]",
+            "zlib_bytes": 51
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 74
+          }
+        },
+        "trace_bytes": 272347,
+        "truth": [
+          [
+            "member_a",
+            "change_user"
+          ]
+        ],
+        "variant": 1
+      },
+      {
+        "kind": "direct_grant_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 74
+          }
+        },
+        "trace_bytes": 272432,
+        "truth": [],
+        "variant": 0
+      },
+      {
+        "kind": "direct_grant_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 99,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 41,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_user\"]]]",
+            "zlib_bytes": 49
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0100\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 46,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[]]]",
+            "zlib_bytes": 51
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 74
+          }
+        },
+        "trace_bytes": 272424,
+        "truth": [
+          [
+            "member_a",
+            "change_user"
+          ]
+        ],
+        "variant": 1
+      },
+      {
+        "kind": "two_members_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 59,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],\"01\"]]",
+            "zlib_bytes": 59
+          },
+          "post_effective_before_after": {
+            "bytes": 99,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 59
+          },
+          "post_loss_list": {
+            "bytes": 41,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_b\",\"change_user\"]]]",
+            "zlib_bytes": 49
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0001\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 59,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],\"10\"]]",
+            "zlib_bytes": 57
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 83,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 59
+          },
+          "pre_full_relationships": {
+            "bytes": 102,
+            "decoded": [
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_a\",2],[\"member_b\",1]],[[1,\"change_user\"],[2,\"change_user\"]],[]]]",
+            "zlib_bytes": 72
+          }
+        },
+        "trace_bytes": 254986,
+        "truth": [
+          [
+            "member_b",
+            "change_user"
+          ]
+        ],
+        "variant": 0
+      },
+      {
+        "kind": "two_members_equal_pre",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 59,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],\"10\"]]",
+            "zlib_bytes": 59
+          },
+          "post_effective_before_after": {
+            "bytes": 99,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 41,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_user\"]]]",
+            "zlib_bytes": 49
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0100\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 59,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],\"01\"]]",
+            "zlib_bytes": 57
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 83,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\",\"member_b\"],[\"change_user\"],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 61
+          },
+          "pre_full_relationships": {
+            "bytes": 102,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",1],[\"member_b\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[]]]",
+            "zlib_bytes": 71
+          }
+        },
+        "trace_bytes": 237245,
+        "truth": [
+          [
+            "member_a",
+            "change_user"
+          ]
+        ],
+        "variant": 1
+      },
+      {
+        "kind": "same_loss_control",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 113,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_a\",2]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 73
+          }
+        },
+        "trace_bytes": 231987,
+        "truth": [],
+        "variant": 0
+      },
+      {
+        "kind": "same_loss_control",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 125,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 71
+          }
+        },
+        "trace_bytes": 281359,
+        "truth": [],
+        "variant": 1
+      },
+      {
+        "kind": "visible_count_control",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 36,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[],[\"change_user\"],\"\"]]",
+            "zlib_bytes": 44
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 36,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[],[\"change_user\"],\"\"]]",
+            "zlib_bytes": 41
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 36,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[],[\"change_user\"],[]]]",
+            "zlib_bytes": 42
+          },
+          "pre_full_relationships": {
+            "bytes": 111,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 65
+          }
+        },
+        "trace_bytes": 245192,
+        "truth": [],
+        "variant": 0
+      },
+      {
+        "kind": "visible_count_control",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,6,1,true,[[\"member_a\"],[\"change_user\"],\"0\"]]",
+            "zlib_bytes": 53
+          },
+          "post_effective_before_after": {
+            "bytes": 126,
+            "decoded": [],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 60
+          },
+          "post_loss_list": {
+            "bytes": 15,
+            "decoded": [],
+            "encoded": "[1,4,1,true,[]]",
+            "zlib_bytes": 23
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0000\"]]",
+            "zlib_bytes": 68
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 47,
+            "decoded": [],
+            "encoded": "[1,1,1,true,[[\"member_a\"],[\"change_user\"],\"1\"]]",
+            "zlib_bytes": 51
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 72,
+            "decoded": [],
+            "encoded": "[1,2,1,true,[[\"member_a\"],[\"change_user\"],[[\"member_a\",\"change_user\"]]]]",
+            "zlib_bytes": 55
+          },
+          "pre_full_relationships": {
+            "bytes": 125,
+            "decoded": [],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1]],[[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 71
+          }
+        },
+        "trace_bytes": 287990,
+        "truth": [],
+        "variant": 1
+      },
+      {
+        "kind": "equal_marginals_two_permissions",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"1001\"]]",
+            "zlib_bytes": 70
+          },
+          "post_effective_before_after": {
+            "bytes": 183,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_group\"],[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"]]]]",
+            "zlib_bytes": 70
+          },
+          "post_loss_list": {
+            "bytes": 69,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_group\"],[\"member_b\",\"change_user\"]]]",
+            "zlib_bytes": 61
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"1001\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0110\"]]",
+            "zlib_bytes": 67
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 126,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"]]]]",
+            "zlib_bytes": 74
+          },
+          "pre_full_relationships": {
+            "bytes": 160,
+            "decoded": [
+              [
+                "member_a",
+                "change_group"
+              ],
+              [
+                "member_b",
+                "change_user"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",1]],[[1,\"change_group\"],[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"]]]]",
+            "zlib_bytes": 85
+          }
+        },
+        "trace_bytes": 283032,
+        "truth": [
+          [
+            "member_a",
+            "change_group"
+          ],
+          [
+            "member_b",
+            "change_user"
+          ]
+        ],
+        "variant": 0
+      },
+      {
+        "kind": "equal_marginals_two_permissions",
+        "packets": {
+          "post_candidate_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,6,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0110\"]]",
+            "zlib_bytes": 70
+          },
+          "post_effective_before_after": {
+            "bytes": 183,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,3,1,true,[[[\"member_a\",\"change_group\"],[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"],[\"member_b\",\"change_user\"]],[[\"member_a\",\"change_group\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 73
+          },
+          "post_loss_list": {
+            "bytes": 69,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,4,1,true,[[\"member_a\",\"change_user\"],[\"member_b\",\"change_group\"]]]",
+            "zlib_bytes": 61
+          },
+          "post_universe_loss_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,5,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"0110\"]]",
+            "zlib_bytes": 70
+          },
+          "pre_candidates_alternative_bits": {
+            "bytes": 76,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,1,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],\"1001\"]]",
+            "zlib_bytes": 67
+          },
+          "pre_candidates_alternative_list": {
+            "bytes": 126,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,2,1,true,[[\"member_a\",\"member_b\"],[\"change_group\",\"change_user\"],[[\"member_a\",\"change_group\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 74
+          },
+          "pre_full_relationships": {
+            "bytes": 160,
+            "decoded": [
+              [
+                "member_a",
+                "change_user"
+              ],
+              [
+                "member_b",
+                "change_group"
+              ]
+            ],
+            "encoded": "[1,0,1,true,[[[\"member_a\",1],[\"member_b\",1]],[[1,\"change_group\"],[1,\"change_user\"],[2,\"change_user\"]],[[\"member_a\",\"change_group\"],[\"member_b\",\"change_user\"]]]]",
+            "zlib_bytes": 85
+          }
+        },
+        "trace_bytes": 236090,
+        "truth": [
+          [
+            "member_a",
+            "change_user"
+          ],
+          [
+            "member_b",
+            "change_group"
+          ]
+        ],
+        "variant": 1
+      }
+    ],
+    "native_gate": true,
+    "observed_collision": {
+      "pre_effective_plus_loss_margins": {
+        "distinct_records": 6,
+        "observed_ambiguous_episodes": 2,
+        "observed_conflicting_classes": 1
+      },
+      "target_and_native_log": {
+        "distinct_records": 1,
+        "observed_ambiguous_episodes": 12,
+        "observed_conflicting_classes": 1
+      },
+      "target_members_permissions_pre_effective": {
+        "distinct_records": 4,
+        "observed_ambiguous_episodes": 11,
+        "observed_conflicting_classes": 3
+      }
+    },
+    "packet_totals": {
+      "post_candidate_loss_bits": {
+        "correct": 12,
+        "max_zlib": 70,
+        "min_zlib": 44,
+        "raw": 635,
+        "zlib": 673
+      },
+      "post_effective_before_after": {
+        "correct": 12,
+        "max_zlib": 73,
+        "min_zlib": 59,
+        "raw": 1518,
+        "zlib": 742
+      },
+      "post_loss_list": {
+        "correct": 12,
+        "max_zlib": 61,
+        "min_zlib": 23,
+        "raw": 392,
+        "zlib": 456
+      },
+      "post_universe_loss_bits": {
+        "correct": 12,
+        "max_zlib": 70,
+        "min_zlib": 68,
+        "raw": 912,
+        "zlib": 828
+      },
+      "pre_candidates_alternative_bits": {
+        "correct": 12,
+        "max_zlib": 67,
+        "min_zlib": 41,
+        "raw": 635,
+        "zlib": 646
+      },
+      "pre_candidates_alternative_list": {
+        "correct": 12,
+        "max_zlib": 74,
+        "min_zlib": 42,
+        "raw": 906,
+        "zlib": 687
+      },
+      "pre_full_relationships": {
+        "correct": 12,
+        "max_zlib": 85,
+        "min_zlib": 65,
+        "raw": 1450,
+        "zlib": 888
+      }
+    }
+  }
+]

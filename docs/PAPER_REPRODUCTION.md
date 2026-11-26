@@ -1,12 +1,12 @@
 # Camera-ready paper: table-to-artifact reproduction
 
-**Paper:** *What Must a Web-Agent Log Remember? Candidate Omission, Evidence Collision, and Selective Retention* (TRUSTMORE 2026 working camera-ready revision, November 22, 2026).
+**Paper:** *What Must a Web-Agent Log Remember? Candidate Omission, Evidence Collision, and Selective Retention* (TRUSTMORE 2026 revised camera-ready manuscript).
 
 **Repository:** [risu-research/web-agent-evidence-retention](https://github.com/risu-research/web-agent-evidence-retention).
 
 **Primary source:** `McGill-NLP/WebLINX-full` at revision `36ef9f79b43df50e25b7f3b68e5c9f6ccf4160e8`.
 
-**Main population:** frozen 600 actions from 55 demonstrations. The separate fixed-action candidate-expansion sensitivity uses 598 actions sampled under earlier top-10 eligibility conditions. R5–R8B controlled browser experiments address later-stage execution evidence and are exploratory extensions outside the paper's primary quantitative tables.
+**Main population:** frozen 600 actions from 55 demonstrations. The separate fixed-action candidate-expansion sensitivity uses 598 actions sampled under earlier top-10 eligibility conditions. Section IX adds selected controlled Django experiments. See [runtime reproduction](EFFECT_REPRODUCTION.md) for Tables VIII and IX.
 
 ## Fast independent check (offline)
 
@@ -71,6 +71,10 @@ The R3C script reads original replay-action XPath strings and evaluates them aga
 | VII: demonstration-cluster cost uncertainty | `scripts/storage_cost_bootstrap.py` | `results/storage_cost_cluster_bootstrap_2026-11-22.json` | [storage uncertainty workflow](../.github/workflows/storage-uncertainty.yml) |
 | VIII: fixed-action 598 sensitivity | `scripts/reproduce_universe.py` | `results/rerun-2026-11-22/universe_summary.json`, `results/fixed_action_sensitivity.csv` | [main run](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45031621684) |
 | VIII, Table VII: 64-bit pHash thresholds | `scripts/reproduce_confirm.py` | `results/phash_sensitivity_final.csv`, confirmatory JSON | [locked repeat](https://github.com/risu-research/web-agent-evidence-retention/actions/runs/45032360039) |
+
+## Section IX, Tables VIII–IX
+
+The [runtime reproduction guide](EFFECT_REPRODUCTION.md) maps both new tables and the 48-condition Trace comparison to exact source runs, data and offline verification. Run `python scripts/effects/verify_effects.py`.
 
 ## The two XPath measurements
 
