@@ -1,4 +1,4 @@
-name: R10B3 exact CSRF input attribution and resource inventory
+name: R10C actual native execution evidence packet comparison
 on:
   push:
     branches: [research/r09-native-group-revocation]
@@ -150,6 +150,83 @@ jobs:
                     WHERE m.group_id=? ORDER BY u.username,p.codename
                   """,(ids["target"],ids["target"])).fetchall()
               return rows
+          # R10C: same question, same identifier encoding, same episode envelope.
+          # Each complete packet carries version, numeric method ID, target identity,
+          # independently verified deletion success and its method-specific payload.
+          # Pre-state packets are conditional predictions; post-state packets are observations.
+          METHODS={0:"pre_full_relationships",1:"pre_candidates_alternative_bits",2:"pre_candidates_alternative_list",
+                   3:"post_effective_before_after",4:"post_loss_list",5:"post_universe_loss_bits",
+                   6:"post_candidate_loss_bits"}
+          def relationship_packet(db):
+              with sqlite3.connect(db) as con:
+                  membership=con.execute("""
+                    SELECT u.username,g.id FROM auth_user_groups m JOIN auth_user u ON u.id=m.user_id
+                    JOIN auth_group g ON g.id=m.group_id WHERE u.username IN ('member_a','member_b')
+                    ORDER BY u.username,g.id
+                  """).fetchall()
+                  grants=con.execute("""
+                    SELECT g.id,p.codename FROM auth_group_permissions x JOIN auth_group g ON g.id=x.group_id
+                    JOIN auth_permission p ON p.id=x.permission_id JOIN django_content_type t ON t.id=p.content_type_id
+                    WHERE t.app_label='auth' AND p.codename IN ('change_user','change_group')
+                    ORDER BY g.id,p.codename
+                  """).fetchall()
+                  direct=con.execute("""
+                    SELECT u.username,p.codename FROM auth_user_user_permissions x JOIN auth_user u ON u.id=x.user_id
+                    JOIN auth_permission p ON p.id=x.permission_id JOIN django_content_type t ON t.id=p.content_type_id
+                    WHERE u.username IN ('member_a','member_b') AND t.app_label='auth' AND p.codename IN ('change_user','change_group')
+                    ORDER BY u.username,p.codename
+                  """).fetchall()
+              return [membership,grants,direct]
+          def decode_packet(blob):
+              version,method,target,committed,payload=json.loads(blob)
+              assert version==1 and method in METHODS
+              if method in (0,1,2) and not committed:return []
+              if method==0:
+                  membership,grants,direct=payload
+                  full={(u,p) for u,g in membership for h,p in grants if g==h}|set(map(tuple,direct))
+                  remaining={(u,p) for u,g in membership for h,p in grants if g==h and g!=target}|set(map(tuple,direct))
+                  result=full-remaining
+              elif method in (1,2,5,6):
+                  members,perms,data=payload
+                  candidates=[(u,p) for u in members for p in perms]
+                  if method==2:result=set(candidates)-set(map(tuple,data))
+                  else:
+                      assert len(data)==len(candidates) and set(data)<={"0","1"}
+                      result={pair for pair,bit in zip(candidates,data) if bit==("0" if method==1 else "1")}
+              elif method==3:result=set(map(tuple,payload[0]))-set(map(tuple,payload[1]))
+              elif method==4:result=set(map(tuple,payload))
+              return sorted(result)
+          def observed_effective(native):
+              return sorted((u,p) for u in ("member_a","member_b") for p in ("change_group","change_user") if "auth."+p in native[u]["all_permissions"])
+          def build_packets(target,pre,alt,rel,native_before,native_after,committed):
+              members=pre["target_members"];perms=pre["target_permissions"]
+              candidates=[(u,p) for u in members for p in perms]
+              alternatives={(u,p) for u,p,has in alt if has}
+              assert set(candidates)=={(u,p) for u,p,has in alt}
+              actual_before=observed_effective(native_before)
+              actual_after=observed_effective(native_after)
+              actual_loss=sorted(set(actual_before)-set(actual_after))
+              # Include the identity dictionary in every bitmap; no free out-of-band dictionary.
+              users=["member_a","member_b"];permissions=["change_group","change_user"]
+              universe=[(u,p) for u in users for p in permissions]
+              assert set(actual_loss)<=set(candidates)
+              payloads={
+                0:rel,
+                1:[members,perms,"".join("1" if x in alternatives else "0" for x in candidates)],
+                2:[members,perms,sorted(alternatives)],
+                3:[actual_before,actual_after],
+                4:actual_loss,
+                5:[users,permissions,"".join("1" if x in actual_loss else "0" for x in universe)],
+                6:[members,perms,"".join("1" if x in actual_loss else "0" for x in candidates)]}
+              packets={}
+              for method,payload in payloads.items():
+                  raw=json.dumps([1,method,target,committed,payload],separators=(",",":"),sort_keys=True).encode()
+                  compressed=zlib.compress(raw,9)
+                  # Auditor receives only decoded packet bytes, no database or oracle.
+                  result=decode_packet(zlib.decompress(compressed))
+                  assert result==decode_packet(raw)
+                  packets[METHODS[method]]={"encoded":raw.decode(),"bytes":len(raw),"zlib_bytes":len(compressed),"decoded":result}
+              return packets
           def digest(x):
               return hashlib.sha256(json.dumps(x,sort_keys=True,separators=(",",":")).encode()).hexdigest()
           def normalize(s,base):
@@ -225,8 +302,8 @@ jobs:
                       if not req:continue
                       url=urlsplit(req.get("url",""))
                       post=req.get("postData") or {}
-                      postsha=post.get("_sha1")
-                      postname="resources/"+str(postsha)
+                      postsha=post.get("_sha1") or post.get("sha1") or post.get("_file")
+                      postname=str(postsha) if str(postsha).startswith("resources/") else "resources/"+str(postsha)
                       posttext=post.get("text") or ""
                       source="inline" if posttext else "none"
                       if postsha:
@@ -346,6 +423,7 @@ jobs:
               before=truth(db,ids)
               native_before=native_permissions(db)
               alt=alternative_packet(db,ids)
+              rel=relationship_packet(db)
               server=make_server("127.0.0.1",0,StaticFilesHandler(get_wsgi_application()),handler_class=r6.NoLog)
               t=threading.Thread(target=server.serve_forever,daemon=True);t.start()
               base=f"http://127.0.0.1:{server.server_port}"
@@ -420,12 +498,14 @@ jobs:
                   http_pairs=sorted((u,p) for u in ("member_a","member_b") for p,k in (("change_user","change_form_status"),("change_group","group_form_status")) if native_before[u][k]==200 and native_after[u][k]==403)
                   assert all(v["group_form_status"] in (200,403) and (v["group_form_status"]==200)==v["has_group_perm"] for obs in (native_before,native_after) for v in obs.values())
                   assert lost_pairs==native_pairs==http_pairs==sorted((u,p) for u,p,has in alt if not has)
+                  packets=build_packets(ids["target"],before,alt,rel,native_before,native_after,after["target_exists"]==0)
+                  assert all(v["decoded"]==lost_pairs for v in packets.values())
                   margins=[len(lost_pairs),sorted(Counter(u for u,p in lost_pairs).items()),sorted(Counter(p for u,p in lost_pairs).items())]
                   assert len(log)==1 and log[0][3]=="target_group" and log[0][4]==3
                   log_projection=log[0]
                   return {"kind":kind,"variant":variant,"before":before,"after":after,"lost":lost,
                           "dom_hashes":[digest(before_dom),digest(confirm_dom),digest(final_dom)],
-                          "confirmation_hash":digest(confirmation),"lost_pairs":lost_pairs,"margins":margins,
+                          "confirmation_hash":digest(confirmation),"lost_pairs":lost_pairs,"margins":margins,"packets":packets,
                           "native_before":native_before,"native_after":native_after,"native_lost":native_lost,"http_lost":http_lost,"alternative_packet":alt,"native_admin_log":log_projection,
                           "confirmation_mentions_members":[n for n in ("member_a","member_b") if n in confirmation],
                           "document_records":doc_records,"decoded_snapshot_count":decoder.decoded,
@@ -475,12 +555,30 @@ jobs:
                                     "same_all_decoded_snapshot_hash_set":a["decoded_unique_hashes"]==b["decoded_unique_hashes"],
                                     "lost_different":a["lost"]!=b["lost"],"lost":[a["lost"],b["lost"]],
                                     "member_names_in_confirmation":[a["confirmation_mentions_members"],b["confirmation_mentions_members"]]})
-                  result={"django":django.get_version(),"cases":rows,"pairs":pairs,
+                  totals={}
+                  for method in METHODS.values():
+                      packets=[x["packets"][method] for x in rows]
+                      totals[method]={"raw":sum(p["bytes"] for p in packets),"zlib":sum(p["zlib_bytes"] for p in packets),
+                        "min_zlib":min(p["zlib_bytes"] for p in packets),"max_zlib":max(p["zlib_bytes"] for p in packets),
+                        "correct":sum(p["decoded"]==x["lost_pairs"] for p,x in zip(packets,rows))}
+                  # Compare collisions using only independently observed evidence projections.
+                  fields={
+                    "target_and_native_log":lambda x:[x["before"]["target_id"],x["native_admin_log"]],
+                    "target_members_permissions_pre_effective":lambda x:[x["before"]["target_id"],x["before"]["target_members"],x["before"]["target_permissions"],x["before"]["effective_pairs"]],
+                    "pre_effective_plus_loss_margins":lambda x:[x["before"]["target_id"],x["before"]["target_members"],x["before"]["target_permissions"],x["before"]["effective_pairs"],x["margins"]]}
+                  ambiguity={}
+                  for label,project in fields.items():
+                      buckets=defaultdict(list)
+                      for x in rows:buckets[digest(project(x))].append(x)
+                      ambiguous=[b for b in buckets.values() if len({digest(x["lost_pairs"]) for x in b})>1]
+                      ambiguity[label]={"observed_ambiguous_episodes":sum(map(len,ambiguous)),"observed_conflicting_classes":len(ambiguous),"distinct_records":len(buckets)}
+                  result={"django":django.get_version(),"cases":rows,"pairs":pairs,"packet_totals":totals,"observed_collision":ambiguity,
                           "gate":"Three equal-pre native collisions, same-loss negative control and visible-count positive control.",
                           "native_gate":all(all(p[k] for k in ("same_three_dom","same_document_records","same_native_admin_log","native_http_agreement","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","lost_different","alt_packet_differs")) for p in pairs[:3]) and all(pairs[3][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id")) and not pairs[3]["lost_different"] and not pairs[3]["alt_packet_differs"] and not pairs[4]["same_confirmation"] and pairs[4]["same_pre_effective_all"] and all(pairs[5][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","same_loss_margins","lost_pairs_differ","alt_packet_differs"))}
                   (out/"summary.json").write_text(json.dumps(result,indent=2,sort_keys=True))
-                  print("R10B3_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
-                  assert result["native_gate"],"R10B native scientific gate failed"
+                  print("R10C_RESULT",json.dumps({"native_gate":result["native_gate"],"packet_totals":totals,"observed_collision":ambiguity,"cases":[{"kind":x["kind"],"variant":x["variant"],"truth":x["lost_pairs"],"packets":x["packets"],"trace_bytes":x["trace_bytes"]} for x in rows]},sort_keys=True),flush=True)
+                  assert result["native_gate"],"R10C native scientific gate failed"
+                  assert all(v["correct"]==len(rows) for v in totals.values())
           if __name__=="__main__":main()
           
           PY
@@ -491,7 +589,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: r10b3-derived-results-only
+          name: r10c-derived-results-only
           path: |
             out_r09_first/summary.json
             out_r09/summary.json
