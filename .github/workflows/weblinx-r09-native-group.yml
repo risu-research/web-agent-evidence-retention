@@ -1,4 +1,4 @@
-name: R09D native permission enforcement and audit log
+name: R10A equal pre-permission native deletion
 on:
   push:
     branches: [research/r09-native-group-revocation]
@@ -23,15 +23,13 @@ jobs:
       - name: Execute predeclared native group deletion comparison twice
         run: |
           cat > r09_native.py <<'PY'
-          """R09 prospectively fixed native Django admin group deletion experiment.
-          No server-effect injection, no DOM mutation; only ordinary seeded auth data.
-          Pairs: member A/B, backup group membership A/B, direct grant A/B;
-          positive visibility control: zero vs one target membership.
-          Compare three complete stable DOMs, all account-document request methods,
-          paths, statuses, form fields and HTML response bodies with narrowly normalized
-          CSRF, origin and nonce fields; raw Trace decoded separately, not assumed equal.
-          Independent SQL joins determine per-user effective test permission before/after.
-          No raw trace, credentials, tokens, or HTML released. A failed gate stays failed.
+          """R10A: prospectively fixed native deletion with equal PRE effective permissions.
+          Same target ID, member IDs and group permissions, all seeded-user effective permission
+          sets and pre-access verdicts. Vary only redundant direct/group grant paths.
+          Three collision pairs, one non-collision control (different paths, same loss),
+          one visible positive control. Independent SQL, native Django get_all_permissions,
+          protected GET and pre-delete alternative-grant packet. No app/DOM modification.
+          Report full Trace hash-set mismatch separately. No raw session data published.
           """
           import sys, json, re, hashlib, tempfile, shutil, threading, sqlite3, zlib
           from pathlib import Path
@@ -43,7 +41,7 @@ jobs:
           from playwright.sync_api import sync_playwright
           from django.contrib.staticfiles.handlers import StaticFilesHandler
           
-          PAIRS=("member_identity","backup_group","direct_grant","visible_count_control")
+          PAIRS=("backup_group_equal_pre","direct_grant_equal_pre","two_members_equal_pre","same_loss_control","visible_count_control")
           def seed(db,kind,variant):
               from django.contrib.auth.models import User,Group,Permission
               from django.db import connections
@@ -56,14 +54,29 @@ jobs:
               perm=Permission.objects.get(content_type__app_label="auth",content_type__model="user",codename="change_user")
               target.permissions.add(perm)
               backup.permissions.add(perm)
-              if kind=="member_identity": target.user_set.add(a if variant==0 else b)
-              elif kind=="backup_group":
+              # B's direct grant is fixed in the first two pairs. Both users always have
+              # change_user before deletion. The alternate relationship is moved A -> B.
+              if kind=="backup_group_equal_pre":
                   target.user_set.add(a)
+                  b.user_permissions.add(perm)
                   backup.user_set.add(a if variant==0 else b)
-              elif kind=="direct_grant":
+              elif kind=="direct_grant_equal_pre":
                   target.user_set.add(a)
+                  backup.user_set.add(b)
                   (a if variant==0 else b).user_permissions.add(perm)
-              elif kind=="visible_count_control" and variant==1: target.user_set.add(a)
+              elif kind=="two_members_equal_pre":
+                  target.user_set.add(a,b)
+                  backup.user_set.add(a if variant==0 else b)
+              elif kind=="same_loss_control":
+                  target.user_set.add(a)
+                  b.user_permissions.add(perm)
+                  if variant==0: backup.user_set.add(a)
+                  else: a.user_permissions.add(perm)
+              elif kind=="visible_count_control":
+                  a.user_permissions.add(perm)
+                  b.user_permissions.add(perm)
+                  if variant==1: target.user_set.add(a)
+              else: raise AssertionError(kind)
               ids={"target":target.pk,"permission":perm.pk}
               connections.close_all()
               return ids
@@ -78,7 +91,8 @@ jobs:
                   ORDER BY u.username""",(ids["permission"],ids["permission"])).fetchall()
                   memberships=con.execute("SELECT u.username FROM auth_user_groups g JOIN auth_user u ON g.user_id=u.id WHERE g.group_id=? ORDER BY u.username",(ids["target"],)).fetchall()
                   exists=con.execute("SELECT COUNT(*) FROM auth_group WHERE id=?",(ids["target"],)).fetchone()[0]
-              return {"granted":[x[0] for x in grants],"target_members":[x[0] for x in memberships],"target_exists":exists}
+                  group_permissions=con.execute("SELECT p.codename FROM auth_group_permissions g JOIN auth_permission p ON p.id=g.permission_id WHERE g.group_id=? ORDER BY p.codename",(ids["target"],)).fetchall()
+              return {"granted":[x[0] for x in grants],"target_members":[x[0] for x in memberships],"target_exists":exists,"target_permissions":[x[0] for x in group_permissions],"target_id":ids["target"]}
           def native_permissions(db):
               from concurrent.futures import ThreadPoolExecutor
               def worker():
@@ -87,13 +101,13 @@ jobs:
                   from django.db import connections
                   try:
                       observed={}
-                      for name in ("member_a","member_b"):
+                      for name in ("member_a","member_b","operator"):
                           user=User.objects.get(username=name)
                           permission=user.has_perm("auth.change_user")
                           client=Client(HTTP_HOST="localhost")
                           client.force_login(user)
                           res=client.get(f"/admin/auth/user/{user.pk}/change/")
-                          observed[name]={"has_perm":permission,"change_form_status":res.status_code}
+                          observed[name]={"has_perm":permission,"change_form_status":res.status_code,"all_permissions":sorted(user.get_all_permissions())}
                           client.logout()
                       return observed
                   finally:
@@ -198,10 +212,10 @@ jobs:
                   assert before["target_exists"]==1 and after["target_exists"]==0
                   assert after["target_members"]==[]
                   lost=sorted(set(before["granted"])-set(after["granted"]))
-                  native_lost=sorted(k for k,v in native_before.items() if v["has_perm"] and not native_after[k]["has_perm"])
-                  http_lost=sorted(k for k,v in native_before.items() if v["change_form_status"]==200 and native_after[k]["change_form_status"]==403)
+                  native_lost=sorted(k for k,v in native_before.items() if k!="operator" and v["has_perm"] and not native_after[k]["has_perm"])
+                  http_lost=sorted(k for k,v in native_before.items() if k!="operator" and v["change_form_status"]==200 and native_after[k]["change_form_status"]==403)
                   assert all((v["change_form_status"]==200)==v["has_perm"] and v["change_form_status"] in (200,403) for obs in (native_before,native_after) for v in obs.values())
-                  assert all(sorted(k for k,v in obs.items() if v["has_perm"])==state["granted"] for obs,state in ((native_before,before),(native_after,after)))
+                  assert all(sorted(k for k,v in obs.items() if k!="operator" and v["has_perm"])==state["granted"] for obs,state in ((native_before,before),(native_after,after)))
                   assert lost==native_lost==http_lost==sorted(row[0] for row in alt if not row[2])
                   assert len(log)==1 and log[0][3]=="target_group" and log[0][4]==3
                   log_projection=log[0]
@@ -234,13 +248,19 @@ jobs:
                       browser=pw.chromium.launch(headless=True)
                       for db,ids,kind,variant in prepared:
                           row=episode(browser,db,ids,kind,variant);rows.append(row)
-                          print("CASE",kind,variant,"lost",row["lost"],"native",row["native_lost"],"http",row["http_lost"],"decoded",row["decoded_snapshot_count"],flush=True)
+                          print("CASE",kind,variant,"pre",row["before"]["granted"],"post",row["after"]["granted"],"lost",row["lost"],"native",row["native_lost"],"http",row["http_lost"],"packet",row["alternative_packet"],"decoded",row["decoded_snapshot_count"],flush=True)
                       browser.close()
                   pairs=[]
                   for kind in PAIRS:
                       a,b=[x for x in rows if x["kind"]==kind]
                       pairs.append({"kind":kind,"same_three_dom":a["dom_hashes"]==b["dom_hashes"],
                                     "same_confirmation":a["confirmation_hash"]==b["confirmation_hash"],
+                                    "same_pre_effective_all":a["native_before"]==b["native_before"],
+                                    "same_pre_target_members":a["before"]["target_members"]==b["before"]["target_members"],
+                                    "same_pre_target_permissions":a["before"]["target_permissions"]==b["before"]["target_permissions"],
+                                    "same_target_id":a["before"]["target_id"]==b["before"]["target_id"],
+                                    "pre_grants": [a["before"]["granted"],b["before"]["granted"]],
+                                    "alt_packet_differs":a["alternative_packet"]!=b["alternative_packet"],
                                     "same_native_admin_log":a["native_admin_log"]==b["native_admin_log"],
                                     "native_http_agreement":all(x["lost"]==x["native_lost"]==x["http_lost"] for x in (a,b)),
                                     "same_document_records":a["document_records"]==b["document_records"],
@@ -248,10 +268,11 @@ jobs:
                                     "lost_different":a["lost"]!=b["lost"],"lost":[a["lost"],b["lost"]],
                                     "member_names_in_confirmation":[a["confirmation_mentions_members"],b["confirmation_mentions_members"]]})
                   result={"django":django.get_version(),"cases":rows,"pairs":pairs,
-                          "gate":"Three native contrast pairs must have different lost permission recipients and equal stable DOM+document records; count control should differ in confirmation. All decoded snapshot equality reported separately; raw archives not assumed equal.",
-                          "native_gate":all(p["same_three_dom"] and p["same_document_records"] and p["lost_different"] and p["same_native_admin_log"] and p["native_http_agreement"] for p in pairs[:3]) and not pairs[3]["same_confirmation"]}
+                          "gate":"Three equal-pre native collisions, same-loss negative control and visible-count positive control.",
+                          "native_gate":all(all(p[k] for k in ("same_three_dom","same_document_records","same_native_admin_log","native_http_agreement","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","lost_different","alt_packet_differs")) for p in pairs[:3]) and all(pairs[3][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id")) and not pairs[3]["lost_different"] and not pairs[3]["alt_packet_differs"] and not pairs[4]["same_confirmation"] and pairs[4]["same_pre_effective_all"]}
                   (out/"summary.json").write_text(json.dumps(result,indent=2,sort_keys=True))
-                  print("R09D_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
+                  print("R10A_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
+                  assert result["native_gate"],"R10A scientific gate failed"
           if __name__=="__main__":main()
           
           PY
@@ -262,7 +283,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: r09d-derived-results-only
+          name: r10a-derived-results-only
           path: |
             out_r09_first/summary.json
             out_r09/summary.json
