@@ -1,4 +1,4 @@
-name: R09 native Django group deletion evidence audit
+name: R09D native permission enforcement and audit log
 on:
   push:
     branches: [research/r09-native-group-revocation]
@@ -49,8 +49,8 @@ jobs:
               from django.db import connections
               r6.switch_database(db)
               root=User.objects.create_superuser("operator","operator@example.invalid","local-dummy-only")
-              a=User.objects.create_user("member_a",password="local-dummy")
-              b=User.objects.create_user("member_b",password="local-dummy")
+              a=User.objects.create_user("member_a",password="local-dummy",is_staff=True)
+              b=User.objects.create_user("member_b",password="local-dummy",is_staff=True)
               target=Group.objects.create(name="target_group")
               backup=Group.objects.create(name="backup_group")
               perm=Permission.objects.get(content_type__app_label="auth",content_type__model="user",codename="change_user")
@@ -79,6 +79,43 @@ jobs:
                   memberships=con.execute("SELECT u.username FROM auth_user_groups g JOIN auth_user u ON g.user_id=u.id WHERE g.group_id=? ORDER BY u.username",(ids["target"],)).fetchall()
                   exists=con.execute("SELECT COUNT(*) FROM auth_group WHERE id=?",(ids["target"],)).fetchone()[0]
               return {"granted":[x[0] for x in grants],"target_members":[x[0] for x in memberships],"target_exists":exists}
+          def native_permissions(db):
+              from concurrent.futures import ThreadPoolExecutor
+              def worker():
+                  from django.contrib.auth.models import User
+                  from django.test import Client
+                  from django.db import connections
+                  try:
+                      observed={}
+                      for name in ("member_a","member_b"):
+                          user=User.objects.get(username=name)
+                          permission=user.has_perm("auth.change_user")
+                          client=Client(HTTP_HOST="localhost")
+                          client.force_login(user)
+                          res=client.get(f"/admin/auth/user/{user.pk}/change/")
+                          observed[name]={"has_perm":permission,"change_form_status":res.status_code}
+                          client.logout()
+                      return observed
+                  finally:
+                      connections.close_all()
+              with ThreadPoolExecutor(max_workers=1) as executor:
+                  return executor.submit(worker).result()
+          def native_log(db):
+              with sqlite3.connect(db) as conn:
+                  return conn.execute("SELECT user_id,content_type_id,object_id,object_repr,action_flag,change_message FROM django_admin_log ORDER BY id").fetchall()
+          def alternative_packet(db,ids):
+              with sqlite3.connect(db) as conn:
+                  rows=conn.execute("""
+                    SELECT u.username, p.codename,
+                    EXISTS(SELECT 1 FROM auth_user_user_permissions x WHERE x.user_id=u.id AND x.permission_id=p.id)
+                    OR EXISTS(SELECT 1 FROM auth_user_groups g JOIN auth_group_permissions x ON x.group_id=g.group_id
+                              WHERE g.user_id=u.id AND g.group_id<>? AND x.permission_id=p.id)
+                    FROM auth_user_groups m JOIN auth_user u ON m.user_id=u.id
+                    JOIN auth_group_permissions gp ON gp.group_id=m.group_id
+                    JOIN auth_permission p ON p.id=gp.permission_id
+                    WHERE m.group_id=? AND p.id=? ORDER BY u.username,p.codename
+                  """,(ids["target"],ids["target"],ids["permission"])).fetchall()
+              return rows
           def digest(x):
               return hashlib.sha256(json.dumps(x,sort_keys=True,separators=(",",":")).encode()).hexdigest()
           def normalize(s,base):
@@ -100,6 +137,8 @@ jobs:
               from django.db import connections
               r6.switch_database(db)
               before=truth(db,ids)
+              native_before=native_permissions(db)
+              alt=alternative_packet(db,ids)
               server=make_server("127.0.0.1",0,StaticFilesHandler(get_wsgi_application()),handler_class=r6.NoLog)
               t=threading.Thread(target=server.serve_forever,daemon=True);t.start()
               base=f"http://127.0.0.1:{server.server_port}"
@@ -154,12 +193,22 @@ jobs:
                               if root is not None:decoded.append(digest(node_value(root,base)))
                   assert decoder.ref_failures==0 and decoder.decoded>0
                   after=truth(db,ids)
+                  native_after=native_permissions(db)
+                  log=native_log(db)
                   assert before["target_exists"]==1 and after["target_exists"]==0
                   assert after["target_members"]==[]
                   lost=sorted(set(before["granted"])-set(after["granted"]))
+                  native_lost=sorted(k for k,v in native_before.items() if v["has_perm"] and not native_after[k]["has_perm"])
+                  http_lost=sorted(k for k,v in native_before.items() if v["change_form_status"]==200 and native_after[k]["change_form_status"]==403)
+                  assert all((v["change_form_status"]==200)==v["has_perm"] and v["change_form_status"] in (200,403) for obs in (native_before,native_after) for v in obs.values())
+                  assert all(sorted(k for k,v in obs.items() if v["has_perm"])==state["granted"] for obs,state in ((native_before,before),(native_after,after)))
+                  assert lost==native_lost==http_lost==sorted(row[0] for row in alt if not row[2])
+                  assert len(log)==1 and log[0][3]=="target_group" and log[0][4]==3
+                  log_projection=log[0]
                   return {"kind":kind,"variant":variant,"before":before,"after":after,"lost":lost,
                           "dom_hashes":[digest(before_dom),digest(confirm_dom),digest(final_dom)],
                           "confirmation_hash":digest(confirmation),
+                          "native_before":native_before,"native_after":native_after,"native_lost":native_lost,"http_lost":http_lost,"alternative_packet":alt,"native_admin_log":log_projection,
                           "confirmation_mentions_members":[n for n in ("member_a","member_b") if n in confirmation],
                           "document_records":doc_records,"decoded_snapshot_count":decoder.decoded,
                           "decoded_unique_hashes":sorted(set(decoded)),"trace_bytes":trace.stat().st_size,
@@ -185,22 +234,24 @@ jobs:
                       browser=pw.chromium.launch(headless=True)
                       for db,ids,kind,variant in prepared:
                           row=episode(browser,db,ids,kind,variant);rows.append(row)
-                          print("CASE",kind,variant,"lost",row["lost"],"decoded",row["decoded_snapshot_count"],flush=True)
+                          print("CASE",kind,variant,"lost",row["lost"],"native",row["native_lost"],"http",row["http_lost"],"decoded",row["decoded_snapshot_count"],flush=True)
                       browser.close()
                   pairs=[]
                   for kind in PAIRS:
                       a,b=[x for x in rows if x["kind"]==kind]
                       pairs.append({"kind":kind,"same_three_dom":a["dom_hashes"]==b["dom_hashes"],
                                     "same_confirmation":a["confirmation_hash"]==b["confirmation_hash"],
+                                    "same_native_admin_log":a["native_admin_log"]==b["native_admin_log"],
+                                    "native_http_agreement":all(x["lost"]==x["native_lost"]==x["http_lost"] for x in (a,b)),
                                     "same_document_records":a["document_records"]==b["document_records"],
                                     "same_all_decoded_snapshot_hash_set":a["decoded_unique_hashes"]==b["decoded_unique_hashes"],
                                     "lost_different":a["lost"]!=b["lost"],"lost":[a["lost"],b["lost"]],
                                     "member_names_in_confirmation":[a["confirmation_mentions_members"],b["confirmation_mentions_members"]]})
                   result={"django":django.get_version(),"cases":rows,"pairs":pairs,
                           "gate":"Three native contrast pairs must have different lost permission recipients and equal stable DOM+document records; count control should differ in confirmation. All decoded snapshot equality reported separately; raw archives not assumed equal.",
-                          "native_gate":all(p["same_three_dom"] and p["same_document_records"] and p["lost_different"] for p in pairs[:3]) and not pairs[3]["same_confirmation"]}
+                          "native_gate":all(p["same_three_dom"] and p["same_document_records"] and p["lost_different"] and p["same_native_admin_log"] and p["native_http_agreement"] for p in pairs[:3]) and not pairs[3]["same_confirmation"]}
                   (out/"summary.json").write_text(json.dumps(result,indent=2,sort_keys=True))
-                  print("R09_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
+                  print("R09D_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
           if __name__=="__main__":main()
           
           PY
@@ -211,7 +262,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: r09-derived-results-only
+          name: r09d-derived-results-only
           path: |
             out_r09_first/summary.json
             out_r09/summary.json
