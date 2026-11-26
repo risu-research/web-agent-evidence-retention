@@ -1,0 +1,212 @@
+name: R09 native Django group deletion evidence audit
+on:
+  push:
+    branches: [research/r09-native-group-revocation]
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/weblinx-r09-native-group.yml']
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned upstream runtime
+        run: |
+          python -m pip install 'Django==5.2.12' 'playwright==1.65.2'
+          python -m playwright install --with-deps chromium
+      - name: Execute predeclared native group deletion comparison twice
+        run: |
+          cat > r09_native.py <<'PY'
+          """R09 prospectively fixed native Django admin group deletion experiment.
+          No server-effect injection, no DOM mutation; only ordinary seeded auth data.
+          Pairs: member A/B, backup group membership A/B, direct grant A/B;
+          positive visibility control: zero vs one target membership.
+          Compare three complete stable DOMs, all account-document request methods,
+          paths, statuses, form fields and HTML response bodies with narrowly normalized
+          CSRF, origin and nonce fields; raw Trace decoded separately, not assumed equal.
+          Independent SQL joins determine per-user effective test permission before/after.
+          No raw trace, credentials, tokens, or HTML released. A failed gate stays failed.
+          """
+          import sys, json, re, hashlib, tempfile, shutil, threading, sqlite3, zlib
+          from pathlib import Path
+          from urllib.parse import urlsplit, parse_qsl
+          from wsgiref.simple_server import make_server
+          sys.path.insert(0,str(Path.cwd()/"scripts"))
+          import weblinx_r6_django_trace as r6
+          from weblinx_r7_trace_dom_auditor import read_raw, SnapshotDecoder, Node
+          from playwright.sync_api import sync_playwright
+          from django.contrib.staticfiles.handlers import StaticFilesHandler
+          
+          PAIRS=("member_identity","backup_group","direct_grant","visible_count_control")
+          def seed(db,kind,variant):
+              from django.contrib.auth.models import User,Group,Permission
+              from django.db import connections
+              r6.switch_database(db)
+              root=User.objects.create_superuser("operator","operator@example.invalid","local-dummy-only")
+              a=User.objects.create_user("member_a",password="local-dummy")
+              b=User.objects.create_user("member_b",password="local-dummy")
+              target=Group.objects.create(name="target_group")
+              backup=Group.objects.create(name="backup_group")
+              perm=Permission.objects.get(content_type__app_label="auth",content_type__model="user",codename="change_user")
+              target.permissions.add(perm)
+              backup.permissions.add(perm)
+              if kind=="member_identity": target.user_set.add(a if variant==0 else b)
+              elif kind=="backup_group":
+                  target.user_set.add(a)
+                  backup.user_set.add(a if variant==0 else b)
+              elif kind=="direct_grant":
+                  target.user_set.add(a)
+                  (a if variant==0 else b).user_permissions.add(perm)
+              elif kind=="visible_count_control" and variant==1: target.user_set.add(a)
+              ids={"target":target.pk,"permission":perm.pk}
+              connections.close_all()
+              return ids
+          def truth(db,ids):
+              with sqlite3.connect(db) as con:
+                  grants=con.execute("""
+                  SELECT u.username FROM auth_user u
+                  WHERE u.username IN ('member_a','member_b') AND (
+                    EXISTS(SELECT 1 FROM auth_user_user_permissions p WHERE p.user_id=u.id AND p.permission_id=?)
+                    OR EXISTS(SELECT 1 FROM auth_user_groups g JOIN auth_group_permissions p ON p.group_id=g.group_id
+                    WHERE g.user_id=u.id AND p.permission_id=?))
+                  ORDER BY u.username""",(ids["permission"],ids["permission"])).fetchall()
+                  memberships=con.execute("SELECT u.username FROM auth_user_groups g JOIN auth_user u ON g.user_id=u.id WHERE g.group_id=? ORDER BY u.username",(ids["target"],)).fetchall()
+                  exists=con.execute("SELECT COUNT(*) FROM auth_group WHERE id=?",(ids["target"],)).fetchone()[0]
+              return {"granted":[x[0] for x in grants],"target_members":[x[0] for x in memberships],"target_exists":exists}
+          def digest(x):
+              return hashlib.sha256(json.dumps(x,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+          def normalize(s,base):
+              s=s.replace(base,"http://localhost")
+              # CSRF form values only, preserving all other fields.
+              s=re.sub(r'(name="csrfmiddlewaretoken" value=")[A-Za-z0-9]+(")',r'\1CSRF\2',s)
+              s=re.sub(r'("csrfmiddlewaretoken"\s+value=")[A-Za-z0-9]+(")',r'\1CSRF\2',s)
+              return s
+          def node_value(node,base):
+              if isinstance(node,str):return normalize(node,base)
+              if not isinstance(node,Node):return None
+              attrs={k:normalize(str(v),base) for k,v in node.attrs.items()}
+              if attrs.get("name")=="csrfmiddlewaretoken":
+                  for k in ("value","__playwright_value__"):
+                      if k in attrs:attrs[k]="CSRF"
+              return [node.name,attrs,[node_value(c,base) for c in node.children]]
+          def episode(browser,db,ids,kind,variant):
+              from django.core.wsgi import get_wsgi_application
+              from django.db import connections
+              r6.switch_database(db)
+              before=truth(db,ids)
+              server=make_server("127.0.0.1",0,StaticFilesHandler(get_wsgi_application()),handler_class=r6.NoLog)
+              t=threading.Thread(target=server.serve_forever,daemon=True);t.start()
+              base=f"http://127.0.0.1:{server.server_port}"
+              ctx=browser.new_context(viewport={"width":1350,"height":920})
+              p=ctx.new_page()
+              try:
+                  p.goto(base+"/admin/login/?next=/admin/auth/group/")
+                  p.locator("#id_username").fill("operator")
+                  p.locator("#id_password").fill("local-dummy-only")
+                  p.locator('input[type=submit]').click()
+                  p.locator("#result_list").wait_for()
+                  trace=db.parent/"trace.zip"
+                  ctx.tracing.start(screenshots=True,snapshots=True,sources=False)
+                  docs=[]
+                  p.on("response",lambda res:docs.append(res) if res.request.resource_type=="document" else None)
+                  p.goto(base+"/admin/auth/group/",wait_until="load")
+                  row=p.locator("#result_list tbody tr").filter(has=p.get_by_role("link",name="target_group",exact=True))
+                  assert row.count()==1
+                  before_dom=normalize(p.content(),base)
+                  row.locator('input[type=checkbox]').check()
+                  p.locator('select[name=action]').select_option("delete_selected")
+                  p.locator('button[name=index]').click()
+                  p.locator('input[name=post]').wait_for(state="attached")
+                  confirm_dom=normalize(p.content(),base)
+                  confirmation=p.locator("#content").inner_text()
+                  # Native confirmation must show target, but membership endpoints may not be displayed.
+                  assert "target_group" in confirmation
+                  p.locator('form input[type=submit]').last.click()
+                  p.locator("#result_list").wait_for()
+                  assert p.get_by_role("link",name="target_group",exact=True).count()==0
+                  final_dom=normalize(p.content(),base)
+                  doc_records=[]
+                  for res in docs:
+                      req=res.request
+                      fields=parse_qsl(req.post_data or "",keep_blank_values=True)
+                      fields=[(k,"CSRF" if k=="csrfmiddlewaretoken" else v) for k,v in fields]
+                      body=normalize(res.text(),base) if res.status==200 and "text/html" in res.headers.get("content-type","") else ""
+                      doc_records.append([req.method,urlsplit(req.url).path,urlsplit(req.url).query,res.status,fields,digest(body)])
+                  ctx.tracing.stop(path=trace)
+                  events,net=read_raw(trace)
+                  decoder=SnapshotDecoder(); decoded=[]
+                  for event in events:
+                      if event.get("type")=="frame-snapshot":
+                          s=event.get("snapshot",{})
+                          if s.get("isMainFrame"):
+                              root=decoder.decode(s)
+                              if root is not None:decoded.append(digest(node_value(root,base)))
+                  assert decoder.ref_failures==0 and decoder.decoded>0
+                  after=truth(db,ids)
+                  assert before["target_exists"]==1 and after["target_exists"]==0
+                  assert after["target_members"]==[]
+                  lost=sorted(set(before["granted"])-set(after["granted"]))
+                  return {"kind":kind,"variant":variant,"before":before,"after":after,"lost":lost,
+                          "dom_hashes":[digest(before_dom),digest(confirm_dom),digest(final_dom)],
+                          "confirmation_hash":digest(confirmation),
+                          "confirmation_mentions_members":[n for n in ("member_a","member_b") if n in confirmation],
+                          "document_records":doc_records,"decoded_snapshot_count":decoder.decoded,
+                          "decoded_unique_hashes":sorted(set(decoded)),"trace_bytes":trace.stat().st_size,
+                          "snapshot_failures":decoder.ref_failures,
+                          "effect_packet_bytes":len(zlib.compress(json.dumps({"before":before,"after":after},sort_keys=True,separators=(",",":")).encode(),9))}
+              finally:
+                  ctx.close();server.shutdown();server.server_close();t.join(timeout=3)
+                  connections.close_all()
+          def main():
+              import django
+              out=Path("out_r09");out.mkdir(exist_ok=True)
+              with tempfile.TemporaryDirectory() as td:
+                  root=Path(td); template=root/"template.sqlite3"
+                  r6.init_django(template)
+                  prepared=[]
+                  for kind in PAIRS:
+                      for variant in (0,1):
+                          d=root/f"{kind}-{variant}";d.mkdir()
+                          db=d/"db.sqlite3";shutil.copy2(template,db)
+                          ids=seed(db,kind,variant);prepared.append((db,ids,kind,variant))
+                  rows=[]
+                  with sync_playwright() as pw:
+                      browser=pw.chromium.launch(headless=True)
+                      for db,ids,kind,variant in prepared:
+                          row=episode(browser,db,ids,kind,variant);rows.append(row)
+                          print("CASE",kind,variant,"lost",row["lost"],"decoded",row["decoded_snapshot_count"],flush=True)
+                      browser.close()
+                  pairs=[]
+                  for kind in PAIRS:
+                      a,b=[x for x in rows if x["kind"]==kind]
+                      pairs.append({"kind":kind,"same_three_dom":a["dom_hashes"]==b["dom_hashes"],
+                                    "same_confirmation":a["confirmation_hash"]==b["confirmation_hash"],
+                                    "same_document_records":a["document_records"]==b["document_records"],
+                                    "same_all_decoded_snapshot_hash_set":a["decoded_unique_hashes"]==b["decoded_unique_hashes"],
+                                    "lost_different":a["lost"]!=b["lost"],"lost":[a["lost"],b["lost"]],
+                                    "member_names_in_confirmation":[a["confirmation_mentions_members"],b["confirmation_mentions_members"]]})
+                  result={"django":django.get_version(),"cases":rows,"pairs":pairs,
+                          "gate":"Three native contrast pairs must have different lost permission recipients and equal stable DOM+document records; count control should differ in confirmation. All decoded snapshot equality reported separately; raw archives not assumed equal.",
+                          "native_gate":all(p["same_three_dom"] and p["same_document_records"] and p["lost_different"] for p in pairs[:3]) and not pairs[3]["same_confirmation"]}
+                  (out/"summary.json").write_text(json.dumps(result,indent=2,sort_keys=True))
+                  print("R09_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
+          if __name__=="__main__":main()
+          
+          PY
+          python r09_native.py
+          mv out_r09 out_r09_first
+          python r09_native.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r09-derived-results-only
+          path: |
+            out_r09_first/summary.json
+            out_r09/summary.json
+          if-no-files-found: warn
