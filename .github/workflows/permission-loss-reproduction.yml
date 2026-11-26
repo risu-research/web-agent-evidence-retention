@@ -18,6 +18,24 @@ jobs:
           python scripts/verify_paper_artifact.py
           python scripts/effects/verify_effects.py
           python -m compileall -q scripts/effects
+          python - <<'PY'
+          import hashlib, pathlib, subprocess, re
+          paths=subprocess.check_output(['git','ls-files','-z']).decode().strip('\0').split('\0')
+          bad=[]
+          for name in paths:
+              p=pathlib.Path(name)
+              if re.search(r'(^|/)(?:\.env(?:\..*)?|__pycache__|\.venv|node_modules|.*\.sqlite3?|.*\.trace|.*\.network|.*\.zip|.*\.pem|.*\.key|.*handoff.*|.*conversation.*)(?:/|$)',name,re.I):
+                  bad.append(name)
+          assert not bad,bad
+          added=subprocess.check_output(['git','diff','--name-only','trustmore2026-artifact-v1.0.0','HEAD']).decode().splitlines()
+          print('Changed paths:', '\n'.join(added))
+          print('Tracked files:',len(paths))
+          out=pathlib.Path('release-verification');out.mkdir(exist_ok=True)
+          (out/'SHA256SUMS').write_text(''.join(hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()+'  '+p+'\n' for p in sorted(paths)))
+          (out/'FILES.txt').write_text('\n'.join(sorted(paths))+'\n')
+          PY
+          git archive --format=zip --prefix=web-agent-evidence-retention/ HEAD -o release-verification/source.zip
+          unzip -tq release-verification/source.zip
       - run: |
           python -m pip install -r requirements-effects.txt
           python -m playwright install --with-deps chromium
@@ -25,6 +43,8 @@ jobs:
           python scripts/effects/django_user_trace.py
           python scripts/effects/group_trace_diagnostic.py
           mv out_permission_loss out_trace_diagnostic
+          python scripts/effects/group_permission_packets.py
+          mv out_permission_loss out_permission_first
           python scripts/effects/group_permission_packets.py
           python - <<'PY'
           import json
@@ -36,6 +56,18 @@ jobs:
               assert s['native_gate']
           s=json.loads(Path('out_permission_loss/summary.json').read_text())
           assert all(v['correct']==12 for v in s['packet_totals'].values())
+          expected=json.loads(Path('results/effects/group_permission_packets.json').read_text())[0]
+          for folder in ('out_permission_first','out_permission_loss'):
+              actual=json.loads(Path(folder,'summary.json').read_text())
+              assert actual['native_gate'] and actual['packet_totals']==expected['packet_totals']
+              assert actual['observed_collision']==expected['observed_collision']
+              assert [r['packets'] for r in actual['cases']]==[r['packets'] for r in expected['cases']]
+              assert [r['lost_pairs'] for r in actual['cases']]==[r['truth'] for r in expected['cases']]
+          d=json.loads(Path('out_trace_diagnostic/summary.json').read_text())
+          core=[p for p in d['pairs'] if p['kind'] not in ('same_loss_control','visible_count_control')]
+          assert len(core)==4
+          assert all(p['trace_decomposition']['aligned']>0 and p['trace_decomposition']['marker_normalized_aligned_equal']==p['trace_decomposition']['aligned'] for p in core)
+          print('Packet payloads, loss sets and counts match archived source in both repeats')
           print('Runtime reproduction gates passed')
           PY
       - uses: actions/upload-artifact@v4
@@ -47,4 +79,6 @@ jobs:
             out_round7/r7_trace_DOM_vs_packets_summary.json
             out_trace_diagnostic/summary.json
             out_permission_loss/summary.json
+            out_permission_first/summary.json
+            release-verification/
           if-no-files-found: warn
