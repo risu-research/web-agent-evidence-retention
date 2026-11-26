@@ -3,7 +3,7 @@ on:
   push:
     branches: [artifact/permission-loss-reproduction]
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 permissions:
   contents: read
@@ -90,7 +90,7 @@ jobs:
           if-no-files-found: warn
   publish:
     needs: verify
-    if: github.event_name == 'pull_request' && github.head_ref == 'artifact/permission-loss-reproduction'
+    if: github.event_name == 'pull_request' && github.head_ref == 'artifact/permission-loss-reproduction' && github.base_ref == 'artifact/v1.0.0-baseline'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
