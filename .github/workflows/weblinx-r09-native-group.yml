@@ -1,4 +1,4 @@
-name: R10B Trace difference decomposition and equal-margin native deletion
+name: R10B2 Trace attached POST and header audit
 on:
   push:
     branches: [research/r09-native-group-revocation]
@@ -185,10 +185,15 @@ jobs:
                   original=node_value(node,base)
                   key=[calls.get(meta.get("callId"),"unmapped"),meta.get("phase"),meta.get("snapshotName","").split("@")[0],urlsplit(meta.get("frameUrl","")).path]
                   snaps.append((key,original,targetnorm(original)))
+              def normobj(obj):
+                  if isinstance(obj,str):return normalize(obj,base)
+                  if isinstance(obj,list):return [normobj(x) for x in obj]
+                  if isinstance(obj,dict):return {k:normobj(v) for k,v in obj.items()}
+                  return obj
               actions=[]
               for e in events:
                   if e.get("type")=="before":
-                      actions.append([e.get("class"),e.get("method"),e.get("apiName"),e.get("params")])
+                      actions.append([e.get("class"),e.get("method"),e.get("apiName"),normobj(e.get("params"))])
               resources=[]
               with zipfile.ZipFile(trace) as z:
                   names=set(z.namelist())
@@ -198,8 +203,35 @@ jobs:
                       if not req:continue
                       url=urlsplit(req.get("url",""))
                       post=req.get("postData") or {}
-                      fields=parse_qsl(post.get("text",""),keep_blank_values=True)
-                      fields=[(k,"CSRF" if k=="csrfmiddlewaretoken" else v) for k,v in fields]
+                      postsha=post.get("_sha1")
+                      postname="resources/"+str(postsha)
+                      posttext=post.get("text") or ""
+                      source="inline" if posttext else "none"
+                      if postsha:
+                          if postname in names:
+                              posttext=z.read(postname).decode("utf-8",errors="strict")
+                              source="attached"
+                          else:source="missing_attachment"
+                      if "application/x-www-form-urlencoded" in post.get("mimeType",""):
+                          fields=parse_qsl(posttext,keep_blank_values=True)
+                          if not fields and post.get("params"):
+                              fields=[(x["name"],x["value"]) for x in post["params"]]
+                              source="params_only"
+                          fields=[(k,"CSRF" if k=="csrfmiddlewaretoken" else v) for k,v in fields]
+                          if req.get("method")=="POST":
+                              assert fields and source!="missing_attachment","POST form not recovered"
+                      elif posttext:fields=[("opaque_body_sha256",digest(posttext))]
+                      else:fields=[]
+                      def headers(raw):
+                          result=[]
+                          for h in raw:
+                              name=h["name"].lower(); value=h.get("value","")
+                              if name=="host" and value==urlsplit(base).netloc:value="localhost"
+                              value=normalize(value,base)
+                              if name in ("cookie","set-cookie"):
+                                  value=re.sub(r"(?i)(\b(?:csrftoken|sessionid)=)[^;\s]+",r"\1TOKEN",value)
+                              result.append((name,value))
+                          return sorted(result)
                       content=res.get("content") or {}
                       sha=content.get("_sha1")
                       name="resources/"+str(sha)
@@ -210,7 +242,8 @@ jobs:
                               body=digest(normalize(b.decode("utf-8",errors="strict"),base))
                           else:body=hashlib.sha256(b).hexdigest()
                       resources.append({"key":[req.get("method"),url.path,url.query],
-                                        "status":res.get("status"),"form":fields,"body":body,
+                                        "status":res.get("status"),"form":fields,"body":body,"post_source":source,
+                                        "request_headers":headers(req.get("headers",[])),"response_headers":headers(res.get("headers",[])),
                                         "request_header_names":sorted(h["name"].lower() for h in req.get("headers",[])),
                                         "response_header_names":sorted(h["name"].lower() for h in res.get("headers",[]))})
               return {"snapshots":snaps,"actions":actions,"resources":resources}
@@ -259,13 +292,16 @@ jobs:
                       if ax[k]!=bx[k]:
                           out[k]={"counts":[len(ax[k]),len(bx[k])],
                                   "status":[[r["status"] for r in ax[k]],[r["status"] for r in bx[k]]],
-                                  "fields_differ":[f for f in ("status","form","body","request_header_names","response_header_names") if [r[f] for r in ax[k]]!=[r[f] for r in bx[k]]]}
+                                  "fields_differ":[f for f in ("status","form","body","post_source","request_header_names","response_header_names","request_headers","response_headers") if [r[f] for r in ax[k]]!=[r[f] for r in bx[k]]],
+                                  "header_value_differences":{f:sorted({name for r in ax[k]+bx[k] for name,value in r[f] if [[v for n,v in row[f] if n==name] for row in ax[k]]!=[[v for n,v in row[f] if n==name] for row in bx[k]]}) for f in ("request_headers","response_headers")}}
                   return out
               return {"snapshot_counts":[len(a),len(b)],"aligned":aligned,"raw_aligned_equal":raw_equal,
                       "marker_normalized_aligned_equal":equal,"unmatched":unmatched,"node_diff_counts":dict(diff),"redacted_diff_examples":examples,
                       "marker_normalized_snapshot_hash_sets_equal":set(x[1] for x in aa)==set(x[1] for x in bb),
                       "action_records_equal":left["actions"]==right["actions"],
                       "network_record_counts":[len(left["resources"]),len(right["resources"])],
+                      "post_body_sources":[dict(Counter(r["post_source"] for r in side["resources"] if r["key"][0]=="POST")) for side in (left,right)],
+                      "response_body_missing":[sum(r["body"]=="missing" for r in side["resources"]) for side in (left,right)],
                       "network_ordered_projection_equal":left["resources"]==right["resources"],
                       "network_projection_differences":netdiff(left["resources"],right["resources"])}
           def episode(browser,db,ids,kind,variant):
@@ -329,9 +365,9 @@ jobs:
                               if root is not None:
                                   decoded.append(digest(node_value(root,base)))
                                   snapshot_records.append((s,root))
-                      trace_audit=trace_projection(events,net,snapshot_records,trace,base)
-                      # Internal detailed projections live only in process memory until paired comparison.
-                      INTERNAL[(kind,variant)]=trace_audit
+                  trace_audit=trace_projection(events,net,snapshot_records,trace,base)
+                  # Internal detailed projections live only in process memory until paired comparison.
+                  INTERNAL[(kind,variant)]=trace_audit
                   assert decoder.ref_failures==0 and decoder.decoded>0
                   after=truth(db,ids)
                   native_after=native_permissions(db)
@@ -408,7 +444,7 @@ jobs:
                           "gate":"Three equal-pre native collisions, same-loss negative control and visible-count positive control.",
                           "native_gate":all(all(p[k] for k in ("same_three_dom","same_document_records","same_native_admin_log","native_http_agreement","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","lost_different","alt_packet_differs")) for p in pairs[:3]) and all(pairs[3][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id")) and not pairs[3]["lost_different"] and not pairs[3]["alt_packet_differs"] and not pairs[4]["same_confirmation"] and pairs[4]["same_pre_effective_all"] and all(pairs[5][k] for k in ("same_three_dom","same_document_records","same_native_admin_log","same_pre_effective_all","same_pre_target_members","same_pre_target_permissions","same_target_id","same_loss_margins","lost_pairs_differ","alt_packet_differs"))}
                   (out/"summary.json").write_text(json.dumps(result,indent=2,sort_keys=True))
-                  print("R10B_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
+                  print("R10B2_RESULT",json.dumps({"pairs":pairs,"native_gate":result["native_gate"]}),flush=True)
                   assert result["native_gate"],"R10B native scientific gate failed"
           if __name__=="__main__":main()
           
@@ -420,7 +456,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: r10b-derived-results-only
+          name: r10b2-derived-results-only
           path: |
             out_r09_first/summary.json
             out_r09/summary.json
