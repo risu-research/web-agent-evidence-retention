@@ -1,0 +1,73 @@
+name: Verify published artifact and Zenodo archive
+on:
+  push:
+    branches: [research/r09-native-group-revocation]
+    paths: ['.github/workflows/weblinx-r09-native-group.yml']
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths: ['.github/workflows/weblinx-r09-native-group.yml']
+permissions:
+  contents: read
+jobs:
+  archive:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: trustmore2026-artifact-v1.1.0
+          fetch-depth: 0
+      - name: Check released source and archived version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD
+          gh release view trustmore2026-artifact-v1.1.0 --json tagName,isDraft,isPrerelease,url,publishedAt
+          python - <<'PY'
+          import hashlib, io, json, subprocess, time, urllib.request, urllib.parse, zipfile
+          def get(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'TRUSTMORE-artifact-verification/1.1','Accept':'application/json, */*'})
+              with urllib.request.urlopen(req,timeout=25) as r:return r.read(),r.geturl()
+          def read(url):return json.loads(get(url)[0])
+          tag='trustmore2026-artifact-v1.1.0'
+          release='https://github.com/risu-research/web-agent-evidence-retention/releases/tag/'+tag
+          record=None
+          for attempt in range(5):
+              records={}
+              for query in ['conceptrecid:24450360','title:"Web-Agent Evidence Retention"','related_identifiers.identifier:"'+release+'"']:
+                  try:
+                      x=read('https://zenodo.org/api/records?'+urllib.parse.urlencode({'q':query,'all_versions':'true','size':30,'sort':'mostrecent'}))
+                      records.update({str(r['id']):r for r in x['hits']['hits']})
+                  except Exception as e:print('Query diagnostic:',str(e),flush=True)
+              try:
+                  _,url=get('https://doi.org/10.5281/zenodo.24450360')
+                  rid=url.rstrip('/').split('/')[-1]
+                  if rid.isdigit():records[rid]=read('https://zenodo.org/api/records/'+rid)
+              except Exception as e:print('Concept DOI diagnostic:',str(e),flush=True)
+              for r in records.values():
+                  m=r.get('metadata',{})
+                  print('Candidate:',r.get('id'),m.get('version'),m.get('title'),flush=True)
+                  if str(m.get('version','')).lstrip('v')=='1.1.0' and ('Web-Agent Evidence Retention' in m.get('title','') or release in str(m.get('related_identifiers',[]))):
+                      record=r;break
+              if record:break
+              if attempt<4:time.sleep(8)
+          assert record, 'Version 1.1.0 Zenodo record was not confirmed'
+          m=record['metadata']
+          print('ZENODO_METADATA',json.dumps({'id':record['id'],'doi':record.get('doi') or m.get('doi'),'conceptdoi':record.get('conceptdoi'),'version':m.get('version'),'title':m.get('title'),'creators':m.get('creators'),'related_identifiers':m.get('related_identifiers'),'license':m.get('license'),'files':record.get('files')},sort_keys=True),flush=True)
+          expected={}
+          for name in subprocess.check_output(['git','ls-files','-z']).decode().strip('\0').split('\0'):
+              expected[name]=hashlib.sha256(open(name,'rb').read()).hexdigest()
+          files=[f for f in record['files'] if f['key'].endswith('.zip')]
+          assert len(files)==1, files
+          f=files[0]
+          raw,_=get(f['links'].get('self') or f['links']['download'])
+          with zipfile.ZipFile(io.BytesIO(raw)) as z:
+              assert z.testzip() is None
+              names=[x for x in z.namelist() if not x.endswith('/')]
+              actual={x.split('/',1)[1]:hashlib.sha256(z.read(x)).hexdigest() for x in names}
+          missing=sorted(set(expected)-set(actual));extra=sorted(set(actual)-set(expected));different=sorted(k for k in expected.keys() & actual.keys() if expected[k]!=actual[k])
+          result={'doi':record.get('doi') or m.get('doi'),'record_url':record.get('links',{}).get('html'),'version':m.get('version'),'file':f['key'],'zip_bytes':len(raw),'zip_sha256':hashlib.sha256(raw).hexdigest(),'expected_files':len(expected),'archived_files':len(actual),'missing':missing,'extra':extra,'different':different}
+          print('ARCHIVE_VERIFICATION',json.dumps(result,sort_keys=True),flush=True)
+          assert not missing and not extra and not different
+          PY
