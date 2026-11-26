@@ -114,16 +114,27 @@ jobs:
                   trace=db.parent/"trace.zip"
                   ctx.tracing.start(screenshots=True,snapshots=True,sources=False)
                   docs=[]
+                  doc_records=[]
+                  def capture_docs():
+                      for res in docs[:]:
+                          req=res.request
+                          fields=parse_qsl(req.post_data or "",keep_blank_values=True)
+                          fields=[(k,"CSRF" if k=="csrfmiddlewaretoken" else v) for k,v in fields]
+                          body=normalize(res.text(),base) if res.status==200 and "text/html" in res.headers.get("content-type","") else ""
+                          doc_records.append([req.method,urlsplit(req.url).path,urlsplit(req.url).query,res.status,fields,digest(body)])
+                      docs.clear()
                   p.on("response",lambda res:docs.append(res) if res.request.resource_type=="document" else None)
                   p.goto(base+"/admin/auth/group/",wait_until="load")
                   row=p.locator("#result_list tbody tr").filter(has=p.get_by_role("link",name="target_group",exact=True))
                   assert row.count()==1
                   before_dom=normalize(p.content(),base)
+                  capture_docs()
                   row.locator('input[type=checkbox]').check()
                   p.locator('select[name=action]').select_option("delete_selected")
                   p.locator('button[name=index]').click()
                   p.locator('input[name=post]').wait_for(state="attached")
                   confirm_dom=normalize(p.content(),base)
+                  capture_docs()
                   confirmation=p.locator("#content").inner_text()
                   # Native confirmation must show target, but membership endpoints may not be displayed.
                   assert "target_group" in confirmation
@@ -131,13 +142,7 @@ jobs:
                   p.locator("#result_list").wait_for()
                   assert p.get_by_role("link",name="target_group",exact=True).count()==0
                   final_dom=normalize(p.content(),base)
-                  doc_records=[]
-                  for res in docs:
-                      req=res.request
-                      fields=parse_qsl(req.post_data or "",keep_blank_values=True)
-                      fields=[(k,"CSRF" if k=="csrfmiddlewaretoken" else v) for k,v in fields]
-                      body=normalize(res.text(),base) if res.status==200 and "text/html" in res.headers.get("content-type","") else ""
-                      doc_records.append([req.method,urlsplit(req.url).path,urlsplit(req.url).query,res.status,fields,digest(body)])
+                  capture_docs()
                   ctx.tracing.stop(path=trace)
                   events,net=read_raw(trace)
                   decoder=SnapshotDecoder(); decoded=[]
@@ -199,6 +204,7 @@ jobs:
           if __name__=="__main__":main()
           
           PY
+          python -m py_compile r09_native.py
           python r09_native.py
           mv out_r09 out_r09_first
           python r09_native.py
