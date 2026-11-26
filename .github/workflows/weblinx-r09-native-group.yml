@@ -1,87 +1,73 @@
-name: Verify paper artifact and reproduce runtime experiments
+name: Verify published artifact and Zenodo archive
 on:
   push:
     branches: [research/r09-native-group-revocation]
-  workflow_dispatch:
+    paths: ['.github/workflows/weblinx-r09-native-group.yml']
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths: ['.github/workflows/weblinx-r09-native-group.yml']
 permissions:
   contents: read
 jobs:
-  verify:
+  archive:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: trustmore2026-artifact-v1.1.0
           fetch-depth: 0
-          ref: 3abcf4e0a3f1142b1e9793ce979f6d2a6c5dddc6
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: |
-          python scripts/verify_paper_artifact.py
-          python scripts/effects/verify_effects.py
-          python -m compileall -q scripts/effects
+      - name: Check released source and archived version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD
+          gh release view trustmore2026-artifact-v1.1.0 --json tagName,isDraft,isPrerelease,url,publishedAt
           python - <<'PY'
-          import hashlib, pathlib, subprocess, re
-          paths=subprocess.check_output(['git','ls-files','-z']).decode().strip('\0').split('\0')
-          bad=[]
-          for name in paths:
-              p=pathlib.Path(name)
-              if re.search(r'(^|/)(?:\.env(?:\..*)?|__pycache__|\.venv|node_modules|.*\.sqlite3?|.*\.trace|.*\.network|.*\.zip|.*\.pem|.*\.key|.*handoff.*|.*conversation.*)(?:/|$)',name,re.I):
-                  bad.append(name)
-          assert not bad,bad
-          added=subprocess.check_output(['git','diff','--name-only','trustmore2026-artifact-v1.0.0','HEAD']).decode().splitlines()
-          print('Changed paths:', '\n'.join(added))
-          print('Tracked files:',len(paths))
-          out=pathlib.Path('release-verification');out.mkdir(exist_ok=True)
-          (out/'SHA256SUMS').write_text(''.join(hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()+'  '+p+'\n' for p in sorted(paths)))
-          (out/'FILES.txt').write_text('\n'.join(sorted(paths))+'\n')
+          import hashlib, io, json, subprocess, time, urllib.request, urllib.parse, zipfile
+          def get(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'TRUSTMORE-artifact-verification/1.1','Accept':'application/json, */*'})
+              with urllib.request.urlopen(req,timeout=25) as r:return r.read(),r.geturl()
+          def read(url):return json.loads(get(url)[0])
+          tag='trustmore2026-artifact-v1.1.0'
+          release='https://github.com/risu-research/web-agent-evidence-retention/releases/tag/'+tag
+          record=None
+          for attempt in range(5):
+              records={}
+              for query in ['conceptrecid:24450360','title:"Web-Agent Evidence Retention"','related_identifiers.identifier:"'+release+'"']:
+                  try:
+                      x=read('https://zenodo.org/api/records?'+urllib.parse.urlencode({'q':query,'all_versions':'true','size':30,'sort':'mostrecent'}))
+                      records.update({str(r['id']):r for r in x['hits']['hits']})
+                  except Exception as e:print('Query diagnostic:',str(e),flush=True)
+              try:
+                  _,url=get('https://doi.org/10.5281/zenodo.24450360')
+                  rid=url.rstrip('/').split('/')[-1]
+                  if rid.isdigit():records[rid]=read('https://zenodo.org/api/records/'+rid)
+              except Exception as e:print('Concept DOI diagnostic:',str(e),flush=True)
+              for r in records.values():
+                  m=r.get('metadata',{})
+                  print('Candidate:',r.get('id'),m.get('version'),m.get('title'),flush=True)
+                  if str(m.get('version','')).lstrip('v')=='1.1.0' and ('Web-Agent Evidence Retention' in m.get('title','') or release in str(m.get('related_identifiers',[]))):
+                      record=r;break
+              if record:break
+              if attempt<4:time.sleep(8)
+          assert record, 'Version 1.1.0 Zenodo record was not confirmed'
+          m=record['metadata']
+          print('ZENODO_METADATA',json.dumps({'id':record['id'],'doi':record.get('doi') or m.get('doi'),'conceptdoi':record.get('conceptdoi'),'version':m.get('version'),'title':m.get('title'),'creators':m.get('creators'),'related_identifiers':m.get('related_identifiers'),'license':m.get('license'),'files':record.get('files')},sort_keys=True),flush=True)
+          expected={}
+          for name in subprocess.check_output(['git','ls-files','-z']).decode().strip('\0').split('\0'):
+              expected[name]=hashlib.sha256(open(name,'rb').read()).hexdigest()
+          files=[f for f in record['files'] if f['key'].endswith('.zip')]
+          assert len(files)==1, files
+          f=files[0]
+          raw,_=get(f['links'].get('self') or f['links']['download'])
+          with zipfile.ZipFile(io.BytesIO(raw)) as z:
+              assert z.testzip() is None
+              names=[x for x in z.namelist() if not x.endswith('/')]
+              actual={x.split('/',1)[1]:hashlib.sha256(z.read(x)).hexdigest() for x in names}
+          missing=sorted(set(expected)-set(actual));extra=sorted(set(actual)-set(expected));different=sorted(k for k in expected.keys() & actual.keys() if expected[k]!=actual[k])
+          result={'doi':record.get('doi') or m.get('doi'),'record_url':record.get('links',{}).get('html'),'version':m.get('version'),'file':f['key'],'zip_bytes':len(raw),'zip_sha256':hashlib.sha256(raw).hexdigest(),'expected_files':len(expected),'archived_files':len(actual),'missing':missing,'extra':extra,'different':different}
+          print('ARCHIVE_VERIFICATION',json.dumps(result,sort_keys=True),flush=True)
+          assert not missing and not extra and not different
           PY
-          git archive --format=zip --prefix=web-agent-evidence-retention/ HEAD -o release-verification/source.zip
-          unzip -tq release-verification/source.zip
-      - run: |
-          python -m pip install -r requirements-effects.txt
-          python -m playwright install --with-deps chromium
-      - run: |
-          python scripts/effects/django_user_trace.py
-          python scripts/effects/group_trace_diagnostic.py
-          mv out_permission_loss out_trace_diagnostic
-          python scripts/effects/group_permission_packets.py
-          mv out_permission_loss out_permission_first
-          python scripts/effects/group_permission_packets.py
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          s=json.loads(Path('out_round7/r7_trace_DOM_vs_packets_summary.json').read_text())
-          assert s['cases']==48 and all(v['correct']==48 for v in s['evaluations']['trace'].values())
-          for folder in ('out_trace_diagnostic','out_permission_loss'):
-              s=json.loads(Path(folder,'summary.json').read_text())
-              assert s['native_gate']
-          s=json.loads(Path('out_permission_loss/summary.json').read_text())
-          assert all(v['correct']==12 for v in s['packet_totals'].values())
-          expected=json.loads(Path('results/effects/group_permission_packets.json').read_text())[0]
-          for folder in ('out_permission_first','out_permission_loss'):
-              actual=json.loads(Path(folder,'summary.json').read_text())
-              assert actual['native_gate'] and actual['packet_totals']==expected['packet_totals']
-              assert actual['observed_collision']==expected['observed_collision']
-              assert [r['packets'] for r in actual['cases']]==[r['packets'] for r in expected['cases']]
-              assert [r['lost_pairs'] for r in actual['cases']]==[r['truth'] for r in expected['cases']]
-          d=json.loads(Path('out_trace_diagnostic/summary.json').read_text())
-          core=[p for p in d['pairs'] if p['kind'] not in ('same_loss_control','visible_count_control')]
-          assert len(core)==4
-          assert all(p['trace_decomposition']['aligned']>0 and p['trace_decomposition']['marker_normalized_aligned_equal']==p['trace_decomposition']['aligned'] for p in core)
-          print('Packet payloads, loss sets and counts match archived source in both repeats')
-          print('Runtime reproduction gates passed')
-          PY
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: derived-runtime-reproduction
-          path: |
-            out_round7/r7_trace_DOM_vs_packets_48.csv
-            out_round7/r7_trace_DOM_vs_packets_summary.json
-            out_trace_diagnostic/summary.json
-            out_permission_loss/summary.json
-            out_permission_first/summary.json
-            release-verification/
-          if-no-files-found: warn
